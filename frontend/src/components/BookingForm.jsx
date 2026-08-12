@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
-import { calculateEstimate } from '../api/bookingApi';
-import { calculateDistance } from "../utils/distanceCalculator";
 import { createBooking } from "../api/api";
-import {
-  fetchWithAuth,
-} from "../utils/fetchWithAuth";
+import { calculateTripPricing } from "../utils/pricingCalculator";
 import {
   useJsApiLoader,
   Autocomplete,
@@ -17,67 +13,21 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-const ORS_API_KEY = import.meta.env.VITE_ORS_API_KEY;
-const API_URL = import.meta.env.VITE_API_URL;
 
 const BookingForm = () => {
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API,
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
     libraries: ["places"],
   });
-
-  const truckRates = {
-    "Mini Truck (TATA Ace)": 24,
-    "Pickup Truck": 32,
-
-    "20ft / 22ft / 24ft Container": 42,
-
-    "19 ft Open Truck": 46,
-
-    "32 ft Container Truck (SXL)": 52,
-    "32 ft Container Truck (MXL)": 60,
-
-    "10 Tyre Truck": 58,
-    "12 Tyre Truck": 68,
-    "14 Tyre Truck": 82,
-    "16 Tyre Truck": 96,
-
-    "40 ft Trailer": 48,
-    "45 ft Trailer": 58,
-    "48 ft Trailer": 68,
-    "53 ft Trailer": 82,
-  };
-
-  const minimumCharges = {
-    "Mini Truck (TATA Ace)": 2500,
-    "Pickup Truck": 3500,
-
-    "20ft / 22ft / 24ft Container": 7000,
-
-    "19 ft Open Truck": 8000,
-
-    "32 ft Container Truck (SXL)": 12000,
-    "32 ft Container Truck (MXL)": 14000,
-
-    "10 Tyre Truck": 16000,
-    "12 Tyre Truck": 19000,
-    "14 Tyre Truck": 22000,
-    "16 Tyre Truck": 26000,
-
-    "40 ft Trailer": 25000,
-    "45 ft Trailer": 32000,
-    "48 ft Trailer": 40000,
-    "53 ft Trailer": 50000,
-  };
 
   const [formData, setFormData] = useState({
     customer_name: '',
     mobile: '',
     pickup_location: '',
     drop_location: '',
-    trip_level: 'District',
-    truck_type: 'Mini Truck (TATA Ace)',
+    trip_level: 'State',
+    truck_type: '', // ✅ ஆரம்பத்தில் காலியாக இருக்கும் (Select Truck காட்டும்)
     goods_type: '',
     load_weight: '',
   });
@@ -127,118 +77,124 @@ const BookingForm = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    // 🔄 கஸ்டமர் ஏதேனும் இன்புட்டை மாற்றத் தொடங்கினால் பழைய வாடகை விவரங்களை ரீசெட் செய்கிறோம்
+    setEstimate(null);
+    setEstimateDetails(null);
   };
 
   const calculateDistance = async (pickup, drop) => {
     try {
-      const geoPickup = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${pickup}`
-      );
+      // 🔄 ஸ்டெப் 1: கஸ்டமர் டைப் பண்ணுன அட்ரஸ்ல இருக்குற கமாக்களை நீக்கி ஸ்பேஸா மாத்தி தேடுறோம்
+      let cleanPickup = pickup.replace(/,/g, ' ');
+      let cleanDrop = drop.replace(/,/g, ' ');
 
-      const pickupData = await geoPickup.json();
+      let geoPickup = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cleanPickup)}`);
+      let pickupData = await geoPickup.json();
 
-      const geoDrop = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${drop}`
-      );
+      let geoDrop = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cleanDrop)}`);
+      let dropData = await geoDrop.json();
 
-      const dropData = await geoDrop.json();
+      // 🔄 ஸ்டெப் 2 (SMART BACKUP): ஒருவேளை கமா நீக்கியும் ரிசல்ட் கிடைக்கலனா, கமாவுக்கு அடுத்து இருக்குற மெயின் ஏரியாவை மட்டும் பிரிச்சு எடுக்கிறோம்!
+      if (!pickupData.length && pickup.includes(',')) {
+        const parts = pickup.split(',');
+        const mainArea = parts[parts.length - 1].trim(); // கடைசியாக இருக்கும் மெயின் ஊர் (எ.கா: Madurai)
+        geoPickup = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mainArea)}`);
+        pickupData = await geoPickup.json();
+      }
 
+      if (!dropData.length && drop.includes(',')) {
+        const parts = drop.split(',');
+        const mainArea = parts[parts.length - 1].trim(); // கடைசியாக இருக்கும் மெயின் ஊர்
+        geoDrop = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mainArea)}`);
+        dropData = await geoDrop.json();
+      }
+
+      // 🚀 ஸ்டெப் 3: இரண்டு இடத்தோட அட்சரேகையும் கிடைச்சா OSRM-க்கு அனுப்பி ரோடு தூரத்தை எடுப்போம்
       if (pickupData.length && dropData.length) {
-        const lat1 = parseFloat(pickupData[0].lat);
-        const lon1 = parseFloat(pickupData[0].lon);
+        const lat1 = pickupData[0].lat;
+        const lon1 = pickupData[0].lon;
+        const lat2 = dropData[0].lat;
+        const lon2 = dropData[0].lon;
 
-        const lat2 = parseFloat(dropData[0].lat);
-        const lon2 = parseFloat(dropData[0].lon);
+        const routeRes = await fetch(`https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`);
+        const routeData = await routeRes.json();
 
-        const R = 6371;
-
-        const dLat = (lat2 - lat1) * (Math.PI / 180);
-        const dLon = (lon2 - lon1) * (Math.PI / 180);
-
-        const a =
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(lat1 * (Math.PI / 180)) *
-          Math.cos(lat2 * (Math.PI / 180)) *
-          Math.sin(dLon / 2) *
-          Math.sin(dLon / 2);
-
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        const distance = Math.round(R * c);
-
-        setDistanceKm(distance);
-
-        return distance;
+        if (routeData.routes && routeData.routes.length > 0) {
+          const distance = Math.round(routeData.routes[0].distance / 1000);
+          setDistanceKm(distance); // ஸ்கிரீன்ல KM காட்டும்
+          return distance;         // வாடகை கணக்கீட்டிற்குப் போகும்
+        }
       }
     } catch (err) {
-      console.log(err);
+      console.log("Distance calculate panna error: ", err);
     }
-
+    
+    setDistanceKm(0);
     return 0;
   };
+
 
   const handleCheckFare = async (e) => {
     e.preventDefault();
 
     try {
-      if (
-        !formData.pickup_location ||
-        !formData.drop_location
-      ) {
+      if (!formData.pickup_location || !formData.drop_location) {
         alert("Enter pickup & drop");
         return;
       }
 
-      const ratePerKm =
-        truckRates[formData.truck_type];
+      const pricingTruckType =
+        formData.truck_type === "Trailer Truck"
+          ? `${formData.trailer_size || ""} Trailer`.trim()
+          : formData.truck_type;
 
-      if (!ratePerKm) {
+      if (formData.truck_type === "Trailer Truck" && !formData.trailer_size) {
+        alert("Select trailer size");
+        return;
+      }
+
+      const tripKm = await calculateDistance(
+        formData.pickup_location,
+        formData.drop_location
+      );
+
+      if (tripKm === 0) {
+        alert(
+          "Distance not found for these locations! ❌\nPlease remove extra address details and just type the Main Area name (e.g., Madurai, Tirunelveli)."
+        );
+        return;
+      }
+
+      const pricing = calculateTripPricing(pricingTruckType, tripKm);
+
+      if (!pricing.ratePerKm || !pricing.baseAmount) {
         alert("Truck rate missing ❌");
         return;
       }
 
-      // GOOGLE DISTANCE
-      const distanceKm =
-        await calculateDistance(
-          formData.pickup_location,
-          formData.drop_location
-        );
-
-      // FARE
-      const calculatedAmount =
-        distanceKm * ratePerKm;
-
-      // MINIMUM
-      const minimumCharge =
-        minimumCharges[
-        formData.truck_type
-        ] || 0;
-
-      // FINAL
-      const totalAmount = Math.max(
-        calculatedAmount,
-        minimumCharge
-      );
-
-      setEstimate(totalAmount);
-
+      setEstimate(pricing.totalWithGST);
       setEstimateDetails({
-        distance: distanceKm,
-        rate: ratePerKm,
-        minimumCharge,
+        distance: tripKm,
+        rate: pricing.ratePerKm,
+        minimumCharge: pricing.minimumCharge,
+        baseAmount: pricing.baseAmount,
+        gstPercentage: pricing.gstPercentage,
+        gstAmount: pricing.gstAmount,
       });
-
     } catch (error) {
       console.error(error);
-
-      alert(
-        "Distance calculate panna mudila ❌"
-      );
+      alert("Distance calculate panna mudila ❌");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const baseAmt = estimateDetails?.baseAmount || estimate || 0;
+    const gstPct = estimateDetails?.gstPercentage || 5;
+    const gstAmt = estimateDetails?.gstAmount || Math.round((baseAmt * gstPct) / 100);
+    const totalWithGST = baseAmt + gstAmt;
 
     const bookingData = {
       customerName: formData.customer_name,
@@ -246,19 +202,24 @@ const BookingForm = () => {
       pickup: formData.pickup_location,
       drop: formData.drop_location,
       goods: formData.goods_type || formData.truck_type,
-      amount: estimate || 0,
+      amount: baseAmt,
       bookingType: "public",
       priority: "normal",
       status: "Booked",
+      payment: {
+        paymentMode: "Cash",
+        advanceAmount: 0,
+        balanceAmount: totalWithGST,
+        paymentStatus: "Pending",
+        gstPercentage: gstPct,
+        gstAmount: gstAmt,
+        totalWithGST: totalWithGST
+      },
       notes: `Trip Level: ${formData.trip_level}, Truck Type: ${formData.truck_type}`,
     };
 
     try {
       const saved = await createBooking(bookingData);
-
-      if (saved.whatsappLink) {
-        window.open(saved.whatsappLink, "_blank");
-      }
 
       const savedBooking = saved.booking || saved;
       const bookingId = savedBooking?.bookingId || "Generated";
@@ -268,41 +229,19 @@ const BookingForm = () => {
         `Booking Submitted Successfully ✅\nBooking ID: ${bookingId}\nTracking OTP: ${otp}`
       );
 
-      const phoneNumber = formData.mobile.replace(/\D/g, "");
-
-      const message = `🚚 Eagle Transport Booking Confirmed ✅
-
-Hello ${formData.customer_name},
-
-🆔 Booking ID: ${bookingId}
-🔐 Tracking OTP: ${otp}
-
-📍 Pickup: ${formData.pickup_location}
-📍 Drop: ${formData.drop_location}
-
-🚛 Truck Type: ${formData.truck_type}
-💰 Estimated Fare: ₹${estimate ? estimate.toLocaleString() : 0}
-
-Track:
-${window.location.origin}/tracking`;
-
-      window.open(
-        `https://wa.me/91${phoneNumber}?text=${encodeURIComponent(message)}`,
-        "_blank"
-      );
-
       setFormData({
         customer_name: '',
         mobile: '',
         pickup_location: '',
         drop_location: '',
-        trip_level: 'District',
-        truck_type: 'Mini Truck (TATA Ace)',
+        trip_level: 'State',
+        truck_type: '',
         goods_type: '',
         load_weight: '',
       });
 
       setEstimate(null);
+      setEstimateDetails(null);
     } catch (error) {
       console.error(error);
       alert("Booking submit panna error vandhudhu ❌");
@@ -343,7 +282,7 @@ ${window.location.origin}/tracking`;
                 type="text"
                 name="customer_name"
                 className="form-control"
-                placeholder="Rajesh Kumar"
+                placeholder="Name"
                 value={formData.customer_name}
                 onChange={handleChange}
                 required
@@ -363,7 +302,7 @@ ${window.location.origin}/tracking`;
                 type="tel"
                 name="mobile"
                 className="form-control"
-                placeholder="+91 98765 43210"
+                placeholder="+91 99999 99999"
                 value={formData.mobile}
                 onChange={handleChange}
                 required
@@ -529,8 +468,6 @@ ${window.location.origin}/tracking`;
                 </option>
               </select>
 
-              
-
               {/* TRAILER SIZE SELECT */}
               {formData.truck_type === "Trailer Truck" && (
                 <div style={{ marginTop: "14px" }}>
@@ -563,8 +500,6 @@ ${window.location.origin}/tracking`;
                 </div>
               )}
             </div>
-            
-           
 
             <div style={{ flex: 1 }}>
               <label style={styles.label}>
@@ -579,8 +514,8 @@ ${window.location.origin}/tracking`;
                 onChange={handleChange}
                 style={styles.select}
               >
-                <option>District</option>
                 <option>State</option>
+                <option>District</option>
                 <option>National</option>
               </select>
             </div>
@@ -594,16 +529,63 @@ ${window.location.origin}/tracking`;
             </div>
           )}
 
-          {estimate && (
-            <div style={styles.estimateBox}>
-              <span style={styles.estimateText}>
-                Estimated Fare
+          {estimateDetails && (
+            <div style={{ ...styles.estimateBox, background: 'linear-gradient(135deg, #071b34 0%, #0f2f57 100%)', textAlign: 'left', padding: '20px', position: 'relative' }}>
+
+              {/* ✕ மார்க் ரீசெட் பட்டன் */}
+              <button
+                type="button"
+                onClick={() => {
+                  setEstimate(null);
+                  setEstimateDetails(null);
+                }}
+                style={{
+                  position: 'absolute',
+                  top: '12px',
+                  right: '12px',
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  border: 'none',
+                  color: '#fff',
+                  borderRadius: '50%',
+                  width: '28px',
+                  height: '28px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 'bold',
+                  fontSize: '14px',
+                  transition: '0.2s'
+                }}
+                title="Change Route"
+                onMouseEnter={(e) => e.target.style.background = '#ef4444'}
+                onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.15)'}
+              >
+                ✕
+              </button>
+
+              <span style={{ ...styles.estimateText, color: '#ff7a00', fontWeight: '800', fontSize: '1rem', display: 'block', marginBottom: '12px' }}>
+                Fare Breakdown (GST Included)
               </span>
 
-              <h2 style={styles.estimateAmount}>
-                ₹{estimate.toLocaleString()}
-              </h2>
-              
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff', fontSize: '0.96rem', fontWeight: '600', marginBottom: '8px' }}>
+                <span>Actual Amount:</span>
+                <span>₹{estimateDetails.baseAmount.toLocaleString('en-IN')}</span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'rgba(255,255,255,0.8)', fontSize: '0.92rem', marginBottom: '12px' }}>
+                <span>GST ({estimateDetails.gstPercentage}%):</span>
+                <span>+₹{estimateDetails.gstAmount.toLocaleString('en-IN')}</span>
+              </div>
+
+              <hr style={{ border: '0', borderTop: '1px solid rgba(255,255,255,0.15)', margin: '12px 0' }} />
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#fff' }}>
+                <span style={{ fontWeight: '800', fontSize: '1.05rem' }}>Grand Total:</span>
+                <h2 style={{ ...styles.estimateAmount, margin: 0, fontSize: '1.9rem', color: '#fff' }}>
+                  ₹{estimate.toLocaleString('en-IN')}
+                </h2>
+              </div>
             </div>
           )}
 
@@ -617,12 +599,31 @@ ${window.location.origin}/tracking`;
                 Check Truck Fare
               </button>
             ) : (
-              <button
-                type="submit"
-                style={styles.confirmBtn}
-              >
-                Confirm Booking
-              </button>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  type="submit"
+                  style={styles.confirmBtn}
+                >
+                  Confirm Booking
+                </button>
+
+                {/* ரன் டைம் ஃபார்ம் கிளியர் பட்டன் */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEstimate(null);
+                    setEstimateDetails(null);
+                  }}
+                  style={{
+                    ...styles.fareBtn,
+                    width: '35%',
+                    background: '#ef4444',
+                    boxShadow: '0 16px 30px rgba(239,68,68,0.2)'
+                  }}
+                >
+                  Clear
+                </button>
+              </div>
             )}
           </div>
 

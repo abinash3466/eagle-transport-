@@ -17,6 +17,10 @@ const Navbar = () => {
 
   return (
     <nav style={styles.nav}>
+      {/* 🌟 Dynamic Font Injection: Google Fonts lendhu Cinzel premium layout-ah load panrom */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap');
+      `}</style>
       <div className="container" style={styles.navContainer}>
         <Link to="/" style={styles.logo}>
           <img className="logoImage" src={logo} alt="Eagle Logo" style={styles.logoImage} />
@@ -108,23 +112,27 @@ navContainer:{
 },
 
   logoText: {
-  display: 'block',
-  fontSize: '1.80rem',
-  fontWeight: '950',
-  color: 'var(--dark-blue)',
-  lineHeight: '1',
-  letterSpacing: '1px',
-  fontFamily: "'Merriweather', serif", // 🔥 added
-},
+    display: 'block',
+    fontFamily: "'Cinzel', serif",  // 🔥 Pure Luxury Serif Font
+    fontSize: '1.9rem',             // Unga navbar container height-ku perfect scaling
+    fontWeight: '900',              // Ultra bold look for solid impact
+    color: '#0A2342',               // Deep Navy Blue
+    lineHeight: '0.9',              // Sub-text oda gapping structure correct-ah ukaara
+    letterSpacing: '1px',           // Clean modern kerning
+    textTransform: 'uppercase',     // Inga uppercase add panniyachu, so neat-ah capital-la render aagum
+  },
 
-logoSubText: {
-  display: 'block',
-  fontSize: '1.10rem',
-  fontWeight: '600',
-  color: 'var(--accent-orange)',
-  letterSpacing: '2px',
-  fontFamily: "'Merriweather', serif", // 🔥 added
-},
+  logoSubText: {
+    display: 'block',
+    fontFamily: "'Cinzel', serif",  // Main text oda match aahura adhe font family
+    fontSize: '0.85rem',            // Clean tagline proportion
+    fontWeight: '700',
+    color: '#ff8c00',               // Dynamic Accent Golden Orange
+    lineHeight: '1',
+    letterSpacing: '5.2px',         // 🔥 Mela irukura EAGLE oda boundary edges-ku exact-ah matching-ah stretch aaha indha width tracking!
+    marginTop: '4px',
+    textTransform: 'uppercase',     // Proper corporate layout standard
+  },
 
   desktopMenu: {
     display: 'flex',

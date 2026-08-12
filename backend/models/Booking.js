@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { GST_PERCENTAGE } = require("../config/financeConfig");
 
 const statusHistorySchema = new mongoose.Schema(
   {
@@ -155,6 +156,7 @@ const bookingSchema = new mongoose.Schema(
 
       paymentStatus: {
         type: String,
+        enum: ["Pending", "Partial", "Paid"],
         default: "Pending",
       },
 
@@ -189,7 +191,7 @@ const bookingSchema = new mongoose.Schema(
 
       gstPercentage: {
         type: Number,
-        default: 18,
+        default: GST_PERCENTAGE,
       },
 
       gstAmount: {

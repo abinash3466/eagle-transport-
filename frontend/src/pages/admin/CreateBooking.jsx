@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { createBooking } from "../../api/api";
-import { fetchWithAuth } from "../../utils/fetchWithAuth";
+import { calculateTripPricing } from "../../utils/pricingCalculator";
 import {
   Package,
   User,
@@ -16,50 +16,6 @@ import {
 } from 'lucide-react';
 
 const CreateBooking = () => {
-
-  const truckRates = {
-    "Mini Truck (TATA Ace)": 24,
-    "Pickup Truck": 32,
-
-    "20ft / 22ft / 24ft Container": 42,
-
-    "19 ft Open Truck": 46,
-
-    "32 ft Container Truck (SXL)": 52,
-    "32 ft Container Truck (MXL)": 60,
-
-    "10 Tyre Truck": 58,
-    "12 Tyre Truck": 68,
-    "14 Tyre Truck": 82,
-    "16 Tyre Truck": 96,
-
-    "40 ft Trailer": 48,
-    "45 ft Trailer": 58,
-    "48 ft Trailer": 68,
-    "53 ft Trailer": 82,
-  };
-
-  const minimumCharges = {
-    "Mini Truck (TATA Ace)": 2500,
-    "Pickup Truck": 3500,
-
-    "20ft / 22ft / 24ft Container": 7000,
-
-    "19 ft Open Truck": 8000,
-
-    "32 ft Container Truck (SXL)": 12000,
-    "32 ft Container Truck (MXL)": 14000,
-
-    "10 Tyre Truck": 16000,
-    "12 Tyre Truck": 19000,
-    "14 Tyre Truck": 22000,
-    "16 Tyre Truck": 26000,
-
-    "40 ft Trailer": 25000,
-    "45 ft Trailer": 32000,
-    "48 ft Trailer": 40000,
-    "53 ft Trailer": 50000,
-  };
 
   const [form, setForm] = useState({
     customerName: '',
@@ -79,34 +35,56 @@ const CreateBooking = () => {
   const [booking, setBooking] = useState(null);
   const [distanceKm, setDistanceKm] = useState(0);
 
-  const priceEstimate = useMemo(() => {
-    const ratePerKm = truckRates[form.truckType] || 0;
+  const pricing = useMemo(
+    () => calculateTripPricing(form.truckType, distanceKm),
+    [form.truckType, distanceKm]
+  );
 
-    const total =
-      Number(distanceKm || 0) * Number(ratePerKm);
+  const priceEstimate = pricing.totalWithGST;
 
-    return Math.round(total);
-  }, [form.truckType, distanceKm]);
-
-  const calculateDistance = async () => {
-    if (!form.pickup || !form.drop) return;
-
+  const calculateDistance = async (pickup, drop) => {
     try {
-      const response = await fetch(
-        `https://router.project-osrm.org/route/v1/driving/${encodeURIComponent(
-          form.pickup
-        )};${encodeURIComponent(form.drop)}?overview=false`
+      // 🔄 ஃப்ரீ ஏபிஐ-க்காக கமா (,) குறியீடுகளை நீக்கிவிட்டு சுத்தமான வார்த்தைகளாக மாற்றுகிறோம்
+      const cleanPickup = pickup.replace(/,/g, ' ');
+      const cleanDrop = drop.replace(/,/g, ' ');
+
+      // 1. Pickup ஏரியாவின் அட்சரேகையை (Latitude/Longitude) கண்டுபிடிக்கிறோம்
+      const geoPickup = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cleanPickup)}`
       );
+      const pickupData = await geoPickup.json();
 
-      const data = await response.json();
+      // 2. Drop ஏரியாவின் அட்சரேகையை கண்டுபிடிக்கிறோம்
+      const geoDrop = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cleanDrop)}`
+      );
+      const dropData = await geoDrop.json();
 
-      if (data.routes && data.routes.length > 0) {
-        const km = data.routes[0].distance / 1000;
-        setDistanceKm(Math.round(km));
+      if (pickupData.length && dropData.length) {
+        const lat1 = pickupData[0].lat;
+        const lon1 = pickupData[0].lon;
+
+        const lat2 = dropData[0].lat;
+        const lon2 = dropData[0].lon;
+
+        // 🚀 OSRM Free API மூலமா அசல் ரோடு தூரத்தை எடுக்கிறோம்
+        const routeRes = await fetch(
+          `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`
+        );
+        const routeData = await routeRes.json();
+
+        if (routeData.routes && routeData.routes.length > 0) {
+          const distance = Math.round(routeData.routes[0].distance / 1000);
+
+          setDistanceKm(distance);
+          return distance;
+        }
       }
-    } catch (error) {
-      console.error("Distance error", error);
+    } catch (err) {
+      console.log("Distance calculate panna error: ", err);
     }
+
+    return 0;
   };
 
   const handleChange = async (e) => {
@@ -117,88 +95,56 @@ const CreateBooking = () => {
 
     setForm(updatedForm);
 
-    if (
-      updatedForm.pickup &&
-      updatedForm.drop
-    ) {
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${updatedForm.pickup}&format=json&limit=1`
-        );
-
-        const pickupData = await response.json();
-
-        const response2 = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${updatedForm.drop}&format=json&limit=1`
-        );
-
-        const dropData = await response2.json();
-
-        if (
-          pickupData.length > 0 &&
-          dropData.length > 0
-        ) {
-          const lat1 = pickupData[0].lat;
-          const lon1 = pickupData[0].lon;
-
-          const lat2 = dropData[0].lat;
-          const lon2 = dropData[0].lon;
-
-          const routeRes = await fetch(
-            `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`
-          );
-
-          const routeData = await routeRes.json();
-
-          if (routeData.routes?.length > 0) {
-            const km =
-              routeData.routes[0].distance / 1000;
-
-            setDistanceKm(Math.round(km));
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
+    if (updatedForm.pickup && updatedForm.drop) {
+      // 🔄 இன்புட் மாறும் போதே ரன்-டைம்ல கமாக்களை நீக்கி துல்லியமான OSRM தூரத்தைக் கணக்கிடுகிறது
+      await calculateDistance(updatedForm.pickup, updatedForm.drop);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const {
+      baseAmount: base,
+      gstPercentage,
+      gstAmount,
+      totalWithGST,
+    } = calculateTripPricing(form.truckType, distanceKm);
+
     const newBooking = {
-  customerName: form.customerName,
-  phone: form.mobile,
-  pickup: form.pickup,
-  drop: form.drop,
-  goods: form.goodsType || form.truckType,
-  amount: priceEstimate,
-  bookingType: "vip",
-  priority: form.priority.toLowerCase(),
-  status: "Booked",
-  payment: {
-    paymentMode: form.paymentMode,
-    advanceAmount: 0,
-    balanceAmount: priceEstimate,
-    paymentStatus: "Pending",
-  },
+      customerName: form.customerName,
+      phone: form.mobile,
+      pickup: form.pickup,
+      drop: form.drop,
+      goods: form.goodsType || form.truckType,
+      amount: base,
+      bookingType: "vip",
+      priority: form.priority.toLowerCase(),
+      status: "Booked",
+      payment: {
+        paymentMode: form.paymentMode,
+        advanceAmount: 0,
+        balanceAmount: totalWithGST,
+        paymentStatus: "Pending",
+        gstPercentage: gstPercentage,
+        gstAmount: gstAmount,
+        totalWithGST: totalWithGST
+      },
       notes: `Truck Type: ${form.truckType}${form.trailerSize ? `(${form.trailerSize})` : ""}, Weight: ${form.weight}, Pickup Date: ${form.date}, Payment: ${form.paymentMode}, Notes: ${form.notes}`,
-};
+    };
 
     try {
       const saved = await createBooking(newBooking);
-
-      if (saved.whatsappLink) {
-      window.open(saved.whatsappLink, "_blank");
-    }
-
       const savedBooking = saved.booking || saved;
-
+      
       setBooking({
         ...form,
         bookingId: savedBooking.bookingId || "Generated",
         otp: savedBooking.otp || "0000",
-        amount: priceEstimate,
+        amount: totalWithGST,
+        baseAmount: base,
+        gstAmount,
+        totalWithGST,
         status: "Booked",
         createdAt: new Date().toLocaleString(),
         trailerSize: form.trailerSize,
@@ -227,14 +173,14 @@ const CreateBooking = () => {
         </div>
 
         <div style={styles.heroMiniCard}>
-          <p style={styles.miniLabel}>Estimated Amount</p>
+          <p style={styles.miniLabel}>Total Amount (With GST)</p>
           <h3 style={styles.amount}>
             ₹{priceEstimate.toLocaleString('en-IN')}
           </h3>
           <p style={styles.miniText}>
             Distance: {distanceKm} KM
             <br />
-            Rate: ₹{truckRates[form.truckType] || 0}/km
+            Base: ₹{pricing.baseAmount.toLocaleString('en-IN')} + GST {pricing.gstPercentage}%
           </p>
         </div>
       </div>
@@ -302,7 +248,7 @@ const CreateBooking = () => {
                 </option>
 
                 <option value="Mini Truck (TATA Ace)">
-                  🚛 Mini Truck (TATA Ace)
+                  存放 Mini Truck (TATA Ace)
                 </option>
 
                 <option value="Pickup Truck">
@@ -489,13 +435,18 @@ const CreateBooking = () => {
               <Info label="Customer" value={booking.customerName} />
               <Info label="Mobile" value={booking.mobile} />
               <Info label="Route" value={`${booking.pickup} → ${booking.drop}`} />
-                <Info
-                  label="Truck"
-                  value={`${booking.truckType} ${booking.trailerSize || ""}`}
-                />
-                <Info label="Distance" value={`${distanceKm} KM`} />
+              <Info
+                label="Truck"
+                value={`${booking.truckType} ${booking.trailerSize || ""}`}
+              />
+              <Info label="Distance" value={`${distanceKm} KM`} />
               <Info label="Goods" value={booking.goodsType} />
-              <Info label="Amount" value={`₹${booking.amount.toLocaleString('en-IN')}`} />
+              <Info label="Actual Amount" value={`₹${Number(booking.baseAmount || 0).toLocaleString('en-IN')}`} />
+              <Info label="GST (5%)" value={`+₹${Number(booking.gstAmount || 0).toLocaleString('en-IN')}`} />
+              <div style={{ ...styles.infoRow, borderTop: '1px dashed rgba(148,163,184,0.3)', marginTop: '6px', paddingTop: '14px' }}>
+                <span>Grand Total</span>
+                <strong style={{ color: '#ff7a00', fontSize: '1.2rem' }}>₹{booking.amount.toLocaleString('en-IN')}</strong>
+              </div>
 
               <div style={styles.statusBox}>
                 <CheckCircle2 size={18} />
@@ -803,6 +754,5 @@ const styles = {
     boxShadow: "0 10px 25px rgba(16,185,129,0.12)",
   },
 };
-
 
 export default CreateBooking;

@@ -6,6 +6,7 @@ import React, {
 
 import { authHeader } from "../../utils/authHeader";
 import { fetchWithAuth } from "../../utils/fetchWithAuth";
+import { GST_PERCENTAGE, DRIVER_SALARY_PERCENTAGE } from "../../utils/financeConfig";
 import {
   CreditCard,
   RefreshCw,
@@ -22,16 +23,14 @@ import {
   Download,
 } from "lucide-react";
 
-const API_URL = "http://localhost:5000/api";
-
-const GST_PERCENTAGE = 5;
+const API_URL = import.meta.env.VITE_API_URL;
 
 const PaymentManagement = () => {
   const [bookings, setBookings] = useState([]);
   const [issues, setIssues] = useState([]);
   const [fuelLogs, setFuelLogs] = useState([]);
   const [tollLogs, setTollLogs] = useState([]);
-  
+
 
   const [paymentData, setPaymentData] = useState({});
   const [salaryData, setSalaryData] = useState({});
@@ -174,12 +173,12 @@ const PaymentManagement = () => {
   const getBaseAmount = (booking) =>
     Number(booking.amount || 0);
 
+  // Single GST rule for this finance screen. Booking.amount is treated as base amount before GST.
   const getGSTAmount = (booking) =>
     (getBaseAmount(booking) * GST_PERCENTAGE) / 100;
 
   const getTotal = (booking) =>
-    getBaseAmount(booking) +
-    getGSTAmount(booking);
+    getBaseAmount(booking) + getGSTAmount(booking);
 
   const getBalance = (booking) => {
     const total = getTotal(booking);
@@ -192,10 +191,16 @@ const PaymentManagement = () => {
   };
 
   const totalRevenue = bookings.reduce(
-    (sum, booking) =>
-      sum + Number(booking.amount || 0),
+    (sum, booking) => sum + getBaseAmount(booking),
     0
   );
+
+  const totalGSTBilled = bookings.reduce(
+    (sum, booking) => sum + getGSTAmount(booking),
+    0
+  );
+
+  const totalInvoiceValue = totalRevenue + totalGSTBilled;
 
   const totalCollected = bookings.reduce(
     (sum, booking) =>
@@ -264,14 +269,11 @@ const PaymentManagement = () => {
     driverSalaryExpense +
     otherExpense;
 
-  const netRevenue =
-    totalCollected - totalExpense;
+  // Cash position: money received minus expenses actually recorded/paid.
+  const netRevenue = totalCollected - totalExpense;
 
-  const totalGSTCollected = bookings.reduce(
-    (sum, booking) =>
-      sum + getGSTAmount(booking),
-    0
-  );
+  // Operating profit excludes GST because GST is a tax component, not operating revenue.
+  const operatingProfit = totalRevenue - totalExpense;
 
   const totalTrips = bookings.length;
 
@@ -292,24 +294,19 @@ const PaymentManagement = () => {
 
   const profitMargin =
     totalRevenue > 0
-      ? (
-        (netRevenue / totalRevenue) *
-        100
-      ).toFixed(1)
-      : 0;
+      ? ((operatingProfit / totalRevenue) * 100).toFixed(1)
+      : "0.0";
 
   const collectionRate =
-    totalRevenue > 0
-      ? (
-        (totalCollected /
-          totalRevenue) *
-        100
-      ).toFixed(1)
-      : 0;
+    totalInvoiceValue > 0
+      ? ((totalCollected / totalInvoiceValue) * 100).toFixed(1)
+      : "0.0";
 
   const summary = useMemo(() => {
     return {
       totalRevenue,
+      totalGSTBilled,
+      totalInvoiceValue,
       totalCollected,
       pendingBalance,
       serviceExpense,
@@ -318,7 +315,7 @@ const PaymentManagement = () => {
       driverSalaryExpense,
       otherExpense,
       netRevenue,
-      totalGSTCollected,
+      operatingProfit,
       totalTrips,
       paidTrips,
       pendingTrips,
@@ -328,6 +325,8 @@ const PaymentManagement = () => {
     };
   }, [
     totalRevenue,
+    totalGSTBilled,
+    totalInvoiceValue,
     totalCollected,
     pendingBalance,
     serviceExpense,
@@ -336,7 +335,7 @@ const PaymentManagement = () => {
     driverSalaryExpense,
     otherExpense,
     netRevenue,
-    totalGSTCollected,
+    operatingProfit,
     totalTrips,
     paidTrips,
     pendingTrips,
@@ -571,6 +570,73 @@ const PaymentManagement = () => {
     win.print();
   };
 
+  // ✅ புதுசு: ஒட்டுமொத்த GST வசூலையும் அறிக்கையாக (PDF) மாற்றும் பங்க்ஷன் 🚀
+  const downloadGSTBreakdownReport = () => {
+    const html = `
+    <html>
+      <head>
+        <title>GST Breakdown Report</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 40px; color: #111827; }
+          h1 { color: #0B3A70; margin-bottom: 5px; }
+          .meta { color: #64748B; font-size: 14px; margin-bottom: 25px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th, td { border: 1px solid #D9E2EF; padding: 12px; text-align: left; font-size: 14px; }
+          th { background-color: #0B3A70; color: white; }
+          tr:nth-child(even) { background-color: #F3F6FA; }
+          .total-row { font-weight: bold; background-color: #E2E8F0 !important; color: #0B3A70; }
+        </style>
+      </head>
+      <body>
+        <h1>Eagle Transport - GST Breakdown Report</h1>
+        <div class="meta">Generated on: ${new Date().toLocaleString('en-IN')} | Total Active Bookings: ${bookings.length}</div>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Customer Name</th>
+              <th>Base Amount</th>
+              <th>GST Rate</th>
+              <th>GST Collected</th>
+              <th>Grand Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${bookings.map(b => {
+      const base = getBaseAmount(b);
+      const gstAmt = getGSTAmount(b);
+      const total = getTotal(b);
+      return `
+                <tr>
+                  <td><strong>${b.bookingId || '-'}</strong></td>
+                  <td>${b.customerName || 'Customer'}</td>
+                  <td>₹${base.toLocaleString('en-IN')}</td>
+                  <td>${GST_PERCENTAGE}%</td>
+                  <td>₹${gstAmt.toLocaleString('en-IN')}</td>
+                  <td>₹${total.toLocaleString('en-IN')}</td>
+                </tr>
+              `;
+    }).join('')}
+            <tr class="total-row">
+              <td colspan="2">Total Summary</td>
+              <td>₹${summary.totalRevenue.toLocaleString('en-IN')}</td>
+              <td>-</td>
+              <td>₹${summary.totalGSTBilled.toLocaleString('en-IN')}</td>
+              <td>₹${summary.totalInvoiceValue.toLocaleString('en-IN')}</td>
+            </tr>
+          </tbody>
+        </table>
+      </body>
+    </html>
+    `;
+
+    const win = window.open("", "", "width=1000,height=800");
+    win.document.write(html);
+    win.document.close();
+    win.print();
+  };
+
   const updatePayment = async (
     bookingId
   ) => {
@@ -581,37 +647,19 @@ const PaymentManagement = () => {
     const selected =
       paymentData[bookingId] || {};
 
-    const total = getTotal(booking);
-
-    const oldPaid = Number(
-      booking?.payment?.advanceAmount ||
-      0
-    );
-
     const receivedNow = Number(
       selected.balanceReceived || 0
     );
 
-    let totalPaid = Number(
-      selected.totalPaid ??
-      oldPaid + receivedNow
-    );
+    if (!Number.isFinite(receivedNow) || receivedNow <= 0) {
+      alert("Enter a valid amount received");
+      return;
+    }
 
-    if (totalPaid > total)
-      totalPaid = total;
-
-    const balanceAmount = Math.max(
-      total - totalPaid,
-      0
-    );
-
-    let paymentStatus = "Pending";
-
-    if (totalPaid <= 0)
-      paymentStatus = "Pending";
-    else if (totalPaid < total)
-      paymentStatus = "Partial";
-    else paymentStatus = "Paid";
+    if (receivedNow > getBalance(booking) + 0.01) {
+      alert(`Maximum receivable amount is ${formatMoney(getBalance(booking))}`);
+      return;
+    }
 
     try {
       const res = await fetchWithAuth(
@@ -631,17 +679,9 @@ const PaymentManagement = () => {
                 ?.paymentMode ||
               "Cash",
 
-            advanceAmount: totalPaid,
-
-            balanceAmount,
-
-            paymentStatus,
-
-            gstPercentage: GST_PERCENTAGE,
-
-            gstAmount: getGSTAmount(booking),
-
-            totalWithGST: total,
+            // Send only the new transaction amount.
+            // Backend calculates cumulative paid/balance/status to avoid duplicate history and tampering.
+            receivedAmount: receivedNow,
           }),
         }
       );
@@ -673,69 +713,61 @@ const PaymentManagement = () => {
       alert(
         "Server error while updating payment"
       );
-
-      setSalaryPayments((prev) => {
-        const updated = {
-          ...prev,
-
-          [driverId]:
-            Number(prev[driverId] || 0) +
-            Number(amount),
-        };
-
-        localStorage.setItem(
-          "salaryPayments",
-          JSON.stringify(updated)
-        );
-
-        return updated;
-      });
     }
   };
 
   const saveOtherExpense = async () => {
-    const amount = Number(
-      salaryData.otherExpense || 0
-    );
+    const title = String(salaryData.expenseName || "").trim();
+    const amount = Number(salaryData.otherExpense || 0);
 
-    const existing = Number(
-      localStorage.getItem(
-        "otherExpense"
-      ) || 0
-    );
+    if (!title) {
+      alert("Enter expense name");
+      return;
+    }
 
-    const total = existing + amount;
+    if (!Number.isFinite(amount) || amount <= 0) {
+      alert("Enter a valid expense amount");
+      return;
+    }
 
-    await fetchWithAuth(
-      `${API_URL}/expenses`,
-      {
+    try {
+      const res = await fetchWithAuth(`${API_URL}/expenses`, {
         method: "POST",
-
         headers: {
-          "Content-Type":
-            "application/json",
+          "Content-Type": "application/json",
         },
-
         body: JSON.stringify({
-          title:
-            salaryData.expenseName,
-
+          title,
           amount,
-
           type: "Other",
         }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.success === false) {
+        alert(data.message || "Expense save failed");
+        return;
       }
-    );
 
-    alert(
-      "Other expense added successfully ✅"
-    );
+      setSalaryData((prev) => ({
+        ...prev,
+        expenseName: "",
+        otherExpense: "",
+      }));
 
-    loadAllData();
+      alert("Other expense added successfully ✅");
+      loadAllData();
+    } catch (error) {
+      console.error(error);
+      alert("Server error while saving expense");
+    }
   };
 
   const getDriverTrips = (driverId) => {
     return bookings.filter((booking) => {
+      if (booking.status !== "Delivered") return false;
+
       return (
         booking.driverId?._id === driverId ||
         booking.driverId === driverId ||
@@ -753,125 +785,87 @@ const PaymentManagement = () => {
     });
   };
 
-  const calculateDriverSalary = (
-    driverId
-  ) => {
+  const calculateDriverSalary = (driverId) => {
+    const trips = getDriverTrips(driverId);
 
-    const trips =
-      getDriverTrips(driverId);
+    const autoSalary = trips.reduce((sum, trip) => {
+      const tripAmount = Number(trip.amount || 0);
+      return sum + (tripAmount * DRIVER_SALARY_PERCENTAGE) / 100;
+    }, 0);
 
-    const autoSalary =
-      trips.reduce((sum, trip) => {
+    const driverExpenseRecords = expenses.filter((e) => {
+      if (e.type !== "Driver Salary") return false;
 
-        const tripAmount = Number(
-          trip.amount || 0
-        );
+      const expenseDriverId = e.driver?._id || e.driver;
 
-        return (
-          sum + tripAmount * 0.14
-        );
+      return (
+        String(expenseDriverId || "") === String(driverId) ||
+        e.title?.includes(driverId)
+      );
+    });
 
-      }, 0);
+    const paidSalary = driverExpenseRecords.reduce(
+      (sum, item) => sum + Number(item.amount || 0),
+      0
+    );
 
-    const paidSalary =
-      expenses
-        .filter(
-          (e) =>
-            e.type ===
-            "Driver Salary" &&
-            e.title?.includes(driverId)
-        )
-        .reduce(
-          (sum, item) =>
-            sum +
-            Number(item.amount || 0),
-          0
-        );
+    let lastPaidDate = "N/A";
+    if (driverExpenseRecords.length > 0) {
+      const sortedRecords = [...driverExpenseRecords].sort(
+        (a, b) => new Date(b.createdAt || b.date || 0) - new Date(a.createdAt || a.date || 0)
+      );
+      const latestRecord = sortedRecords[0];
+      if (latestRecord.createdAt || latestRecord.date) {
+        lastPaidDate = new Date(latestRecord.createdAt || latestRecord.date).toLocaleDateString('en-IN');
+      }
+    }
+
+    const totalSalary = autoSalary;
 
     return {
       autoSalary,
-      totalSalary:
-        autoSalary,
+      totalSalary,
       paidSalary,
-      pendingSalary:
-        autoSalary - paidSalary,
+      pendingSalary: Math.max(totalSalary - paidSalary, 0),
+      lastPaidDate, // 👈 இந்த புதிய தேதி வேல்யூ சேர்க்கப்பட்டுள்ளது!
       trips,
     };
   };
 
-  const payDriverSalary = async (
-    driverId,
-    amount
-  ) => {
+  const payDriverSalary = async (driverId, amount) => {
     try {
       const res = await fetchWithAuth(
         `${API_URL}/drivers/${driverId}/pay-salary`,
         {
           method: "PUT",
-
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
-
           body: JSON.stringify({
-            amount,
+            amount: Number(amount), // 👈 நம்பராக மாற்றி அனுப்புகிறோம்
           }),
         }
       );
 
-      const data =
-        await res.json();
+      const data = await res.json();
 
       if (!data.success) {
-        alert(
-          "Salary payment failed"
-        );
-
+        alert(data.message || "Salary payment failed ❌");
         return;
       }
 
-      alert(
-        "Salary paid successfully ✅"
-      );
+      alert("Salary paid successfully ✅");
+
+      setSalaryData((prev) => ({
+        ...prev,
+        [driverId]: ""
+      }));
 
       loadAllData();
     } catch (error) {
-      console.log(error);
-
-      alert("Server error");
+      console.error(error);
+      alert("Server error ❌");
     }
-  };  
-
-  const saveManualBonus = (
-    driverId
-  ) => {
-    const amount = Number(
-      manualSalaryInput[driverId] || 0
-    );
-
-    const existing = Number(
-      localStorage.getItem(
-        `manualBonus_${driverId}`
-      ) || 0
-    );
-
-    const updated =
-      existing + amount;
-
-    localStorage.setItem(
-      `manualBonus_${driverId}`,
-      updated
-    );
-
-    alert(
-      "Manual salary added successfully ✅"
-    );
-
-    setManualSalaryInput((prev) => ({
-      ...prev,
-      [driverId]: "",
-    }));
   };
 
   const generateSalaryReceipt = (
@@ -882,91 +876,69 @@ const PaymentManagement = () => {
     <html>
       <head>
         <title>Salary Receipt</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 40px; color: #111827; }
+          h1, h2 { color: #0B3A70; margin: 0 0 10px 0; }
+          hr { border: 0; border-top: 1px solid #D9E2EF; margin: 20px 0; }
+          .info-p { font-size: 14px; margin: 6px 0; }
+          .trip-box { padding: 14px; border: 1px solid #E2E8F0; border-radius: 14px; margin-bottom: 12px; background-color: #F8FAFC; }
+          .trip-title { font-size: 15px; color: #0B3A70; margin: 0 0 6px 0; }
+          .trip-date { font-size: 12px; color: #64748B; margin: 4px 0; display: flex; gap: 15px; }
+          .salary-highlight { color: #FF7A00; font-weight: bold; }
+        </style>
       </head>
 
-      <body style="font-family:Arial;padding:40px;">
+      <body>
         <h1>Eagle Transport</h1>
-
         <h2>Driver Salary Receipt</h2>
-
         <hr />
 
-        <p>
-          <strong>Driver Name:</strong>
-          ${driver.name}
-        </p>
-
-        <p>
-          <strong>Driver ID:</strong>
-          ${driver._id}
-        </p>
-
-        <p>
-          <strong>Total Trips:</strong>
-          ${salaryDetails.trips.length}
-        </p>
-
-        <p>
-          <strong>Auto Salary:</strong>
-          ₹${salaryDetails.autoSalary.toFixed(
-              2
-          )}
-      </p>
-
-      <p>
-        <strong>Bonus Salary:</strong>
-        ₹${salaryDetails.manualBonus.toFixed(
-          2
-        )}
-      </p>
-
-        <p>
-          <strong>Total Salary:</strong>
-          ₹${salaryDetails.totalSalary.toFixed(2)}
-        </p>
-
-        <p>
-          <strong>Paid Salary:</strong>
-          ₹${salaryDetails.paidSalary.toFixed(2)}
-        </p>
-
-        <p>
-          <strong>Pending Salary:</strong>
-          ₹${salaryDetails.pendingSalary.toFixed(2)}
-        </p>
+        <p class="info-p"><strong>Driver Name:</strong> ${driver.name}</p>
+        <p class="info-p"><strong>Driver ID:</strong> ${driver.driverId || driver._id}</p>
+        <p class="info-p"><strong>Total Trips:</strong> ${salaryDetails.trips.length}</p>
+        <p class="info-p"><strong>Auto Salary (${DRIVER_SALARY_PERCENTAGE}%):</strong> ₹${salaryDetails.autoSalary.toFixed(2)}</p>
+        <p class="info-p"><strong>Total Salary:</strong> ₹${salaryDetails.totalSalary.toFixed(2)}</p>
+        <p class="info-p"><strong>Paid Salary:</strong> ₹${salaryDetails.paidSalary.toFixed(2)}</p>
+        <p class="info-p"><strong>Pending Salary:</strong> ₹${salaryDetails.pendingSalary.toFixed(2)}</p>
 
         <hr />
-
-        <h3>Trip Details</h3>
+        <h3>Trip Details & Timeline</h3>
 
         ${salaryDetails.trips
         .map(
-          (trip) => `
-            <div style="margin-bottom:12px;">
-              <strong>
-                ${trip.bookingId}
-              </strong>
+          (trip) => {
+            // ✅ statusHistory-ல் இருந்து Dispatched மற்றும் Delivered தேதிகளைப் பிரிக்கிறோம்[cite: 7]
+            const dispatchedStatus = (trip.statusHistory || []).find(h => h.status === "Dispatched");
+            const deliveredStatus = (trip.statusHistory || []).find(h => h.status === "Delivered");
 
-              -
-              ₹${trip.amount}
+            const dispatchedDate = dispatchedStatus && dispatchedStatus.updatedAt
+              ? new Date(dispatchedStatus.updatedAt).toLocaleDateString('en-IN')
+              : "N/A";
 
-              →
-              Salary:
-              ₹${(
-              Number(
-                trip.amount || 0
-              ) * 0.14
-            ).toFixed(2)}
-            </div>
-          `
+            const deliveredDate = deliveredStatus && deliveredStatus.updatedAt
+              ? new Date(deliveredStatus.updatedAt).toLocaleDateString('en-IN')
+              : "N/A";
+
+            return `
+              <div class="trip-box">
+                <div class="trip-title"><strong>ID: ${trip.bookingId || '-'}</strong> (${trip.pickup} → ${trip.drop})</div>
+                <div class="trip-date">
+                  <span>📅 <b>Dispatched:</b> ${dispatchedDate}</span>
+                  <span>✅ <b>Delivered:</b> ${deliveredDate}</span>
+                </div>
+                <div style="font-size: 13px; margin-top: 6px;">
+                  Trip Amount: ₹${Number(trip.amount || 0).toLocaleString('en-IN')} | 
+                  <span class="salary-highlight">Driver Share (${DRIVER_SALARY_PERCENTAGE}%): ₹${((Number(trip.amount || 0) * DRIVER_SALARY_PERCENTAGE) / 100).toFixed(2)}</span>
+                </div>
+              </div>
+            `;
+          }
         )
         .join("")}
 
         <br />
-
-        <p>
-          Generated On:
-          ${new Date().toLocaleString()}
+        <p class="info-p" style="color: #64748B; font-size: 12px;">
+          Generated On: ${new Date().toLocaleString('en-IN')}
         </p>
       </body>
     </html>
@@ -979,24 +951,29 @@ const PaymentManagement = () => {
     );
 
     win.document.write(html);
-
     win.document.close();
-
     win.print();
   };
 
+  // Salary management should contain only drivers who have at least one completed trip.
+  const salaryEligibleDrivers = useMemo(
+    () =>
+      drivers.filter(
+        (driver) => getDriverTrips(driver._id).length > 0
+      ),
+    [drivers, bookings]
+  );
+
   const selectedDriver =
-    drivers.find(
+    salaryEligibleDrivers.find(
       (d) => d._id === selectedDriverId
     );
 
   const selectedDriverSalary =
-    selectedDriverId
-      ? calculateDriverSalary(
-        selectedDriverId
-      )
+    selectedDriver
+      ? calculateDriverSalary(selectedDriver._id)
       : null;
-  
+
   const filters = [
     "All",
     "Pending",
@@ -1024,22 +1001,40 @@ const PaymentManagement = () => {
           </p>
         </div>
 
-        <button
-          style={styles.refreshBtn}
-          onClick={loadAllData}
-        >
-          <RefreshCw size={17} />
-          Refresh
-        </button>
+        {/* ✅ புதுசு: அனலிட்டிக்ஸ் அறிக்கையை பிரிண்ட் செய்ய புதிய மேலாண்மை பட்டன் */}
+        <div style={{ display: "flex", gap: "12px" }}>
+          <button
+            style={styles.refreshBtn}
+            onClick={downloadGSTBreakdownReport}
+          >
+            <Download size={17} />
+            GST Report PDF
+          </button>
+          <button
+            style={styles.refreshBtn}
+            onClick={loadAllData}
+          >
+            <RefreshCw size={17} />
+            Refresh
+          </button>
+        </div>
       </div>
 
       <div style={styles.summaryGrid}>
         <SummaryCard
-          title="Total Revenue"
+          title="Base Revenue"
           value={formatMoney(
             summary.totalRevenue
           )}
           icon={<Wallet size={24} />}
+        />
+
+        <SummaryCard
+          title="Invoice Value"
+          value={formatMoney(
+            summary.totalInvoiceValue
+          )}
+          icon={<Receipt size={24} />}
         />
 
         <SummaryCard
@@ -1053,7 +1048,7 @@ const PaymentManagement = () => {
         />
 
         <SummaryCard
-          title="Pending"
+          title="Outstanding"
           value={formatMoney(
             summary.pendingBalance
           )}
@@ -1062,7 +1057,7 @@ const PaymentManagement = () => {
         />
 
         <SummaryCard
-          title="Net Revenue"
+          title="Net Cash Flow"
           value={formatMoney(
             summary.netRevenue
           )}
@@ -1071,9 +1066,9 @@ const PaymentManagement = () => {
         />
 
         <SummaryCard
-          title="GST Collected"
+          title="GST Billed"
           value={formatMoney(
-            summary.totalGSTCollected
+            summary.totalGSTBilled
           )}
           icon={<Receipt size={24} />}
         />
@@ -1144,10 +1139,12 @@ const PaymentManagement = () => {
             }
           >
             <option value="">
-              Select Driver
+              {salaryEligibleDrivers.length > 0
+                ? "Select Driver"
+                : "No completed trips yet"}
             </option>
 
-            {drivers.map((driver) => (
+            {salaryEligibleDrivers.map((driver) => (
               <option
                 key={driver._id}
                 value={driver._id}
@@ -1157,58 +1154,78 @@ const PaymentManagement = () => {
             ))}
           </select>
 
+          {salaryEligibleDrivers.length === 0 && (
+            <div
+              style={{
+                marginTop: "18px",
+                padding: "18px",
+                borderRadius: "16px",
+                background: "#f8fafc",
+                border: "1px solid #e2e8f0",
+                color: "#475569",
+                fontWeight: "700",
+                lineHeight: "1.6",
+              }}
+            >
+              No completed trips yet. Driver salary will appear here only after a trip is delivered.
+            </div>
+          )}
+
           {selectedDriver &&
             selectedDriverSalary && (() => {
-
+              const hasCompletedTrips = selectedDriverSalary.trips.length > 0;
+              const hasEarnedSalary = selectedDriverSalary.totalSalary > 0;
               const isFullyPaid =
-                selectedDriverSalary.pendingSalary <= 0;
+                hasCompletedTrips &&
+                hasEarnedSalary &&
+                selectedDriverSalary.pendingSalary <= 0.01 &&
+                selectedDriverSalary.paidSalary >= selectedDriverSalary.totalSalary - 0.01;
 
               return (
                 <div
                   style={{
-                    border:
-                      "1px solid #e2e8f0",
+                    border: "1px solid #e2e8f0",
                     borderRadius: "18px",
                     padding: "18px",
                     marginTop: "18px",
                   }}
                 >
-                  <h4>
-                    {selectedDriver.name}
-                  </h4>
-
-                  <p>
-                    Driver ID:
-                    {selectedDriver._id}
-                  </p>
+                  <h4>{selectedDriver.name}</h4>
+                  <p><strong>Driver ID:</strong> {selectedDriver.driverId || selectedDriver._id}</p>
 
                   {isFullyPaid ? (
                     <>
+                      {/* ✅ 2. சம்பளம் முழுமையாகக் கொடுத்திருந்தால் காட்டும் புதிய பக்கா டிசைன் */}
                       <div
                         style={{
                           marginTop: "16px",
-                          padding: "16px",
-                          borderRadius: "14px",
-                          background:
-                            "#ecfdf5",
+                          padding: "18px",
+                          borderRadius: "16px",
+                          background: "#ecfdf5",
+                          border: "1px solid #a7f3d0",
                           color: "#047857",
-                          fontWeight: "800",
                         }}
                       >
-                        Salary Fully Paid ✅
-                        <br />
-                        No Pending Salary
+                        <div style={{ fontWeight: "900", fontSize: "16.5px", marginBottom: "6px" }}>
+                          Salary Fully Paid ✅
+                        </div>
+                        <div style={{ fontSize: "13.5px", fontWeight: "700", color: "#065f46" }}>
+                          📅 Paid Date: {selectedDriverSalary.lastPaidDate}
+                        </div>
                       </div>
 
-                      <div
-                        style={{
-                          marginTop: "16px",
-                        }}
-                      >
+                      <div style={{ marginTop: "16px" }}>
                         <button
-                          style={
-                            styles.invoiceBtn
-                          }
+                          style={{
+                            ...styles.invoiceBtn,
+                            width: "100%",
+                            background: "linear-gradient(135deg, #0B3A70 0%, #123c6d 100%)",
+                            boxShadow: "0 8px 20px rgba(11, 58, 112, 0.15)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "8px"
+                          }}
                           onClick={() =>
                             generateSalaryReceipt(
                               selectedDriver,
@@ -1216,69 +1233,34 @@ const PaymentManagement = () => {
                             )
                           }
                         >
-                          Generate Receipt
+                          <FileText size={17} />
+                          View & Download Salary Receipt
                         </button>
                       </div>
                     </>
                   ) : (
                     <>
-                      <p>
-                        Total Trips:
-                        {
-                          selectedDriverSalary
-                            .trips.length
-                        }
-                      </p>
+                      {/* 🔄 3. சம்பளம் பாக்கி இருந்தால் மட்டும் காட்டும் உங்க பழைய வொர்க்கிங் ஃபார்ம் */}
+                      <p>Total Trips: {selectedDriverSalary.trips.length}</p>
+                      <p>Auto Salary ({DRIVER_SALARY_PERCENTAGE}%): ₹{selectedDriverSalary.autoSalary.toFixed(2)}</p>
+                      <p>Paid Salary: ₹{selectedDriverSalary.paidSalary.toFixed(2)}</p>
+                      <p>Pending Salary: ₹{selectedDriverSalary.pendingSalary.toFixed(2)}</p>
 
-                      <p>
-                        Auto Salary (14%):
-                        ₹
-                        {selectedDriverSalary.autoSalary.toFixed(
-                          2
-                        )}
-                      </p>
+                      <div style={{ marginTop: "18px" }}>
+                        <input
+                          style={styles.input}
+                          type="number"
+                          placeholder="Enter Salary Amount"
+                          value={salaryData[selectedDriver._id] || ""}
+                          onChange={(e) =>
+                            setSalaryData((prev) => ({
+                              ...prev,
+                              [selectedDriver._id]: e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
 
-                      <p>
-                        Paid Salary:
-                        ₹
-                        {selectedDriverSalary.paidSalary.toFixed(
-                          2
-                        )}
-                      </p>
-
-                      <p>
-                        Pending Salary:
-                        ₹
-                        {selectedDriverSalary.pendingSalary.toFixed(
-                          2
-                        )}
-                      </p>
-
-                        <div
-                          style={{
-                            marginTop: "18px",
-                          }}
-                        >
-                          <input
-                            style={styles.input}
-                            type="number"
-                            placeholder="Enter Salary Amount"
-                            value={
-                              salaryData[
-                              selectedDriver._id
-                              ] || ""
-                            }
-                            onChange={(e) =>
-                              setSalaryData((prev) => ({
-                                ...prev,
-
-                                [selectedDriver._id]:
-                                  e.target.value,
-                              }))
-                            }
-                          />
-                        </div>
-                        
                       <div
                         style={{
                           display: "flex",
@@ -1288,23 +1270,21 @@ const PaymentManagement = () => {
                         }}
                       >
                         <button
-                          style={
-                            styles.salaryBtn
-                          }
-                          onClick={() =>
-                            payDriverSalary(
-                              selectedDriver._id,
-                              salaryData.amount || 0
-                            )
-                          }
+                          style={styles.salaryBtn}
+                          onClick={() => {
+                            const amountToPay = salaryData[selectedDriver._id] || 0;
+                            if (!amountToPay || amountToPay <= 0) {
+                              alert("Please enter a valid salary amount");
+                              return;
+                            }
+                            payDriverSalary(selectedDriver._id, amountToPay);
+                          }}
                         >
                           Pay Salary
                         </button>
 
                         <button
-                          style={
-                            styles.invoiceBtn
-                          }
+                          style={styles.invoiceBtn}
                           onClick={() =>
                             generateSalaryReceipt(
                               selectedDriver,
@@ -1316,74 +1296,24 @@ const PaymentManagement = () => {
                         </button>
                       </div>
 
-                      <div
-                        style={{
-                          marginTop: "24px",
-                        }}
-                      >
-                        <h4>
-                          Trip History
-                        </h4>
-
-                        {selectedDriverSalary.trips.map(
-                          (trip) => (
-                            <div
-                              key={
-                                trip._id
-                              }
-                              style={{
-                                padding:
-                                  "12px",
-                                border:
-                                  "1px solid #e2e8f0",
-                                borderRadius:
-                                  "12px",
-                                marginBottom:
-                                  "10px",
-                              }}
-                            >
-                              <p>
-                                Booking:
-                                {
-                                  trip.bookingId
-                                }
-                              </p>
-
-                              <p>
-                                Route:
-                                {
-                                  trip.pickup
-                                }
-                                →
-                                {
-                                  trip.drop
-                                }
-                              </p>
-
-                              <p>
-                                Trip Amount:
-                                ₹
-                                {
-                                  trip.amount
-                                }
-                              </p>
-
-                              <p>
-                                Driver Salary
-                                (14%):
-                                ₹
-                                {(
-                                  Number(
-                                    trip.amount ||
-                                    0
-                                  ) * 0.14
-                                ).toFixed(
-                                  2
-                                )}
-                              </p>
-                            </div>
-                          )
-                        )}
+                      <div style={{ marginTop: "24px" }}>
+                        <h4>Trip History</h4>
+                        {selectedDriverSalary.trips.map((trip) => (
+                          <div
+                            key={trip._id}
+                            style={{
+                              padding: "12px",
+                              border: "1px solid #e2e8f0",
+                              borderRadius: "12px",
+                              marginBottom: "10px",
+                            }}
+                          >
+                            <p>Booking: {trip.bookingId}</p>
+                            <p>Route: {trip.pickup} → {trip.drop}</p>
+                            <p>Trip Amount: ₹{trip.amount}</p>
+                            <p>Driver Salary ({DRIVER_SALARY_PERCENTAGE}%): ₹{((Number(trip.amount || 0) * DRIVER_SALARY_PERCENTAGE) / 100).toFixed(2)}</p>
+                          </div>
+                        ))}
                       </div>
                     </>
                   )}
@@ -1596,12 +1526,18 @@ const PaymentManagement = () => {
                       )}
                     />
 
-                    <Info
-                      label="Grand Total"
-                      value={formatMoney(
-                        getTotal(booking)
-                      )}
-                    />
+                    {/* ✅ புதுசு: ஜிஎஸ்டி பிரிப்புத் தொகையை லைவ் இண்டிகேட்டராகக் காட்டும் டூல்டிப் டெக்ஸ்ட் 🚀 */}
+                    <div style={{ position: "relative" }}>
+                      <Info
+                        label="Grand Total"
+                        value={formatMoney(
+                          getTotal(booking)
+                        )}
+                      />
+                      <small style={{ display: "block", color: "#64748b", fontSize: "11px", marginTop: "4px", paddingLeft: "14px", fontWeight: "700" }}>
+                        (₹{getBaseAmount(booking).toLocaleString('en-IN')} + ₹{getGSTAmount(booking).toLocaleString('en-IN')} GST)
+                      </small>
+                    </div>
 
                     <Info
                       label="Already Paid"
@@ -2167,4 +2103,3 @@ const styles = {
 };
 
 export default PaymentManagement;
-

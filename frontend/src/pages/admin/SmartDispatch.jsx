@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { fetchWithAuth } from "../../utils/fetchWithAuth";
+import { calculateTripPricing } from "../../utils/pricingCalculator";
 import {
   Route,
   Sparkles,
@@ -20,51 +21,7 @@ import {
 
 import { getDistance } from "geolib";
 
-const API_URL = "http://localhost:5000/api";
-
-const truckRates = {
-  "Mini Truck (TATA Ace)": 24,
-  "Pickup Truck": 32,
-
-  "20ft / 22ft / 24ft Container": 42,
-
-  "19 ft Open Truck": 46,
-
-  "32 ft Container Truck (SXL)": 52,
-  "32 ft Container Truck (MXL)": 60,
-
-  "10 Tyre Truck": 58,
-  "12 Tyre Truck": 68,
-  "14 Tyre Truck": 82,
-  "16 Tyre Truck": 96,
-
-  "40 ft Trailer": 48,
-  "45 ft Trailer": 58,
-  "48 ft Trailer": 68,
-  "53 ft Trailer": 82,
-};
-
-const minimumCharges = {
-  "Mini Truck (TATA Ace)": 2500,
-  "Pickup Truck": 3500,
-
-  "20ft / 22ft / 24ft Container": 7000,
-
-  "19 ft Open Truck": 8000,
-
-  "32 ft Container Truck (SXL)": 12000,
-  "32 ft Container Truck (MXL)": 14000,
-
-  "10 Tyre Truck": 16000,
-  "12 Tyre Truck": 19000,
-  "14 Tyre Truck": 22000,
-  "16 Tyre Truck": 26000,
-
-  "40 ft Trailer": 25000,
-  "45 ft Trailer": 32000,
-  "48 ft Trailer": 40000,
-  "53 ft Trailer": 50000,
-};
+const API_URL = import.meta.env.VITE_API_URL;
 
 const SmartDispatch = () => {
   const [job, setJob] = useState({
@@ -172,13 +129,12 @@ const SmartDispatch = () => {
     return `${hours.toFixed(1)} hrs`;
   };
 
-  const estimatedAmount = useMemo(() => {
-    if (!tripDistance || !job.truckType) return 0;
+  const pricing = useMemo(
+    () => calculateTripPricing(job.truckType, tripDistance),
+    [tripDistance, job.truckType]
+  );
 
-    const rate = truckRates[job.truckType] || 0;
-
-    return Math.round(tripDistance * rate);
-  }, [tripDistance, job.truckType]);
+  const estimatedAmount = pricing.totalWithGST;
 
   const availableTrucks = useMemo(() => {
     return trucks.filter((truck) => {
@@ -509,14 +465,29 @@ const SmartDispatch = () => {
             />
 
             {tripDistance > 0 && (
-              <div style={styles.estimateBox}>
-                <h3 style={{ margin: 0 }}>
-                  Distance: {tripDistance} KM
-                </h3>
+              <div style={{ ...styles.estimateBox, backgroundColor: '#071b34', color: '#fff', textAlign: 'left', padding: '20px', borderRadius: '20px' }}>
+                <h4 style={{ margin: '0 0 12px 0', color: '#ff7a00', fontWeight: '800' }}>AI Dispatch Invoice Preview</h4>
 
-                <h2 style={{ marginTop: 10 }}>
-                  Estimated Amount: ₹{estimatedAmount.toLocaleString()}
-                </h2>
+                <p style={{ margin: '6px 0', fontSize: '0.92rem', display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Total Distance:</span> <strong>{tripDistance} KM</strong>
+                </p>
+
+                <p style={{ margin: '6px 0', fontSize: '0.92rem', display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Actual Amount:</span>
+                  <strong>₹{pricing.baseAmount.toLocaleString('en-IN')}</strong>
+                </p>
+
+                <p style={{ margin: '6px 0', fontSize: '0.92rem', display: 'flex', justifyContent: 'space-between', color: 'rgba(255,255,255,0.8)' }}>
+                  <span>GST (5%):</span>
+                  <strong>+₹{pricing.gstAmount.toLocaleString('en-IN')}</strong>
+                </p>
+
+                <hr style={{ border: '0', borderTop: '1px solid rgba(255,255,255,0.15)', margin: '12px 0' }} />
+
+                <h3 style={{ margin: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>Grand Total:</span>
+                  <span style={{ color: '#fff', fontSize: '1.6rem', fontWeight: '900' }}>₹{estimatedAmount.toLocaleString('en-IN')}</span>
+                </h3>
               </div>
             )}
 

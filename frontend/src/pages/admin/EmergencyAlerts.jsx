@@ -21,6 +21,8 @@ import {
   CalendarClock,
 } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const EmergencyAlerts = () => {
   const [alerts, setAlerts] =
     useState([]);
@@ -44,9 +46,7 @@ const EmergencyAlerts = () => {
 
   const loadAlerts = async () => {
     try {
-      const res = await fetch(
-        'http://localhost:5000/api/issues'
-      );
+      const res = await fetchWithAuth(`${API_URL}/issues`);
 
       const data = await res.json();
 
@@ -153,19 +153,14 @@ const EmergencyAlerts = () => {
           ),
       };
 
-      const res = await fetch(
-        `http://localhost:5000/api/issues/${issueId}/resolve`,
+      const res = await fetchWithAuth(
+        `${API_URL}/issues/${issueId}/resolve`,
         {
           method: 'PUT',
-
           headers: {
-            'Content-Type':
-              'application/json',
+            'Content-Type': 'application/json',
           },
-
-          body: JSON.stringify(
-            payload
-          ),
+          body: JSON.stringify(payload),
         }
       );
 

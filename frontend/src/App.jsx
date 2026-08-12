@@ -42,6 +42,7 @@ function AppLayout() {
           <Route path="/driver/app" element={<DriverApp />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/owner" element={<OwnerLogin />} />
+          <Route path="/owner/login" element={<OwnerLogin />} />
           <Route path="/admin/live-bookings" element={<LiveBookings />} />
         </Routes>
       </main>

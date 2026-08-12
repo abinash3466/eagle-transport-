@@ -19,7 +19,7 @@ import {
   Search,
 } from 'lucide-react';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const TrucksAndDrivers = () => {
   const [activeView, setActiveView] = useState('trucks');
@@ -186,7 +186,7 @@ const TrucksAndDrivers = () => {
         assigned: driver.assignedTruck?.number || driver.assignedTruck || 'Not Assigned',
         route: driver.route || 'No active route',
         status: driver.status === 'available' ? 'Available' : driver.status || 'Available',
-        rating: driver.rating || 4.5,
+        rating: Number.isFinite(Number(driver.rating)) ? Number(driver.rating) : null,
         image: '/driver_avatar.png',
       }));
 
@@ -706,7 +706,12 @@ const TrucksAndDrivers = () => {
                   <div style={styles.bookingInfo}>
                     <p style={styles.infoLabel}>Amount</p>
                     <p style={styles.infoText}>
-                      ₹{Number(booking.amount || 0).toLocaleString('en-IN')}
+                      ₹{Number(booking.payment?.totalWithGST || booking.amount || 0).toLocaleString('en-IN')}
+                      {booking.payment?.gstAmount > 0 && (
+                        <span style={{ fontSize: '10px', color: 'var(--text-muted)', display: 'block', fontWeight: 'normal' }}>
+                          (Incl. ₹{booking.payment.gstAmount} GST)
+                        </span>
+                      )}
                     </p>
                   </div>
 
@@ -779,7 +784,9 @@ const TrucksAndDrivers = () => {
         )}
 
         {!loading && trucks.length > 0 && (
-          <div style={styles.trucksGrid}>
+          <div 
+            className="trucks-grid-mobile" 
+            style={styles.trucksGrid}>
             {trucks.map((truck) => renderTruckCard(truck, true))}
           </div>
         )}
@@ -872,7 +879,7 @@ const TrucksAndDrivers = () => {
                   <div style={styles.driverRight}>
                     <div style={styles.ratingBox}>
                       <Star fill="var(--warning)" color="var(--warning)" size={18} />
-                      <span>{driver.rating}</span>
+                      <span>{driver.rating ?? "Not Rated"}</span>
 
                       <button
                         className="btn"
@@ -1321,11 +1328,11 @@ const styles = {
   },
 
   trucksGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-    gap: '24px',
-    scrollMarginTop: '100px',
-  },
+    display: "grid",
+    gridTemplateColumns: "repeat(2, 1fr)",
+    gap: "24px",
+    alignItems: "start",
+    },
 
   truckCard: {
     padding: 0,
@@ -1829,6 +1836,13 @@ const responsiveCss = `
       align-items: flex-start !important;
     }
   }
+
+  @media (max-width: 768px) {
+  .trucks-grid-mobile {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+}
 `;
 
 

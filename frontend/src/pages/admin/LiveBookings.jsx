@@ -22,7 +22,7 @@ const authHeader = () => {
 
 };
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const LiveBookings = () => {
   const [activeTab, setActiveTab] = useState('All');
@@ -36,7 +36,7 @@ const LiveBookings = () => {
   const [loading, setLoading] = useState(true);
 
   const tabs = ['All', 'Live', 'Pending', 'Delivered'];
-  const statusOptions = ['Booked', 'Dispatched', 'In Transit', 'Delivered'];
+  const GST_PERCENTAGE = 5;
 
   const openBookingReport = (booking) => {
   const bookingMongoId = booking?._id || booking?.id;
@@ -105,6 +105,18 @@ const LiveBookings = () => {
   const getDrop = (booking) => booking.drop || booking.dropLocation || 'N/A';
   const getGoods = (booking) => booking.goods || booking.goodsType || 'Goods';
   const getAmount = (booking) => booking.amount ? `₹${Number(booking.amount).toLocaleString('en-IN')}` : 'Not Added';
+  const getBaseAmount = (booking) => Number(booking?.amount || 0);
+  const getGstAmount = (booking) => {
+    const saved = Number(booking?.payment?.gstAmount || 0);
+    return saved > 0 ? saved : (getBaseAmount(booking) * GST_PERCENTAGE) / 100;
+  };
+  const getInvoiceTotal = (booking) => {
+    const saved = Number(booking?.payment?.totalWithGST || 0);
+    return saved > 0 ? saved : getBaseAmount(booking) + getGstAmount(booking);
+  };
+  const getCollectedAmount = (booking) => Number(booking?.payment?.advanceAmount || 0);
+  const getOutstandingAmount = (booking) => Math.max(getInvoiceTotal(booking) - getCollectedAmount(booking), 0);
+  const formatMoney = (value) => `₹${Number(value || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
 
   const getDriverName = (driver) =>
     driver?.driverName || driver?.name || driver?.fullName || 'Driver';
@@ -245,43 +257,14 @@ const isBookingAssigned = (booking) => {
   };
 
   const handlePaymentChange = (id, field, value) => {
-  setPaymentData((prev) => {
-    const booking = bookings.find((b) => b._id === id);
-    const total = Number(booking?.amount || 0);
-
-    const oldAdvance = Number(booking?.payment?.advanceAmount || 0);
-    const existing = prev[id] || {};
-
-    const updated = {
-      ...existing,
-      [field]: value,
-    };
-
-    const advanceAmount = Number(updated.advanceAmount ?? oldAdvance);
-    const balanceReceived = Number(updated.balanceReceived || 0);
-
-    let totalPaid = advanceAmount + balanceReceived;
-    if (totalPaid > total) totalPaid = total;
-
-    const balanceAmount = Math.max(total - totalPaid, 0);
-
-    updated.balanceAmount = balanceAmount;
-    updated.totalPaid = totalPaid;
-
-    if (totalPaid <= 0) {
-      updated.paymentStatus = "Pending";
-    } else if (totalPaid < total) {
-      updated.paymentStatus = "Partial";
-    } else {
-      updated.paymentStatus = "Paid";
-    }
-
-    return {
+    setPaymentData((prev) => ({
       ...prev,
-      [id]: updated,
-    };
-  });
-};
+      [id]: {
+        ...(prev[id] || {}),
+        [field]: value,
+      },
+    }));
+  };
 
   const handleAssign = async (bookingMongoId) => {
     const selected = assignData[bookingMongoId];
@@ -300,12 +283,13 @@ const isBookingAssigned = (booking) => {
 
       const data = await res.json();
 
-      if (!data.success) {
+      if (!res.ok || !data.success) {
         alert(data.message || 'Assign failed');
         return;
       }
 
       alert('Truck and Driver assigned successfully');
+      setAssignData((prev) => ({ ...prev, [bookingMongoId]: {} }));
       fetchData();
     } catch (error) {
       console.error('Assign error:', error);
@@ -313,78 +297,79 @@ const isBookingAssigned = (booking) => {
     }
   };
 
-  const handleStatusUpdate = async (bookingMongoId, status) => {
+  const handleTripAction = async (booking) => {
+    const status = normalizeStatus(booking.status);
+    const endpoint = status === 'Dispatched' ? 'start-trip' : status === 'In Transit' ? 'end-trip' : null;
+
+    if (!endpoint) return;
+
+    const actionLabel = status === 'Dispatched' ? 'start trip' : 'complete trip';
+    if (!window.confirm(`Are you sure you want to ${actionLabel}?`)) return;
+
     try {
-      const res = await fetchWithAuth(`${API_URL}/bookings/${bookingMongoId}/status`, {
+      const res = await fetchWithAuth(`${API_URL}/bookings/${booking._id}/${endpoint}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(status === 'In Transit' ? { remarks: 'Trip completed by owner' } : {}),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        alert(data.message || `Unable to ${actionLabel}`);
+        return;
+      }
+
+      alert(status === 'Dispatched' ? 'Trip started successfully' : 'Trip completed successfully');
+      fetchData();
+    } catch (error) {
+      console.error('Trip action error:', error);
+      alert(`Server error while trying to ${actionLabel}`);
+    }
+  };
+
+  const handlePaymentUpdate = async (bookingMongoId) => {
+    const booking = bookings.find((item) => item._id === bookingMongoId);
+    const selected = paymentData[bookingMongoId] || {};
+    const receivedAmount = Number(selected.receivedAmount || 0);
+    const outstanding = getOutstandingAmount(booking);
+
+    if (!Number.isFinite(receivedAmount) || receivedAmount <= 0) {
+      alert('Enter an amount greater than 0');
+      return;
+    }
+
+    if (receivedAmount > outstanding + 0.01) {
+      alert(`Maximum receivable amount is ${formatMoney(outstanding)}`);
+      return;
+    }
+
+    try {
+      const res = await fetchWithAuth(`${API_URL}/bookings/${bookingMongoId}/payment`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          status,
-          note: `Owner updated status to ${status}`,
+          paymentMode: selected.paymentMode || booking?.payment?.paymentMode || 'Cash',
+          receivedAmount,
         }),
       });
 
       const data = await res.json();
-
-      if (!data.success) {
-        alert(data.message || 'Status update failed');
+      if (!res.ok || !data.success) {
+        alert(data.message || 'Payment update failed');
         return;
       }
 
-      alert(`Status updated to ${status}`);
+      alert('Payment recorded successfully');
+      setPaymentData((prev) => ({
+        ...prev,
+        [bookingMongoId]: { paymentMode: data.booking?.payment?.paymentMode || 'Cash', receivedAmount: '' },
+      }));
       fetchData();
     } catch (error) {
-      console.error('Status update error:', error);
-      alert('Server error while updating status');
+      console.error('Payment update error:', error);
+      alert('Server error while updating payment');
     }
   };
-
-const handlePaymentUpdate = async (bookingMongoId) => {
-  const booking = bookings.find((item) => item._id === bookingMongoId);
-  const selected = paymentData[bookingMongoId] || {};
-
-  const totalAmount = Number(booking?.amount || 0);
-  const oldAdvance = Number(booking?.payment?.advanceAmount || 0);
-
-  const advanceAmount = Number(selected.advanceAmount ?? oldAdvance);
-  const balanceReceived = Number(selected.balanceReceived || 0);
-
-  let totalPaid = advanceAmount + balanceReceived;
-  if (totalPaid > totalAmount) totalPaid = totalAmount;
-
-  const balanceAmount = Math.max(totalAmount - totalPaid, 0);
-
-  let paymentStatus = "Pending";
-  if (totalPaid <= 0) paymentStatus = "Pending";
-  else if (totalPaid < totalAmount) paymentStatus = "Partial";
-  else paymentStatus = "Paid";
-
-  try {
-    const res = await fetchWithAuth(`${API_URL}/bookings/${bookingMongoId}/payment`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        paymentMode: selected.paymentMode || booking?.payment?.paymentMode || "Cash",
-        advanceAmount: totalPaid,
-        balanceAmount,
-        paymentStatus,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!data.success) {
-      alert(data.message || "Payment update failed");
-      return;
-    }
-
-    alert("Payment updated successfully");
-    fetchData();
-  } catch (error) {
-    console.error("Payment update error:", error);
-    alert("Server error while updating payment");
-  }
-};
 
   const handleLocationUpdate = async (bookingMongoId) => {
     const currentLocation = locationData[bookingMongoId];
@@ -416,156 +401,94 @@ const handlePaymentUpdate = async (bookingMongoId) => {
     }
   };
 
-  const renderActionPanel = (booking) => (
-  <div style={styles.actionPanel}>
-    {!isBookingAssigned(booking) && (
-      <div>
-        <p style={styles.actionTitle}>Assign Truck & Driver</p>
+  const renderActionPanel = (booking) => {
+    const status = normalizeStatus(booking.status);
+    const availableTrucks = trucks.filter((truck) => String(truck.status || 'idle').toLowerCase() === 'idle');
+    const availableDrivers = drivers.filter((driver) => String(driver.status || 'available').toLowerCase() === 'available');
+    const invoiceTotal = getInvoiceTotal(booking);
+    const collected = getCollectedAmount(booking);
+    const outstanding = getOutstandingAmount(booking);
 
-        <select
-          style={styles.assignSelect}
-          value={assignData[booking._id]?.truckId || ''}
-          onChange={(e) => handleAssignChange(booking._id, 'truckId', e.target.value)}
-        >
-          <option value="">Select Truck</option>
-          {trucks.map((truck) => (
-            <option key={truck._id} value={truck._id}>
-              {getTruckName(truck)} {truck.category ? `- ${truck.category}` : ''}
-            </option>
-          ))}
-        </select>
-
-        <select
-          style={styles.assignSelect}
-          value={assignData[booking._id]?.driverId || ''}
-          onChange={(e) => handleAssignChange(booking._id, 'driverId', e.target.value)}
-        >
-          <option value="">Select Driver</option>
-          {drivers.map((driver) => (
-            <option key={driver._id} value={driver._id}>
-              {getDriverName(driver)} {driver.phone ? `- ${driver.phone}` : ''}
-            </option>
-          ))}
-        </select>
-
-        <button style={styles.assignBtn} onClick={() => handleAssign(booking._id)}>
-          Assign
-        </button>
-      </div>
-    )}
-
-    <div>
-      <p style={styles.actionTitle}>Update Status</p>
-      <div style={styles.statusBtnWrap}>
-        {statusOptions.map((status) => (
-          <button
-            key={status}
-            style={{
-              ...styles.statusBtn,
-              ...(normalizeStatus(booking.status) === status ? styles.statusBtnActive : {}),
-            }}
-            onClick={() => handleStatusUpdate(booking._id, status)}
-          >
-            {status}
-          </button>
-        ))}
-      </div>
-    </div>
-
-    <div>
-      <p style={styles.actionTitle}>Payment Details</p>
-
-      <select
-        style={styles.assignSelect}
-        value={paymentData[booking._id]?.paymentMode || booking.payment?.paymentMode || 'Cash'}
-        onChange={(e) => handlePaymentChange(booking._id, 'paymentMode', e.target.value)}
-      >
-        <option>Cash</option>
-        <option>UPI</option>
-        <option>Bank Transfer</option>
-        <option>Credit</option>
-      </select>
-
-      <input
-        style={styles.assignSelect}
-        type="number"
-        placeholder="Advance Amount"
-        value={paymentData[booking._id]?.advanceAmount ?? booking.payment?.advanceAmount ?? ''}
-        onChange={(e) => handlePaymentChange(booking._id, 'advanceAmount', e.target.value)}
-      />
-      <input
-        style={styles.assignSelect}
-        type="number"
-        placeholder="Balance Payment Received"
-        value={paymentData[booking._id]?.balanceReceived || ""}
-        onChange={(e) =>
-        handlePaymentChange(booking._id, "balanceReceived", e.target.value)
-        }
-      />
-      <input
-        style={styles.assignSelect}
-          type="number"
-          placeholder="Balance Amount"
-          value={paymentData[booking._id]?.balanceAmount ?? booking.payment?.balanceAmount ?? 0}
-          disabled
-      />
-
-      <select
-        style={styles.assignSelect}
-        value={paymentData[booking._id]?.paymentStatus || booking.payment?.paymentStatus || 'Pending'}
-        onChange={(e) => handlePaymentChange(booking._id, 'paymentStatus', e.target.value)}
-      >
-        <option>Pending</option>
-        <option>Partial</option>
-        <option>Paid</option>
-      </select>
-
-      <button style={styles.paymentBtn} onClick={() => handlePaymentUpdate(booking._id)}>
-        Update Payment
-      </button>
-    </div>
-
-    <div>
-      <p style={styles.actionTitle}>Current Location</p>
-
-      <input
-        style={styles.assignSelect}
-        placeholder="Eg: Madurai Bypass"
-        value={locationData[booking._id] ?? booking.currentLocation ?? ''}
-        onChange={(e) =>
-          setLocationData((prev) => ({
-            ...prev,
-            [booking._id]: e.target.value,
-          }))
-        }
-      />
-
-      <button style={styles.locationBtn} onClick={() => handleLocationUpdate(booking._id)}>
-        Update Location
-      </button>
-    </div>
-
-    <div>
-      <p style={styles.actionTitle}>Status History</p>
-
-      <div style={styles.historyBox}>
-        {(booking.statusHistory || []).length === 0 ? (
-          <p style={styles.subText}>No history yet</p>
-        ) : (
-          booking.statusHistory.map((item, index) => (
-            <div key={index} style={styles.historyItem}>
-              <strong>{item.status}</strong>
-              <span>{item.note || '-'}</span>
-              <small>
-                {item.updatedAt ? new Date(item.updatedAt).toLocaleString() : 'No date'}
-              </small>
-            </div>
-          ))
+    return (
+      <div style={styles.actionPanel}>
+        {!isBookingAssigned(booking) && status === 'Booked' && (
+          <div>
+            <p style={styles.actionTitle}>Assign Truck & Driver</p>
+            <select style={styles.assignSelect} value={assignData[booking._id]?.truckId || ''} onChange={(e) => handleAssignChange(booking._id, 'truckId', e.target.value)}>
+              <option value="">Select Available Truck</option>
+              {availableTrucks.map((truck) => (
+                <option key={truck._id} value={truck._id}>{getTruckName(truck)} {truck.category ? `- ${truck.category}` : ''}</option>
+              ))}
+            </select>
+            <select style={styles.assignSelect} value={assignData[booking._id]?.driverId || ''} onChange={(e) => handleAssignChange(booking._id, 'driverId', e.target.value)}>
+              <option value="">Select Available Driver</option>
+              {availableDrivers.map((driver) => (
+                <option key={driver._id} value={driver._id}>{getDriverName(driver)} {driver.phone ? `- ${driver.phone}` : ''}</option>
+              ))}
+            </select>
+            <button style={styles.assignBtn} onClick={() => handleAssign(booking._id)}>Assign</button>
+          </div>
         )}
+
+        <div>
+          <p style={styles.actionTitle}>Trip Status</p>
+          <div style={styles.statusBtnWrap}>
+            <span style={{ ...styles.statusBtn, ...styles.statusBtnActive, cursor: 'default' }}>{status}</span>
+            {status === 'Booked' && !isBookingAssigned(booking) && <span style={styles.subText}>Assign a truck and driver to continue.</span>}
+            {status === 'Dispatched' && <button style={styles.assignBtn} onClick={() => handleTripAction(booking)}>Start Trip</button>}
+            {status === 'In Transit' && <button style={styles.locationBtn} onClick={() => handleTripAction(booking)}>Complete Trip</button>}
+            {status === 'Delivered' && <span style={{ ...styles.subText, color: '#047857', fontWeight: 700 }}>Trip completed</span>}
+          </div>
+        </div>
+
+        <div>
+          <p style={styles.actionTitle}>Payment Details</p>
+          <div style={styles.paymentSummaryBox}>
+            <span>Base Freight <strong>{formatMoney(getBaseAmount(booking))}</strong></span>
+            <span>GST ({GST_PERCENTAGE}%) <strong>{formatMoney(getGstAmount(booking))}</strong></span>
+            <span>Invoice Total <strong>{formatMoney(invoiceTotal)}</strong></span>
+            <span>Collected <strong>{formatMoney(collected)}</strong></span>
+            <span>Outstanding <strong>{formatMoney(outstanding)}</strong></span>
+            <span>Status <strong>{booking.payment?.paymentStatus || 'Pending'}</strong></span>
+          </div>
+
+          {outstanding > 0.01 ? (
+            <>
+              <select style={styles.assignSelect} value={paymentData[booking._id]?.paymentMode || booking.payment?.paymentMode || 'Cash'} onChange={(e) => handlePaymentChange(booking._id, 'paymentMode', e.target.value)}>
+                <option>Cash</option><option>UPI</option><option>Bank Transfer</option><option>Credit</option>
+              </select>
+              <input style={styles.assignSelect} type="number" min="0" max={outstanding} step="0.01" placeholder="Amount Received Now" value={paymentData[booking._id]?.receivedAmount || ''} onChange={(e) => handlePaymentChange(booking._id, 'receivedAmount', e.target.value)} />
+              <button style={styles.paymentBtn} onClick={() => handlePaymentUpdate(booking._id)}>Record Payment</button>
+            </>
+          ) : (
+            <div style={{ ...styles.subText, color: '#047857', fontWeight: 800 }}>Payment fully collected</div>
+          )}
+        </div>
+
+        {status !== 'Delivered' && (
+          <div>
+            <p style={styles.actionTitle}>Current Location</p>
+            <input style={styles.assignSelect} placeholder="Eg: Madurai Bypass" value={locationData[booking._id] ?? booking.currentLocation ?? ''} onChange={(e) => setLocationData((prev) => ({ ...prev, [booking._id]: e.target.value }))} />
+            <button style={styles.locationBtn} onClick={() => handleLocationUpdate(booking._id)}>Update Location</button>
+          </div>
+        )}
+
+        <div>
+          <p style={styles.actionTitle}>Status History</p>
+          <div style={styles.historyBox}>
+            {(booking.statusHistory || []).length === 0 ? <p style={styles.subText}>No history yet</p> : (
+              booking.statusHistory.map((item, index) => (
+                <div key={index} style={styles.historyItem}>
+                  <strong>{item.status}</strong><span>{item.note || '-'}</span>
+                  <small>{item.updatedAt ? new Date(item.updatedAt).toLocaleString() : 'No date'}</small>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-);
+    );
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
@@ -1028,6 +951,17 @@ const styles = {
     color: '#fff',
     fontWeight: 800,
     cursor: 'pointer',
+  },
+  paymentSummaryBox: {
+    display: 'grid',
+    gap: 8,
+    padding: 12,
+    marginBottom: 10,
+    borderRadius: 12,
+    background: '#f8fbff',
+    border: '1px solid #e2e8f0',
+    fontSize: '0.8rem',
+    color: 'var(--dark-blue)',
   },
   paymentBtn: {
     width: '100%',

@@ -1,62 +1,105 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { User, Lock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import eagleLogo from '/src/assets/eagle-logo.png';
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 const OwnerLogin = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [showForgotModal, setShowForgotModal] = useState(false);
-  const [forgotMobile, setForgotMobile] = useState('');
+  const [forgotEmail, setForgotEmail] = useState('');
   const [otpSent, setOtpSent] = useState(false);
-  const [generatedOtp, setGeneratedOtp] = useState('');
   const [enteredOtp, setEnteredOtp] = useState('');
-  const [newUsername, setNewUsername] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  
 
   const navigate = useNavigate();
 
-  const handleOwnerForgot = () => {
-    if (!forgotMobile || forgotMobile.length < 10) {
-      alert("Enter valid mobile number 📱");
+  const handleOwnerForgot = async () => {
+    if (!forgotEmail) {
+      alert("Enter registered email");
       return;
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const response = await fetch(
+      `${API_URL}/auth/send-owner-otp`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: forgotEmail,
+        }),
+      }
+    );
 
-    setGeneratedOtp(otp);
-    setOtpSent(true);
+    const data = await response.json();
 
-    alert(`Demo OTP: ${otp}`);
+    if (data.success) {
+
+      setOtpSent(true);
+
+      alert("OTP sent to email");
+
+    }
   };
 
-  const verifyOwnerOtp = () => {
-    if (enteredOtp === generatedOtp) {
-      const usernameGenerated =
-        "OWNER" + Math.floor(1000 + Math.random() * 9000);
+  const verifyOwnerOtp = async () => {
 
-      const passwordGenerated =
-        "Eagle@" + Math.floor(1000 + Math.random() * 9000);
+    const newPassword = prompt(
+      "Enter New Password"
+    );
 
-      setNewUsername(usernameGenerated);
-      setNewPassword(passwordGenerated);
+    if (!newPassword) return;
 
-      alert("OTP Verified Successfully ✅");
+    const response = await fetch(
+      `${API_URL}/auth/verify-owner-otp`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: forgotEmail,
+          otp: enteredOtp,
+          newPassword,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+
+      alert(
+        "Password Reset Successful ✅"
+      );
+
+      setShowForgotModal(false);
+
     } else {
-      alert("Invalid OTP ❌");
+
+      alert(data.message);
+
     }
   };
 
   useEffect(() => {
-    const savedUsername = localStorage.getItem('ownerRememberedUsername');
-    const savedRemember = localStorage.getItem('ownerRememberMe');
+    const savedEmail = localStorage.getItem("ownerRememberedEmail");
+    const savedRemember = localStorage.getItem("ownerRememberMe");
 
-    if (savedRemember === 'true' && savedUsername) {
-      setUsername(savedUsername);
+    if (
+      savedRemember === "true" &&
+      savedEmail
+    ) {
+      setEmail(savedEmail);
       setRememberMe(true);
     }
   }, []);
@@ -66,14 +109,14 @@ const OwnerLogin = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/login",
+        `${API_URL}/auth/login`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            username,
+            email,
             password,
           }),
         }
@@ -96,10 +139,9 @@ const OwnerLogin = () => {
         if (rememberMe) {
 
           localStorage.setItem(
-            "ownerRememberedUsername",
-            username
+            "ownerRememberedEmail",
+            email
           );
-
           localStorage.setItem(
             "ownerRememberMe",
             "true"
@@ -108,7 +150,7 @@ const OwnerLogin = () => {
         } else {
 
           localStorage.removeItem(
-            "ownerRememberedUsername"
+            "ownerRememberedEmail"
           );
 
           localStorage.removeItem(
@@ -150,14 +192,16 @@ const OwnerLogin = () => {
 
         <form onSubmit={handleLogin} style={styles.form}>
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Username</label>
+            <label style={styles.label}>Email</label>
+
             <div style={styles.inputWrap}>
-              <User size={18} color="#64748b" />
+              <Mail size={18} color="#64748b" />
+
               <input
-                type="text"
-                placeholder="Enter Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                placeholder="Enter Registered Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 style={styles.input}
                 required
               />
@@ -207,7 +251,7 @@ const OwnerLogin = () => {
               onClick={() => setShowForgotModal(true)}
               style={styles.ownerForgotBtn}
             >
-              Forgot Username / Password?
+              Forgot Password?
             </button>
           </div>
 
@@ -221,14 +265,14 @@ const OwnerLogin = () => {
             <div style={styles.modalOverlay}>
               <div style={styles.modalCard}>
                 <h3 style={styles.modalTitle}>
-                  Recover Username & Password
+                  Recover Password
                 </h3>
 
                 <input
-                  type="text"
-                  placeholder="Enter Registered Mobile Number"
-                  value={forgotMobile}
-                  onChange={(e) => setForgotMobile(e.target.value)}
+                  type="email"
+                  placeholder="Enter Registered Email"
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
                   style={styles.modalInput}
                 />
 
@@ -258,27 +302,14 @@ const OwnerLogin = () => {
                   </>
                 )}
 
-                {newUsername && (
-                  <div style={styles.generatedBox}>
-                    <p>
-                      <strong>New Username:</strong> {newUsername}
-                    </p>
-
-                    <p>
-                      <strong>New Password:</strong> {newPassword}
-                    </p>
-                  </div>
-                )}
-
+                
                 <button
                   onClick={() => {
                     setShowForgotModal(false);
                     setOtpSent(false);
-                    setForgotMobile('');
+                    setForgotEmail('');
                     setEnteredOtp('');
-                    setGeneratedOtp('');
-                    setNewUsername('');
-                    setNewPassword('');
+                  
                   }}
                   style={styles.closeBtn}
                 >

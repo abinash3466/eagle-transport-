@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const driverSchema = new mongoose.Schema(
   {
@@ -23,6 +24,22 @@ const driverSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "available",
+    },
+
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    otp: {
+      type: String,
+      default: null,
+    },
+
+    otpExpiry: {
+      type: Date,
+      default: null,
     },
 
     salary: {
@@ -55,6 +72,5 @@ const driverSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 
 module.exports = mongoose.model("Driver", driverSchema);

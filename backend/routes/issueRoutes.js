@@ -11,6 +11,7 @@ const {
   getIssues,
   updateIssue,
   deleteIssue,
+  resolveIssue,
 } = require(
   "../controllers/issueController"
 );
@@ -29,6 +30,14 @@ router.get(
   "/",
   auth,
   getIssues
+);
+
+
+// ✅ RESOLVE ISSUE / COMPLETE SERVICE
+router.put(
+  "/:id/resolve",
+  auth,
+  resolveIssue
 );
 
 

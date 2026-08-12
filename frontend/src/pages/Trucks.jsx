@@ -7,7 +7,7 @@ import {
   ShieldCheck,
   ArrowRight
 } from 'lucide-react';
-import { color } from 'framer-motion';
+import { TRUCK_RATES } from '../utils/pricingCalculator';
 
 const truckData = [
   {
@@ -17,7 +17,7 @@ const truckData = [
     route: 'Local / Short Distance',
     use: 'Best for grocery loads, parcels, small business goods and local delivery.',
     image: '/truck-images/mini-truck.png',
-    pricePerKm: 24,
+    rateKey: 'Mini Truck (TATA Ace)',
   },
 
   {
@@ -27,7 +27,7 @@ const truckData = [
     route: 'District Level',
     use: 'Suitable for furniture, agriculture goods, shop supply and light transport.',
     image: '/truck-images/pickup-truck.png',
-    pricePerKm: 30,
+    rateKey: 'Pickup Truck',
   },
 
   {
@@ -37,7 +37,7 @@ const truckData = [
     route: 'District / State',
     use: 'Ideal for medium business cargo, storage goods and commercial shipment.',
     image: '/truck-images/20ft-container.png',
-    pricePerKm: 42,
+    rateKey: '20ft / 22ft / 24ft Container',
   },
 
 
@@ -48,7 +48,7 @@ const truckData = [
     route: 'National Route',
     use: 'Secure closed-body transport vehicle for medium industrial and logistics delivery.',
     image: '/truck-images/32ft-container-sxl.png',
-    pricePerKm: 54,
+    rateKey: '32 ft Container Truck (SXL)',
   },
 
   {
@@ -58,7 +58,7 @@ const truckData = [
     route: 'All India',
     use: 'Built for heavy industrial parts, automotive components, and raw materials.',
     image: '/truck-images/32ft-container-mxl.png',
-    pricePerKm: 64,
+    rateKey: '32 ft Container Truck (MXL)',
   },
 
   {
@@ -68,7 +68,7 @@ const truckData = [
     route: 'State',
     use: 'Open-body truck suitable for construction materials and bulk loading.',
     image: '/truck-images/19ft-open-truck.png',
-    pricePerKm: 48,
+    rateKey: '19 ft Open Truck',
   },
 
   {
@@ -78,7 +78,7 @@ const truckData = [
     route: 'All India',
     use: 'Heavy-duty open-body truck for industrial goods and large cargo transport.',
     image: '/truck-images/10-tyre-truck.png',
-    pricePerKm: 66,
+    rateKey: '10 Tyre Truck',
   },
 
   {
@@ -88,7 +88,7 @@ const truckData = [
     route: 'All India',
     use: 'Perfect for long-distance heavy transport and bulk commercial delivery.',
     image: '/truck-images/12-tyre-truck.png',
-    pricePerKm: 76,
+    rateKey: '12 Tyre Truck',
   },
 
   {
@@ -98,7 +98,7 @@ const truckData = [
     route: 'All India',
     use: 'Large open-body truck suitable for machinery, steel and industrial logistics.',
     image: '/truck-images/14-tyre-truck.png',
-    pricePerKm: 92,
+    rateKey: '14 Tyre Truck',
   },
 
   {
@@ -108,7 +108,7 @@ const truckData = [
     route: 'All India',
     use: 'High-capacity truck for large scale transport, heavy machinery and long routes.',
     image: '/truck-images/16-tyre-truck.png',
-    pricePerKm: 107,
+    rateKey: '16 Tyre Truck',
   },
 
   {
@@ -118,7 +118,8 @@ const truckData = [
     route: 'All India (Ports & Industrial Hubs)',
     use: 'Engineered for the heaviest loads, machinery, and long-haul logistics.',
     image: '/truck-images/trailer-truck.png',
-    pricePerKm:'Enquiry for Price',
+    rateKey: '40 ft Trailer',
+    isTrailerGroup: true,
   },
 ];
 
@@ -223,7 +224,9 @@ const Trucks = () => {
                   <p style={styles.truckDesc}>{truck.use}</p>
 
                   <div style={styles.priceTag}>
-                    Minimum Price: ₹{truck.pricePerKm} / km
+                    {truck.isTrailerGroup
+                      ? `Base Rate: From ₹${TRUCK_RATES[truck.rateKey]} / km`
+                      : `Base Rate: ₹${TRUCK_RATES[truck.rateKey]} / km`}
                   </div>
 
                   <div style={styles.cardFooter}>

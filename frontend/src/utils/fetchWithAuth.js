@@ -26,7 +26,7 @@ export const fetchWithAuth = async (
         localStorage.removeItem("token");
         localStorage.removeItem("user");
 
-        window.location.href = "/owner-login";
+        window.location.href = "/owner/login";
 
         throw new Error("Unauthorized");
     }

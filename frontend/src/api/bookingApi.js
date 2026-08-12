@@ -1,19 +1,29 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-// Mocks for now
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const createBooking = async (data) => {
-  return new Promise((resolve) => setTimeout(() => resolve({ id: 'BKG' + Math.floor(Math.random() * 10000), trackingOtp: '1234', success: true }), 1000));
+  const response = await api.post("/bookings", data);
+  return response.data;
 };
 
 export const getRecentBookings = async () => {
-  return new Promise((resolve) => setTimeout(() => resolve([
-    { id: 'BKG8921', customer: 'Rajesh Kumar', route: 'Delhi to Mumbai', truck: 'Heavy Truck', estimatedAmount: 25000, status: 'On The Way' },
-    { id: 'BKG3412', customer: 'Amit Singh', route: 'Pune to Bangalore', truck: 'Mini Truck', estimatedAmount: 8500, status: 'Booking Received' }
-  ]), 500));
-};
-
-export const calculateEstimate = async (route, truckType) => {
-  return new Promise((resolve) => setTimeout(() => resolve({ amount: Math.floor(Math.random() * 15000) + 5000 }), 300));
+  const response = await api.get("/bookings");
+  const data = response.data;
+  return Array.isArray(data) ? data.slice(0, 5) : [];
 };

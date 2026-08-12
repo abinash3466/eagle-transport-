@@ -7,11 +7,12 @@ const cleanPhone = (phone = "") => {
 };
 
 const makeTrackingLink = (booking) => {
-  return `${FRONTEND_URL}/tracking?bookingId=${booking.bookingId || ""}&otp=${booking.otp || ""}`;
+  return `${FRONTEND_URL}/tracking/${encodeURIComponent(booking.bookingId || "")}`;
 };
 
+// Customer invoice access stays behind the Booking ID + OTP verification flow.
 const makeInvoiceLink = (booking) => {
-  return `${FRONTEND_URL.replace(":5173", ":5000")}/api/bookings/${booking._id}/invoice`;
+  return makeTrackingLink(booking);
 };
 
 const makeWhatsAppLink = (phone, message) => {

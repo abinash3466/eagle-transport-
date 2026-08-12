@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authHeader } from "../../utils/authHeader";
 import { fetchWithAuth } from "../../utils/fetchWithAuth";
+import { GST_PERCENTAGE } from "../../utils/financeConfig";
 import {
   Truck,
   Package,
@@ -30,7 +31,7 @@ import {
   Bar,
 } from 'recharts';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 // Props-il searchTerm matrum setSearchTerm-ai vaangugirom
 const Overview = ({ onNavigate, searchTerm, setSearchTerm }) => {
@@ -175,6 +176,18 @@ const Overview = ({ onNavigate, searchTerm, setSearchTerm }) => {
     return Number(booking.amount || booking.totalAmount || booking.fare || booking.estimatedFare || 0);
   };
 
+  const getInvoiceTotal = (booking) => {
+    const savedTotal = Number(booking.payment?.totalWithGST || 0);
+    if (savedTotal > 0) return savedTotal;
+
+    const baseAmount = getBookingAmount(booking);
+    const savedGst = Number(booking.payment?.gstAmount || 0);
+    const gstAmount =
+      savedGst > 0 ? savedGst : (baseAmount * GST_PERCENTAGE) / 100;
+
+    return baseAmount + gstAmount;
+  };
+
   const getFuelLiters = (log) => Number(log.liters || log.litre || log.quantity || log.fuelLiters || 0);
   const getFuelAmount = (log) => Number(log.amount || log.totalAmount || log.cost || log.fuelCost || 0);
   const getFuelKm = (log) => Number(log.km || log.kilometer || log.distanceKm || log.odometerKm || log.currentKm || 0);
@@ -227,7 +240,7 @@ const Overview = ({ onNavigate, searchTerm, setSearchTerm }) => {
     ).length;
 
     const totalRevenue = filteredBookings.reduce(
-      (sum, booking) => sum + getBookingAmount(booking),
+      (sum, booking) => sum + getInvoiceTotal(booking),
       0
     );
 
@@ -237,7 +250,7 @@ const Overview = ({ onNavigate, searchTerm, setSearchTerm }) => {
     );
 
     const pendingPayments = filteredBookings.reduce((sum, booking) => {
-      const total = getBookingAmount(booking);
+      const total = getInvoiceTotal(booking);
       const paid = getPaidAmount(booking);
       return sum + Math.max(total - paid, 0);
     }, 0);
@@ -268,7 +281,7 @@ const Overview = ({ onNavigate, searchTerm, setSearchTerm }) => {
     const averageMileage = totalFuelLiters > 0 ? (totalFuelKm / totalFuelLiters).toFixed(1) : '0.0';
 
     const totalServiceCost = issues.reduce((sum, issue) => {
-      return sum + Number(issue.serviceCost || 0);
+      return sum + Number(issue.serviceDetails?.amount || issue.serviceCost || 0);
     }, 0);
 
     return {
@@ -343,7 +356,7 @@ const Overview = ({ onNavigate, searchTerm, setSearchTerm }) => {
       trend: `${overview.pendingBookings} pending`,
       details: filteredBookings.map((b) => ({
         title: b.bookingId || 'Booking',
-        text: `${normalizeStatus(b.status)} • ${b.customerName || 'Customer'} • ${formatMoney(getBookingAmount(b))}`,
+        text: `${normalizeStatus(b.status)} • ${b.customerName || 'Customer'} • ${formatMoney(getInvoiceTotal(b))}`,
       })),
     },
     {
@@ -487,7 +500,7 @@ Status: ${i.status ||
       trend: `${filteredBookings.length} bookings found`,
       details: filteredBookings.map((b) => ({
         title: b.bookingId || 'Booking',
-        text: `${b.customerName || 'Customer'} • ${formatMoney(getBookingAmount(b))} • ${normalizeStatus(b.status)}`,
+        text: `${b.customerName || 'Customer'} • ${formatMoney(getInvoiceTotal(b))} • ${normalizeStatus(b.status)}`,
       })),
     },
 
@@ -499,10 +512,10 @@ Status: ${i.status ||
       color: 'var(--danger)',
       trend: `${formatMoney(overview.collectedRevenue)} collected`,
       details: filteredBookings
-        .filter((b) => Math.max(getBookingAmount(b) - getPaidAmount(b), 0) > 0)
+        .filter((b) => Math.max(getInvoiceTotal(b) - getPaidAmount(b), 0) > 0)
         .map((b) => ({
           title: b.bookingId || 'Booking',
-          text: `${b.customerName || 'Customer'} • Pending ${formatMoney(Math.max(getBookingAmount(b) - getPaidAmount(b), 0))} • ${normalizeStatus(b.status)}`,
+          text: `${b.customerName || 'Customer'} • Pending ${formatMoney(Math.max(getInvoiceTotal(b) - getPaidAmount(b), 0))} • ${normalizeStatus(b.status)}`,
         })),
     },
 

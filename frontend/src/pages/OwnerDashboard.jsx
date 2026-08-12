@@ -55,6 +55,8 @@ const fetchWithAuth = (url, options = {}) => {
 
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const SIDEBAR_WIDTH = 280;
 
 const AddDriverForm = () => {
@@ -66,6 +68,7 @@ const AddDriverForm = () => {
   const [form, setForm] = useState({
     driverName: '',
     mobile: '',
+    email: "",
     username: '',
     password: '',
     licenseNumber: '',
@@ -82,13 +85,13 @@ const AddDriverForm = () => {
       try {
 
         const truckRes = await fetchWithAuth(
-          "http://localhost:5000/api/trucks"
+          `${API_URL}/trucks`
         );
 
         const truckData = await truckRes.json();
 
         const driverRes = await fetchWithAuth(
-          "http://localhost:5000/api/drivers"
+          `${API_URL}/drivers`
         );
 
         const driverData = await driverRes.json();
@@ -136,6 +139,18 @@ const AddDriverForm = () => {
       newErrors.mobile = "Mobile Number is required";
     }
 
+    if (!form.email.trim()) {
+      newErrors.email =
+        "Email is required";
+    }
+
+    if (
+      form.email &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+    ) {
+      newErrors.email = "Enter valid email";
+    }
+
     if (!form.username.trim()) {
       newErrors.username = "Username is required";
     }
@@ -158,8 +173,8 @@ const AddDriverForm = () => {
   };
 
   // ✅ Submit
+  // ✅ Submit Function (Updated to match Backend Expected keys)
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
     if (!validateDriverForm()) {
@@ -167,21 +182,21 @@ const AddDriverForm = () => {
     }
 
     try {
-
       const driverData = {
         name: form.driverName,
         phone: form.mobile,
-        username: form.username,
+        email: form.email,
+        driverId: form.username, // 👈 இங்க 'username'-ஐ 'driverId' ஆக மாற்றி பேக்-எண்டிற்கு அனுப்புறோம்!
         password: form.password,
         licenseNumber: form.licenseNumber,
         experience: form.experience,
         address: form.address,
-        assignedTruck: form.assignedTruck || null,
+        assignedTruck: form.assignedTruck || null, // 👈 டிரக் ஐடியும் பேக்-எண்டிற்குப் போகிறது
         status: "available",
       };
 
       const res = await fetchWithAuth(
-        "http://localhost:5000/api/drivers",
+        `${API_URL}/drivers`,
         {
           method: "POST",
           headers: {
@@ -200,19 +215,18 @@ const AddDriverForm = () => {
 
       alert("Driver added successfully ✅");
 
-      // ✅ Refresh Drivers
+      // ✅ Refresh Drivers List
       const driverRes = await fetchWithAuth(
-        "http://localhost:5000/api/drivers"
+        `${API_URL}/drivers`
       );
-
       const updatedDrivers = await driverRes.json();
-
       setDrivers(Array.isArray(updatedDrivers) ? updatedDrivers : []);
 
-      // ✅ Reset Form
+      // ✅ Reset Form completely
       setForm({
         driverName: '',
         mobile: '',
+        email: '',
         username: '',
         password: '',
         licenseNumber: '',
@@ -222,10 +236,8 @@ const AddDriverForm = () => {
       });
 
     } catch (error) {
-
       console.error("Driver add error:", error);
       alert(error.message || "Backend error ❌");
-
     }
   };
 
@@ -301,6 +313,27 @@ const AddDriverForm = () => {
               {errors.mobile && (
                 <span style={styles.errorText}>
                   {errors.mobile}
+                </span>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="email"
+                style={styles.premiumInput}
+                placeholder="Email Address"
+                value={form.email}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    email: e.target.value,
+                  })
+                }
+              />
+
+              {errors.email && (
+                <span style={styles.errorText}>
+                  {errors.email}
                 </span>
               )}
             </div>
@@ -969,14 +1002,18 @@ const OwnerDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('ownerLoggedIn');
-    if (!isLoggedIn) navigate('/owner/login');
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+
+    if (!token || !user || user.role !== "owner") {
+      navigate("/owner/login", { replace: true });
+    }
   }, [navigate]);
 
   useEffect(() => {
   const fetchNotifications = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/bookings/notifications/all");
+      const res = await fetchWithAuth(`${API_URL}/bookings/notifications/all`);
       const data = await res.json();
       setNotifications(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -1133,19 +1170,49 @@ const OwnerDashboard = () => {
   
 
   <div style={styles.notificationWrap}>
-  <button
-    type="button"
-    style={styles.notificationBtn}
-    onClick={() => setShowNotificationDropdown((prev) => !prev)}
-  >
-    <Bell size={22} />
+                <button
+                  type="button"
+                  style={styles.notificationBtn}
+                  onClick={async () => {
+                    const willOpen = !showNotificationDropdown;
 
-    {unreadCount > 0 && (
-      <span style={styles.notificationCount}>
-        {unreadCount}
-      </span>
-    )}
-  </button>
+                    setShowNotificationDropdown(willOpen);
+
+                    if (willOpen && unreadCount > 0) {
+                      setNotifications((prev) =>
+                        prev.map((item) => ({
+                          ...item,
+                          isRead: true,
+                        }))
+                      );
+
+                      try {
+                        const unreadNotifications = notifications.filter(
+                          (item) => !item.isRead
+                        );
+
+                        await Promise.all(
+                          unreadNotifications.map((item) =>
+                            fetchWithAuth(
+                              `${API_URL}/bookings/notifications/${item._id}/read`,
+                              { method: "PUT" }
+                            )
+                          )
+                        );
+                      } catch (error) {
+                        console.error("Mark notification read error:", error);
+                      }
+                    }
+                  }}
+                >
+                  <Bell size={22} />
+
+                  {unreadCount > 0 && (
+                    <span style={styles.notificationCount}>
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
 
   {showNotificationDropdown && (
     <div style={styles.notificationDropdown}>
@@ -1162,11 +1229,9 @@ const OwnerDashboard = () => {
               ...(item.isRead ? styles.notificationRead : styles.notificationUnread),
             }}
             onClick={async () => {
-              await fetch(
-                `http://localhost:5000/api/bookings/notifications/${item._id}/read`,
-                {
-                  headers: authHeader(),
-                  method: "PUT" }
+              await fetchWithAuth(
+                `${API_URL}/bookings/notifications/${item._id}/read`,
+                { method: "PUT" }
               );
 
               setNotifications((prev) =>

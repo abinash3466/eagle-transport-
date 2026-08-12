@@ -1,35 +1,67 @@
 const jwt = require("jsonwebtoken");
 
-module.exports = function (req, res, next) {
+const auth = (req, res, next) => {
+  const authHeader = req.headers.authorization || req.header("Authorization");
 
-    const authHeader = req.header("Authorization");
+  if (!authHeader) {
+    return res.status(401).json({
+      success: false,
+      message: "No token provided, authorization denied",
+    });
+  }
 
-    if (!authHeader) {
-        return res.status(401).json({
-            success: false,
-            message: "No token provided",
-        });
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.slice(7).trim()
+    : authHeader.trim();
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid authorization header",
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id || decoded._id;
+
+    if (!userId || !decoded.role) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token payload",
+      });
     }
 
-    const token = authHeader.startsWith("Bearer ")
-        ? authHeader.split(" ")[1]
-        : authHeader;
+    req.user = {
+      _id: String(userId),
+      id: String(userId),
+      role: decoded.role,
+      driverId: decoded.driverId || null,
+    };
 
-    try {
-        const decoded = jwt.verify(
-            token,
-            process.env.JWT_SECRET
-        );
-
-        req.user = decoded;
-
-        next();
-
-    } catch (err) {
-
-        res.status(401).json({
-            success: false,
-            message: "Invalid token",
-        });
-    }
+    return next();
+  } catch (err) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired token",
+    });
+  }
 };
+
+const authorizeRoles = (...roles) => (req, res, next) => {
+  if (!req.user || !roles.includes(req.user.role)) {
+    return res.status(403).json({
+      success: false,
+      message: "You are not allowed to perform this action",
+    });
+  }
+
+  return next();
+};
+
+auth.authorizeRoles = authorizeRoles;
+auth.ownerOnly = authorizeRoles("owner");
+auth.driverOnly = authorizeRoles("driver");
+auth.ownerOrDriver = authorizeRoles("owner", "driver");
+
+module.exports = auth;

@@ -13,13 +13,14 @@ import {
   AlertCircle,
 } from 'lucide-react';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const FuelLogs = () => {
   const [fuelLogs, setFuelLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
+  const [downloadingReport, setDownloadingReport] = useState('');
 
   const loadFuelLogs = async (manual = false) => {
     try {
@@ -104,6 +105,39 @@ const FuelLogs = () => {
     return km / liters;
   };
 
+
+
+  const downloadReport = async (format) => {
+    try {
+      setDownloadingReport(format);
+      setError('');
+
+      const res = await fetchWithAuth(
+        `${API_URL}/bookings/reports/fuel.${format}`
+      );
+
+      if (!res.ok) {
+        throw new Error(`Fuel ${format.toUpperCase()} download failed: ${res.status}`);
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+
+      link.href = url;
+      link.download = `Eagle_Transport_Fuel_Report.${format}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Fuel report download error:', err);
+      setError(`Unable to download fuel ${format.toUpperCase()} report.`);
+    } finally {
+      setDownloadingReport('');
+    }
+  };
+
   const summary = useMemo(() => {
     const totalLiters = fuelLogs.reduce((sum, log) => sum + getLiters(log), 0);
     const totalAmount = fuelLogs.reduce((sum, log) => sum + getAmount(log), 0);
@@ -156,21 +190,23 @@ const FuelLogs = () => {
           {refreshing ? "Refreshing..." : "Refresh Data"}
         </button>
 
-        <a
-          href="http://localhost:5000/api/bookings/reports/fuel.pdf"
-          target="_blank"
-          rel="noreferrer"
+        <button
+          type="button"
           style={styles.exportBtn}
+          onClick={() => downloadReport('pdf')}
+          disabled={Boolean(downloadingReport)}
         >
-          📄 Fuel PDF
-        </a>
+          {downloadingReport === 'pdf' ? 'Downloading...' : '📄 Fuel PDF'}
+        </button>
 
-        <a
-          href="http://localhost:5000/api/bookings/reports/fuel.csv"
+        <button
+          type="button"
           style={styles.exportBtn}
+          onClick={() => downloadReport('csv')}
+          disabled={Boolean(downloadingReport)}
         >
-          📊 Fuel CSV
-        </a>
+          {downloadingReport === 'csv' ? 'Downloading...' : '📊 Fuel CSV'}
+        </button>
       </div>
     </motion.div>
 

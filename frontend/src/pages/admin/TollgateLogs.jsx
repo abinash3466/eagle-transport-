@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { fetchWithAuth } from "../../utils/fetchWithAuth";
 import { CreditCard, History, AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const TollgateLogs = () => {
   const [logs, setLogs] = useState([]);

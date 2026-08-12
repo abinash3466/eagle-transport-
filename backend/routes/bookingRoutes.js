@@ -12,13 +12,14 @@ const Driver = require("../models/Driver");
 const FuelLog = require("../models/FuelLog");
 const TollLog = require("../models/TollLog");
 const Notification = require("../models/Notification");
+const { GST_PERCENTAGE, DRIVER_SALARY_PERCENTAGE } = require("../config/financeConfig");
 
 const {
   makeWhatsAppLink,
   statusMessage,
 } = require("../utils/whatsappHelper");
 
-const { createBooking, getBookings, deleteBooking  } = require("../controllers/bookingController");
+const { createBooking, getBookings, deleteBooking, updatePayment } = require("../controllers/bookingController");
 
 router.post("/", auth, createBooking);
 router.get("/", auth, getBookings);
@@ -31,6 +32,23 @@ router.put("/:id/assign", auth, async (req, res) => {
 
     if (!truckId || !driverId) {
       return res.status(400).json({ success: false, message: "Truck ID and Driver ID are required" });
+    }
+
+    const currentBooking = await Booking.findById(req.params.id);
+    if (!currentBooking) return res.status(404).json({ success: false, message: "Booking not found" });
+    if (currentBooking.status !== "Booked") return res.status(400).json({ success: false, message: "Only booked trips can be assigned" });
+
+    const [truck, driver] = await Promise.all([Truck.findById(truckId), Driver.findById(driverId)]);
+    if (!truck || !driver) return res.status(404).json({ success: false, message: "Truck or driver not found" });
+    if (String(truck.status || "idle").toLowerCase() !== "idle") return res.status(400).json({ success: false, message: "Selected truck is not available" });
+    if (String(driver.status || "available").toLowerCase() !== "available") return res.status(400).json({ success: false, message: "Selected driver is not available" });
+
+    const [activeTruckBooking, activeDriverBooking] = await Promise.all([
+      Booking.findOne({ _id: { $ne: currentBooking._id }, truck: truckId, status: { $ne: "Delivered" } }),
+      Booking.findOne({ _id: { $ne: currentBooking._id }, driver: driverId, status: { $ne: "Delivered" } }),
+    ]);
+    if (activeTruckBooking || activeDriverBooking) {
+      return res.status(400).json({ success: false, message: "Selected truck or driver is already assigned to an active trip" });
     }
 
     const booking = await Booking.findByIdAndUpdate(
@@ -72,6 +90,10 @@ router.put("/:id/assign", auth, async (req, res) => {
 
 router.put("/:id/start-trip", auth, async (req, res) => {
   try {
+    const currentBooking = await Booking.findById(req.params.id);
+    if (!currentBooking) return res.status(404).json({ success: false, message: "Booking not found" });
+    if (currentBooking.status !== "Dispatched") return res.status(400).json({ success: false, message: "Only dispatched trips can be started" });
+
     const booking = await Booking.findByIdAndUpdate(
       req.params.id,
       {
@@ -132,6 +154,10 @@ router.put("/:id/end-trip",auth, async (req, res) => {
       });
     }
 
+    if (booking.status !== "In Transit") {
+      return res.status(400).json({ success: false, message: "Only trips that are in transit can be completed" });
+    }
+
     // SAFE ARRAYS
 
     if (!booking.statusHistory) {
@@ -146,29 +172,26 @@ router.put("/:id/end-trip",auth, async (req, res) => {
     // SALARY CALCULATION
     // =====================
 
-    const tripAmount =
-      Number(booking.amount || 0);
-
-    const gstAmount =
-      tripAmount * 0.18;
-
-    const amountWithoutGST =
-      tripAmount - gstAmount;
-
+    // Booking.amount is the base transport charge before GST.
+    const baseAmount = Number(booking.amount || 0);
+    const gstAmount = (baseAmount * GST_PERCENTAGE) / 100;
+    const totalWithGST = baseAmount + gstAmount;
     const driverSalary =
-      amountWithoutGST * 0.19;
+      (baseAmount * DRIVER_SALARY_PERCENTAGE) / 100;
 
-    booking.payment.driverSalary =
-      Math.round(driverSalary);
+    booking.payment.gstPercentage = GST_PERCENTAGE;
+    booking.payment.gstAmount = Number(gstAmount.toFixed(2));
+    booking.payment.totalWithGST = Number(totalWithGST.toFixed(2));
 
-    booking.payment.salaryPaid =
-      booking.payment.salaryPaid || 0;
-
-    booking.payment.salaryPending =
-      Math.round(driverSalary);
-
+    booking.payment.driverSalary = Number(driverSalary.toFixed(2));
+    booking.payment.salaryPaid = Number(booking.payment.salaryPaid || 0);
+    booking.payment.salaryPending = Math.max(
+      booking.payment.driverSalary - booking.payment.salaryPaid,
+      0
+    );
     booking.payment.salaryStatus =
-      "Pending";
+      booking.payment.salaryPending <= 0 ? "Paid" :
+      booking.payment.salaryPaid > 0 ? "Partial" : "Pending";
 
     // =====================
     // BOOKING UPDATE
@@ -314,10 +337,18 @@ router.put("/:id/location",auth,  async (req, res) => {
 router.put("/:id/status",auth, async (req, res) => {
   try {
     const { status, note } = req.body;
-    const allowedStatus = ["Booked", "Dispatched", "In Transit", "Delivered"];
+    const allowedStatus = ["Booked", "Dispatched", "In Transit"];
 
-    if (!allowedStatus.includes(status)) {
-      return res.status(400).json({ success: false, message: "Invalid status" });
+    if (status === "Delivered") {
+      return res.status(400).json({ success: false, message: "Use the complete-trip action to mark a booking as delivered" });
+    }
+    if (!allowedStatus.includes(status)) return res.status(400).json({ success: false, message: "Invalid status" });
+
+    const existingBooking = await Booking.findById(req.params.id);
+    if (!existingBooking) return res.status(404).json({ success: false, message: "Booking not found" });
+    const validTransitions = { Booked: ["Booked", "Dispatched"], Dispatched: ["Dispatched", "In Transit"], "In Transit": ["In Transit"], Delivered: [] };
+    if (!validTransitions[existingBooking.status]?.includes(status)) {
+      return res.status(400).json({ success: false, message: `Invalid status transition: ${existingBooking.status} → ${status}` });
     }
 
     const booking = await Booking.findByIdAndUpdate(
@@ -350,30 +381,7 @@ router.put("/:id/status",auth, async (req, res) => {
   }
 });
 
-router.put("/:id/payment",auth , async (req, res) => {
-  try {
-    const { paymentMode, advanceAmount, balanceAmount, paymentStatus } = req.body;
-
-    const booking = await Booking.findByIdAndUpdate(
-      req.params.id,
-      {
-        payment: {
-          paymentMode: paymentMode || "Cash",
-          advanceAmount: Number(advanceAmount) || 0,
-          balanceAmount: Number(balanceAmount) || 0,
-          paymentStatus: paymentStatus || "Pending",
-        },
-      },
-      { returnDocument: 'after' }
-    ).populate("truck").populate("driver");
-
-    if (!booking) return res.status(404).json({ success: false, message: "Booking not found" });
-
-    res.json({ success: true, message: "Payment updated successfully", booking });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Payment update failed", error: error.message });
-  }
-});
+router.put("/:id/payment", auth, updatePayment);
 
 router.post("/track", async (req, res) => {
   try {
@@ -459,8 +467,10 @@ router.get("/:id/invoice", async (req, res) => {
     const paymentMode = booking.payment?.paymentMode || "Cash";
     const paymentStatus = booking.payment?.paymentStatus || "Pending";
     const advanceAmount = Number(booking.payment?.advanceAmount || 0);
-    const balanceAmount = Number(booking.payment?.balanceAmount || 0);
-    const totalAmount = Number(booking.amount || 0);
+    const baseAmount = Number(booking.amount || 0);
+    const gstAmount = Number(booking.payment?.gstAmount || ((baseAmount * GST_PERCENTAGE) / 100));
+    const totalAmount = Number(booking.payment?.totalWithGST || (baseAmount + gstAmount));
+    const balanceAmount = Math.max(totalAmount - advanceAmount, 0);
 
     // HEADER
     doc.rect(0, 0, pageWidth, 112).fill(primary);
@@ -715,11 +725,11 @@ router.get("/:id/invoice", async (req, res) => {
         .text(value, right - 205, y, { width: 170, align: "right" });
     };
 
-    row("Freight Charges", formatMoney(totalAmount), payTop + 20);
-    row("Advance Paid", formatMoney(advanceAmount), payTop + 44);
-    row("Balance Payable", formatMoney(balanceAmount), payTop + 68);
-    row("Payment Mode", paymentMode, payTop + 92);
-    row("Payment Status", paymentStatus, payTop + 116);
+    row("Freight Charges", formatMoney(baseAmount), payTop + 20);
+    row(`GST (${GST_PERCENTAGE}%)`, formatMoney(gstAmount), payTop + 44);
+    row("Amount Paid", formatMoney(advanceAmount), payTop + 68);
+    row("Balance Payable", formatMoney(balanceAmount), payTop + 92);
+    row("Payment", `${paymentMode} • ${paymentStatus}`, payTop + 116);
 
     doc
       .moveTo(left + 45, payTop + 134)
@@ -791,7 +801,7 @@ doc
   }
 });
 
-router.get("/:id/internal-expense", async (req, res) => {
+router.get("/:id/internal-expense", auth, async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id)
       .populate("truck")
@@ -919,7 +929,7 @@ router.get("/:id/internal-expense", async (req, res) => {
   }
 });
 
-router.get("/reports/fuel.csv", async (req, res) => {
+router.get("/reports/fuel.csv", auth, async (req, res) => {
   try {
     const logs = await FuelLog.find()
       .populate("booking")
@@ -980,7 +990,7 @@ router.get("/reports/fuel.csv", async (req, res) => {
   }
 });
 
-router.get("/reports/fuel.pdf", async (req, res) => {
+router.get("/reports/fuel.pdf", auth, async (req, res) => {
   try {
     const logs = await FuelLog.find()
       .populate("booking")
@@ -1117,7 +1127,7 @@ router.get("/reports/fuel.pdf", async (req, res) => {
 });
 
 // GET notifications
-router.get("/notifications/all", async (req, res) => {
+router.get("/notifications/all", auth, async (req, res) => {
   const notifications = await Notification.find().sort({ createdAt: -1 });
   res.json(notifications);
 });

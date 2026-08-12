@@ -15,9 +15,24 @@ const app = express();
    MIDDLEWARE
 ----------------------------- */
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  ...(process.env.FRONTEND_URL || "")
+    .split(",")
+    .map((origin) => origin.trim().replace(/\/$/, ""))
+    .filter(Boolean),
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin(origin, callback) {
+      // Allow server-to-server tools and configured browser origins.
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS blocked origin: ${origin}`));
+    },
     credentials: true,
   })
 );
@@ -73,6 +88,24 @@ app.use("/api/toll", tollLogRoutes);
 app.use("/api/issues", issueRoutes);
 
 app.use("/api/expenses", expenseRoutes);
+
+/* -----------------------------
+   FRONTEND CONFIG
+----------------------------- */
+
+app.get("/api/config/google-maps-key", (req, res) => {
+  if (!process.env.GOOGLE_MAPS_API_KEY) {
+    return res.status(500).json({
+      success: false,
+      message: "API Key not configured in .env",
+    });
+  }
+
+  return res.json({
+    success: true,
+    apiKey: process.env.GOOGLE_MAPS_API_KEY,
+  });
+});
 
 /* -----------------------------
    404 HANDLER

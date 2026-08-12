@@ -1,19 +1,13 @@
 const express = require("express");
-
-const auth = require("../middleware/authMiddleware");
-
 const router = express.Router();
+const auth = require("../middleware/authMiddleware");
+const { ownerOnly } = auth;
 
-const {
-    addTruck,
-    getTrucks,
-    updateTruck,
-    deleteTruck,
+const { addTruck, getTruck, updateTruck, deleteTruck } = require("../controllers/truckController");
 
-} = require("../controllers/truckController");
-
-router.post("/", auth, addTruck);
-router.get("/", auth, getTrucks);
-router.delete("/:id", auth, deleteTruck);
+router.post("/", auth, ownerOnly, addTruck);
+router.get("/", auth, ownerOnly, getTruck);
+router.put("/:id", auth, ownerOnly, updateTruck);
+router.delete("/:id", auth, ownerOnly, deleteTruck);
 
 module.exports = router;

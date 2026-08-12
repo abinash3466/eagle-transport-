@@ -1,118 +1,54 @@
+const mongoose = require("mongoose");
 const Truck = require("../models/Truck");
+const Booking = require("../models/Booking");
 
+const ALLOWED_FIELDS = ["name", "number", "category", "capacity", "location", "status", "health", "driver", "gpsDeviceNumber", "gpsProvider", "gpsInstalled", "currentLocation", "lastCompletedLocation"];
+const pickTruckFields = (body = {}) => ALLOWED_FIELDS.reduce((payload, field) => {
+  if (body[field] !== undefined) payload[field] = body[field];
+  return payload;
+}, {});
 
-// ➕ Add Truck
 exports.addTruck = async (req, res) => {
   try {
-    const truck = new Truck(req.body);
-
-    await truck.save();
-
-    res.status(201).json({
-      success: true,
-      truck,
-    });
+    const truck = await Truck.create(pickTruckFields(req.body));
+    return res.status(201).json({ success: true, truck });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    return res.status(500).json({ success: false, error: error.message });
   }
 };
 
-
-// 📋 Get All Trucks
-exports.getTrucks = async (req, res) => {
+exports.getTruck = async (req, res) => {
   try {
-    const trucks = await Truck.find()
-      .populate("driver");
-
-    res.json(trucks);
+    const trucks = await Truck.find().populate("driver");
+    return res.json(trucks);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    return res.status(500).json({ success: false, error: error.message });
   }
 };
 
-
-// ✏️ Update Truck
-exports.updateTrucks = async (req, res) => {
+exports.updateTruck = async (req, res) => {
   try {
     const { id } = req.params;
-
-    const updatedTruck =
-      await Truck.findByIdAndUpdate(
-        id,
-        req.body,
-        {
-          new: true,
-        }
-      );
-
-    if (!updatedTruck) {
-      return res.status(404).json({
-        success: false,
-        message: "Truck not found",
-      });
-    }
-
-    res.json({
-      success: true,
-      truck: updatedTruck,
-    });
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ success: false, message: "Invalid truck id" });
+    const updatedTruck = await Truck.findByIdAndUpdate(id, pickTruckFields(req.body), { new: true, runValidators: true });
+    if (!updatedTruck) return res.status(404).json({ success: false, message: "Truck not found" });
+    return res.json({ success: true, truck: updatedTruck });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    return res.status(500).json({ success: false, error: error.message });
   }
 };
 
-
-// ❌ Delete Truck
-exports.deleteTrucks = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const deletedTruck =
-      await Truck.findByIdAndDelete(id);
-
-    if (!deletedTruck) {
-      return res.status(404).json({
-        success: false,
-        message: "Truck not found",
-      });
-    }
-
-    res.json({
-      success: true,
-      message: "Truck deleted successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-};
-
-// DELETE TRUCK
 exports.deleteTruck = async (req, res) => {
   try {
-    await Truck.findByIdAndDelete(req.params.id);
-
-    res.json({
-      success: true,
-      message: "Truck deleted successfully",
-    });
-
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ success: false, message: "Invalid truck id" });
+    const activeBooking = await Booking.findOne({ truck: id, status: { $ne: "Delivered" } });
+    if (activeBooking) return res.status(400).json({ success: false, message: "Truck is assigned to an active booking" });
+    const deletedTruck = await Truck.findByIdAndDelete(id);
+    if (!deletedTruck) return res.status(404).json({ success: false, message: "Truck not found" });
+    return res.json({ success: true, message: "Truck deleted successfully" });
   } catch (error) {
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    console.error("Delete truck error:", error);
+    return res.status(500).json({ success: false, message: "Server Error" });
   }
 };
