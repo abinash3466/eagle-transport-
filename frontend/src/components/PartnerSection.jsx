@@ -2,214 +2,176 @@ import React from 'react';
 
 const PartnerSection = () => {
   const partners = [
-    {
-      name: 'Tata Motors',
-      src: '/logos/tata.png',
-      alt: 'Tata Motors Logo',
-    },
-    {
-      name: 'Ashok Leyland',
-      src: '/logos/ashok-leyland.png',
-      alt: 'Ashok Leyland Logo',
-    },
-    {
-      name: 'Mahindra',
-      src: '/logos/mahindra.png',
-      alt: 'Mahindra Logo',
-    },
-    {
-      name: 'BharatBenz',
-      src: '/logos/bharatbenz.png',
-      alt: 'BharatBenz Logo',
-    },
-    {
-      name: 'Eicher',
-      src: '/logos/eicher.png',
-      alt: 'Eicher Logo',
-    },
-    {
-      name: 'Volvo',
-      src: '/logos/volvo.png',
-      alt: 'Volvo Logo',
-    },
+    { name: 'Tata Motors', src: '/logos/tata.png', alt: 'Tata Motors Logo' },
+    { name: 'Ashok Leyland', src: '/logos/ashok-leyland.png', alt: 'Ashok Leyland Logo' },
+    { name: 'Mahindra', src: '/logos/mahindra.png', alt: 'Mahindra Logo' },
+    { name: 'BharatBenz', src: '/logos/bharatbenz.png', alt: 'BharatBenz Logo' },
+    { name: 'Eicher', src: '/logos/eicher.png', alt: 'Eicher Logo' },
+    { name: 'Volvo', src: '/logos/volvo.png', alt: 'Volvo Logo' },
   ];
 
   return (
-    <>
-      <section style={styles.section}>
-        <div className="container">
-          <div style={styles.headingWrap}>
-            <h2 style={styles.heading}>OUR TRUSTED PARTNERS</h2>
-            <p style={styles.subHeading}>
-              Working with Industry Leaders for Seamless Logistics and Performance
-            </p>
-          </div>
-
-          <div style={styles.logoGrid}>
-            {partners.map((partner, idx) => (
-              <div key={idx} style={styles.cardWrap} className="partner-fade-up">
-                <div style={styles.hexCard} className="partner-hex-card">
-                  <img
-                    src={partner.src}
-                    alt={partner.alt}
-                    style={styles.logoImage}
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={styles.dotsWrap}>
-            <span style={{ ...styles.dot, ...styles.activeDot }} />
-            <span style={styles.dot} />
-            <span style={styles.dot} />
-            <span style={styles.dot} />
-            <span style={styles.dot} />
-            <span style={styles.dot} />
-          </div>
+    <section className="partners-premium-section">
+      <div className="container">
+        <div className="partners-premium-header">
+          <span>TRUSTED BRANDS</span>
+          <h2>Brands That Power Our Journey</h2>
+          <p>Working with industry leaders for seamless logistics and performance.</p>
         </div>
-      </section>
+
+        <div className="partners-premium-grid">
+          {partners.map((partner) => (
+            <div className="partners-premium-card" key={partner.name}>
+              <img
+                src={partner.src}
+                alt={partner.alt}
+                loading="lazy"
+              />
+              <span>{partner.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <style>{`
-        .partner-hex-card {
-          transition: transform 0.45s ease, box-shadow 0.45s ease, filter 0.45s ease;
+        .partners-premium-section {
+          padding: 64px 0 68px;
+          background: linear-gradient(180deg, #f7f9fc 0%, #eef3f9 100%);
+          border-top: 1px solid rgba(15,74,136,.05);
+          border-bottom: 1px solid rgba(15,74,136,.05);
         }
 
-        .partner-hex-card:hover {
-          transform: translateY(-12px) scale(1.04);
-          box-shadow: 0 28px 60px rgba(13, 45, 85, 0.18);
-          filter: brightness(1.03);
+        .partners-premium-header {
+          max-width: 680px;
+          margin: 0 auto 30px;
+          text-align: center;
         }
 
-        .partner-fade-up {
-          animation: partnerFadeUp 0.8s ease both;
+        .partners-premium-header > span {
+          display: inline-block;
+          margin-bottom: 7px;
+          color: #ff7a00;
+          font-size: .70rem;
+          font-weight: 900;
+          letter-spacing: .15em;
         }
 
-        .partner-fade-up:nth-child(1) { animation-delay: 0.05s; }
-        .partner-fade-up:nth-child(2) { animation-delay: 0.12s; }
-        .partner-fade-up:nth-child(3) { animation-delay: 0.19s; }
-        .partner-fade-up:nth-child(4) { animation-delay: 0.26s; }
-        .partner-fade-up:nth-child(5) { animation-delay: 0.33s; }
-        .partner-fade-up:nth-child(6) { animation-delay: 0.40s; }
-
-        @keyframes partnerFadeUp {
-          from {
-            opacity: 0;
-            transform: translateY(28px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        .partners-premium-header h2 {
+          margin: 0 0 8px;
+          color: #0b315d;
+          font-size: clamp(2rem, 4vw, 2.7rem);
+          line-height: 1.08;
+          text-transform: uppercase;
+          letter-spacing: -.02em;
         }
 
-        @media (max-width: 1200px) {
-          .partner-fade-up {
-            animation-delay: 0s !important;
-          }
+        .partners-premium-header p {
+          margin: 0;
+          color: #64748b;
+          font-size: .92rem;
+          line-height: 1.5;
+        }
+
+        .partners-premium-grid {
+          display: grid;
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+          gap: 12px;
+        }
+
+        .partners-premium-card {
+          min-width: 0;
+          min-height: 118px;
+          padding: 14px 10px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          border: 1px solid rgba(15,49,88,.08);
+          border-radius: 18px;
+          background: rgba(255,255,255,.94);
+          box-shadow: 0 10px 24px rgba(15,49,88,.06);
+          transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .partners-premium-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 15px 32px rgba(15,49,88,.10);
+        }
+
+        .partners-premium-card img {
+          width: 100%;
+          max-width: 105px;
+          height: 48px;
+          object-fit: contain;
+          display: block;
+          filter: drop-shadow(0 4px 8px rgba(15,58,104,.06));
+        }
+
+        .partners-premium-card span {
+          color: #51657c;
+          font-size: .70rem;
+          font-weight: 700;
+          text-align: center;
         }
 
         @media (max-width: 992px) {
-          .partner-hex-card:hover {
-            transform: translateY(-8px) scale(1.02);
+          .partners-premium-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+          }
+        }
+
+        @media (max-width: 768px) {
+          .partners-premium-section {
+            padding: 28px 0 32px;
+          }
+
+          .partners-premium-header {
+            margin-bottom: 15px;
+          }
+
+          .partners-premium-header > span {
+            margin-bottom: 4px;
+            font-size: .57rem;
+          }
+
+          .partners-premium-header h2 {
+            margin-bottom: 5px;
+            font-size: 1.38rem;
+          }
+
+          .partners-premium-header p {
+            max-width: 315px;
+            margin: 0 auto;
+            font-size: .68rem;
+            line-height: 1.4;
+          }
+
+          .partners-premium-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 7px;
+          }
+
+          .partners-premium-card {
+            min-height: 80px;
+            padding: 8px 6px;
+            gap: 5px;
+            border-radius: 12px;
+          }
+
+          .partners-premium-card img {
+            max-width: 72px;
+            height: 34px;
+          }
+
+          .partners-premium-card span {
+            font-size: .55rem;
+            line-height: 1.1;
           }
         }
       `}</style>
-    </>
+    </section>
   );
-};
-
-const styles = {
-  section: {
-    padding: '80px 0 90px',
-    background: 'linear-gradient(180deg, #f7f9fc 0%, #eef3f9 100%)',
-    borderTop: '1px solid rgba(15, 74, 136, 0.06)',
-    borderBottom: '1px solid rgba(15, 74, 136, 0.06)',
-    overflow: 'hidden',
-  },
-
-  headingWrap: {
-    textAlign: 'center',
-    marginBottom: '48px',
-  },
-
-  heading: {
-    fontSize: 'clamp(2rem, 4vw, 3.4rem)',
-    fontWeight: '900',
-    color: '#0f3d72',
-    marginBottom: '14px',
-    letterSpacing: '0.5px',
-    textTransform: 'uppercase',
-    lineHeight: '1.1',
-  },
-
-  subHeading: {
-    fontSize: 'clamp(1rem, 1.8vw, 1.35rem)',
-    color: '#334e68',
-    maxWidth: '860px',
-    margin: '0 auto',
-    lineHeight: '1.6',
-    fontWeight: '500',
-  },
-
-  logoGrid: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: '28px',
-  },
-
-  cardWrap: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  hexCard: {
-    width: '210px',
-    height: '240px',
-    background: 'linear-gradient(180deg, #ffffff 0%, #f7fbff 100%)',
-    clipPath: 'polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0 18px 40px rgba(13, 45, 85, 0.10)',
-    border: '1px solid rgba(15, 74, 136, 0.07)',
-    padding: '26px',
-    position: 'relative',
-  },
-
-  logoImage: {
-    width: '100%',
-    maxWidth: '150px',
-    maxHeight: '90px',
-    objectFit: 'contain',
-    display: 'block',
-    filter: 'drop-shadow(0 6px 12px rgba(15, 58, 104, 0.08))',
-  },
-
-  dotsWrap: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: '10px',
-    marginTop: '34px',
-  },
-
-  dot: {
-    width: '10px',
-    height: '10px',
-    borderRadius: '999px',
-    backgroundColor: '#fbfbfb',
-    display: 'inline-block',
-  },
-
-  activeDot: {
-    width: '28px',
-    borderRadius: '999px',
-    backgroundColor: '#7f8790',
-  },
 };
 
 export default PartnerSection;

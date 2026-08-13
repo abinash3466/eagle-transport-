@@ -15,7 +15,7 @@ const truckData = [
     name: 'Mini Truck (TATA Ace)',
     capacity: '1 - 2 Tons',
     route: 'Local / Short Distance',
-    use: 'Best for grocery loads, parcels, small business goods and local delivery.',
+    use: 'Best for parcels and local delivery.',
     image: '/truck-images/mini-truck.png',
     rateKey: 'Mini Truck (TATA Ace)',
   },
@@ -25,7 +25,7 @@ const truckData = [
     name: 'Pickup Truck',
     capacity: '2 - 3 Tons',
     route: 'District Level',
-    use: 'Suitable for furniture, agriculture goods, shop supply and light transport.',
+    use: 'Ideal for furniture and shop supply.',
     image: '/truck-images/pickup-truck.png',
     rateKey: 'Pickup Truck',
   },
@@ -35,7 +35,7 @@ const truckData = [
     name: '20ft / 22ft / 24ft Container',
     capacity: '12 Tons',
     route: 'District / State',
-    use: 'Ideal for medium business cargo, storage goods and commercial shipment.',
+    use: 'Secure choice for commercial cargo.',
     image: '/truck-images/20ft-container.png',
     rateKey: '20ft / 22ft / 24ft Container',
   },
@@ -46,7 +46,7 @@ const truckData = [
     name: '32 ft Container Truck (SXL)',
     capacity: '10-15 Tons',
     route: 'National Route',
-    use: 'Secure closed-body transport vehicle for medium industrial and logistics delivery.',
+    use: 'Reliable for medium industrial loads.',
     image: '/truck-images/32ft-container-sxl.png',
     rateKey: '32 ft Container Truck (SXL)',
   },
@@ -56,7 +56,7 @@ const truckData = [
     name: '32 ft Container Truck (MXL)',
     capacity: '15-25 Tons',
     route: 'All India',
-    use: 'Built for heavy industrial parts, automotive components, and raw materials.',
+    use: 'Built for heavy industrial transport.',
     image: '/truck-images/32ft-container-mxl.png',
     rateKey: '32 ft Container Truck (MXL)',
   },
@@ -66,7 +66,7 @@ const truckData = [
     name: '19 ft Open Truck',
     capacity: '12 Tons',
     route: 'State',
-    use: 'Open-body truck suitable for construction materials and bulk loading.',
+    use: 'Perfect for bulk and construction loads.',
     image: '/truck-images/19ft-open-truck.png',
     rateKey: '19 ft Open Truck',
   },
@@ -76,7 +76,7 @@ const truckData = [
     name: '10 Tyre Truck',
     capacity: '19 Tons',
     route: 'All India',
-    use: 'Heavy-duty open-body truck for industrial goods and large cargo transport.',
+    use: 'Heavy-duty transport across India.',
     image: '/truck-images/10-tyre-truck.png',
     rateKey: '10 Tyre Truck',
   },
@@ -86,7 +86,7 @@ const truckData = [
     name: '12 Tyre Truck',
     capacity: '25 Tons',
     route: 'All India',
-    use: 'Perfect for long-distance heavy transport and bulk commercial delivery.',
+    use: 'For long-distance bulk delivery.',
     image: '/truck-images/12-tyre-truck.png',
     rateKey: '12 Tyre Truck',
   },
@@ -96,7 +96,7 @@ const truckData = [
     name: '14 Tyre Truck',
     capacity: '30 Tons',
     route: 'All India',
-    use: 'Large open-body truck suitable for machinery, steel and industrial logistics.',
+    use: 'Best for machinery and steel loads.',
     image: '/truck-images/14-tyre-truck.png',
     rateKey: '14 Tyre Truck',
   },
@@ -106,7 +106,7 @@ const truckData = [
     name: '16 Tyre Truck',
     capacity: 'Up to 35 Tons',
     route: 'All India',
-    use: 'High-capacity truck for large scale transport, heavy machinery and long routes.',
+    use: 'High-capacity truck for heavy cargo.',
     image: '/truck-images/16-tyre-truck.png',
     rateKey: '16 Tyre Truck',
   },
@@ -116,7 +116,7 @@ const truckData = [
     name: 'Trailer Truck (40/45/48/53 ft)',
     capacity: '20-50 Tons',
     route: 'All India (Ports & Industrial Hubs)',
-    use: 'Engineered for the heaviest loads, machinery, and long-haul logistics.',
+    use: 'For oversized and long-haul loads.',
     image: '/truck-images/trailer-truck.png',
     rateKey: '40 ft Trailer',
     isTrailerGroup: true,
@@ -127,42 +127,40 @@ const features = [
   {
     icon: <Truck size={22} />,
     title: 'Multiple Truck Types',
-    text: 'Choose the correct truck based on your load, route and transport requirement.',
+    text: 'Right truck for every load.',
   },
   {
     icon: <MapPinned size={22} />,
     title: 'District to India Routes',
-    text: 'Book trucks for local delivery, state transport and all India long-distance routes.',
+    text: 'Local, state & all-India service.',
   },
   {
     icon: <PackageCheck size={22} />,
     title: 'Safe Goods Handling',
-    text: 'Reliable trucks for household items, business cargo, industrial material and more.',
+    text: 'Reliable transport for every cargo.',
   },
   {
     icon: <ShieldCheck size={22} />,
     title: 'Trusted Booking',
-    text: 'Easy booking process with tracking, support and secure transport service.',
+    text: 'Easy booking with live support.',
   },
 ];
 
 const Trucks = () => {
   return (
-    <div style={styles.page}>
+    <div style={styles.page} className="trucks-page">
       {/* Hero */}
-      <section style={styles.heroSection}>
-        <div style={styles.heroOverlay}></div>
+      <section style={styles.heroSection} className="trucks-hero">
+        <div style={styles.heroOverlay} className="trucks-hero-overlay"></div>
         <div style={styles.container}>
-          <div style={styles.heroContent}>
-            <span style={styles.badge}>Eagle Transport Fleet</span>
-            <h1 style={styles.heroTitle}>Our Truck Fleet</h1>
-            <p style={styles.heroText}>
-              View all available trucks and choose the right vehicle for your goods,
-              route and load capacity. From local trips to national delivery, Eagle Transport
-              gives you the right truck at the right time.
+          <div style={styles.heroContent} className="trucks-hero-content">
+            <span style={styles.badge} className="trucks-hero-badge">Eagle Transport Fleet</span>
+            <h1 style={styles.heroTitle} className="trucks-hero-title">Our Truck Fleet</h1>
+            <p style={styles.heroText} className="trucks-hero-text">
+              Choose the right truck for your load, route and distance.
             </p>
 
-            <div style={styles.heroButtons}>
+            <div style={styles.heroButtons} className="trucks-hero-buttons">
               <Link to="/tracking" style={styles.primaryBtn}>Track Booking</Link>
               <Link to="/" style={styles.secondaryBtn}>Back to Home</Link>
             </div>
@@ -171,21 +169,21 @@ const Trucks = () => {
       </section>
 
       {/* Features */}
-      <section style={styles.featureSection}>
+      <section style={styles.featureSection} className="trucks-feature-section">
         <div style={styles.container}>
-          <div style={styles.sectionHead}>
-            <h2 style={styles.sectionTitle}>Why Choose Our Fleet?</h2>
-            <p style={styles.sectionText}>
-              Flexible truck options for every type of transport need.
+          <div style={styles.sectionHead} className="trucks-section-head">
+            <h2 style={styles.sectionTitle} className="trucks-section-title">Why Choose Our Fleet?</h2>
+            <p style={styles.sectionText} className="trucks-section-text">
+              Smart truck options for every journey.
             </p>
           </div>
 
-          <div style={styles.featureGrid}>
+          <div style={styles.featureGrid} className="trucks-feature-grid">
             {features.map((item, index) => (
-              <div key={index} style={styles.featureCard}>
-                <div style={styles.featureIcon}>{item.icon}</div>
-                <h3 style={styles.featureTitle}>{item.title}</h3>
-                <p style={styles.featureText}>{item.text}</p>
+              <div key={index} style={styles.featureCard} className="trucks-feature-card">
+                <div style={styles.featureIcon} className="trucks-feature-icon">{item.icon}</div>
+                <h3 style={styles.featureTitle} className="trucks-feature-title">{item.title}</h3>
+                <p style={styles.featureText} className="trucks-feature-text">{item.text}</p>
               </div>
             ))}
           </div>
@@ -193,44 +191,44 @@ const Trucks = () => {
       </section>
 
       {/* Trucks */}
-      <section style={styles.truckSection}>
+      <section style={styles.truckSection} className="trucks-list-section">
         <div style={styles.container}>
-          <div style={styles.sectionHead}>
-            <h2 style={styles.sectionTitle}>Available Truck Types</h2>
-            <p style={styles.sectionText}>
-              Select the perfect vehicle based on load size, distance and transport purpose.
+          <div style={styles.sectionHead} className="trucks-section-head">
+            <h2 style={styles.sectionTitle} className="trucks-section-title">Available Truck Types</h2>
+            <p style={styles.sectionText} className="trucks-section-text">
+              Pick by load, distance and route.
             </p>
           </div>
 
-          <div style={styles.truckGrid}>
+          <div style={styles.truckGrid} className="trucks-grid">
             {truckData.map((truck) => (
-              <div key={truck.id} style={styles.truckCard}>
-                <div style={styles.imageWrap}>
+              <div key={truck.id} style={styles.truckCard} className="trucks-card">
+                <div style={styles.imageWrap} className="trucks-image-wrap">
                   <img
                     src={truck.image}
                     alt={truck.name}
-                    style={styles.truckImage}
+                    style={styles.truckImage} className="trucks-image"
                   />
                 </div>
 
-                <div style={styles.cardBody}>
-                  <h3 style={styles.truckName}>{truck.name}</h3>
+                <div style={styles.cardBody} className="trucks-card-body">
+                  <h3 style={styles.truckName} className="trucks-card-title">{truck.name}</h3>
 
-                  <div style={styles.infoPillWrap}>
-                    <span style={styles.infoPill}>Capacity: {truck.capacity}</span>
-                    <span style={styles.infoPill}>Route: {truck.route}</span>
+                  <div style={styles.infoPillWrap} className="trucks-pill-wrap">
+                    <span style={styles.infoPill} className="trucks-pill">Capacity: {truck.capacity}</span>
+                    <span style={styles.infoPill} className="trucks-pill">Route: {truck.route}</span>
                   </div>
 
-                  <p style={styles.truckDesc}>{truck.use}</p>
+                  <p style={styles.truckDesc} className="trucks-card-desc">{truck.use}</p>
 
-                  <div style={styles.priceTag}>
+                  <div style={styles.priceTag} className="trucks-price-tag">
                     {truck.isTrailerGroup
                       ? `Base Rate: From ₹${TRUCK_RATES[truck.rateKey]} / km`
                       : `Base Rate: ₹${TRUCK_RATES[truck.rateKey]} / km`}
                   </div>
 
                   <div style={styles.cardFooter}>
-                    <Link to="/" style={styles.cardBtn}>
+                    <Link to="/" style={styles.cardBtn} className="trucks-card-btn">
                       Book This Truck <ArrowRight size={16} />
                     </Link>
                   </div>
@@ -242,22 +240,21 @@ const Trucks = () => {
       </section>
 
       {/* Bottom CTA */}
-      <section style={styles.ctaSection}>
+      <section style={styles.ctaSection} className="trucks-cta-section">
         <div style={styles.container}>
-          <div style={styles.ctaBox}>
-            <h2 style={styles.ctaTitle}>Need Help Choosing the Right Truck?</h2>
-            <p style={styles.ctaText}>
-              Our Eagle Transport team helps you choose the correct truck based on your goods,
-              route and ton capacity.
+          <div style={styles.ctaBox} className="trucks-cta-box">
+            <h2 style={styles.ctaTitle} className="trucks-cta-title">Need Help Choosing?</h2>
+            <p style={styles.ctaText} className="trucks-cta-text">
+              Tell us your load and route. We’ll suggest the right truck.
             </p>
-            <div style={styles.ctaButtons}>
+            <div style={styles.ctaButtons} className="trucks-cta-buttons">
               <a
                 href="https://wa.me/918428302003?text=Hello%20Eagle%20Transport%2C%20help%20me%20choose%20the%20right%20truck."
                 target="_blank"
                 rel="noreferrer"
                 style={styles.primaryBtn}
               >
-                WhatsApp Support
+                WhatsApp
               </a>
               <a href="tel:+918428302003" style={styles.secondaryBtnDark}>
                 Call Now
@@ -266,6 +263,413 @@ const Trucks = () => {
           </div>
         </div>
       </section>
+
+      <style>{`
+        /* Desktop/laptop inline styles remain untouched. */
+        @media (max-width: 768px) {
+          .trucks-page { background:#f4f7fb !important; }
+
+@media (max-width: 768px) {
+
+  /* =========================================
+     TRUCKS PAGE - MOBILE HERO
+     ========================================= */
+
+  .trucks-hero {
+    position: relative !important;
+
+    /* 1st image hero size feel */
+    min-height: 355px !important;
+    height: 355px !important;
+
+    padding: 0 !important;
+    overflow: hidden !important;
+
+    background-image:
+      url('/truck-images/trucks-mobile-hero.png') !important;
+
+    background-size: cover !important;
+    background-position: 72% center !important;
+    background-repeat: no-repeat !important;
+  }
+
+
+  /* DARK PREMIUM OVERLAY */
+  .trucks-hero-overlay {
+    position: absolute !important;
+    inset: 0 !important;
+
+    background:
+      linear-gradient(
+        90deg,
+        rgba(3, 20, 40, 0.95) 0%,
+        rgba(3, 22, 43, 0.88) 40%,
+        rgba(4, 24, 46, 0.58) 68%,
+        rgba(5, 20, 38, 0.25) 100%
+      ) !important;
+  }
+
+
+  .trucks-hero .container {
+    position: relative !important;
+    z-index: 2 !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+
+ /* =========================================
+   TRUCKS HERO - MOBILE CLEAN VERSION
+========================================= */
+
+.trucks-hero-content {
+  width: 100% !important;
+  max-width: 320px !important;
+
+  padding: 0 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+
+  text-align: left !important;
+
+  /* full content konjam mela */
+  transform: translateY(-18px) !important;
+}
+
+
+/* =========================================
+   BADGE
+========================================= */
+
+.trucks-hero-badge {
+  width: fit-content !important;
+
+  margin: 0 0 14px !important;
+
+  padding: 7px 11px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 999px !important;
+
+  background: rgba(255, 255, 255, 0.10) !important;
+
+  color: #ffffff !important;
+
+  font-size: 10px !important;
+  font-weight: 700 !important;
+
+  backdrop-filter: blur(8px) !important;
+}
+
+
+/* =========================================
+   TITLE
+========================================= */
+
+.trucks-hero-title {
+  width: 100% !important;
+  max-width: 285px !important;
+
+  margin: 0 0 12px !important;
+
+  font-size: 30px !important;
+  line-height: 1.02 !important;
+
+  font-weight: 900 !important;
+
+  letter-spacing: -0.8px !important;
+
+  color: #ffffff !important;
+}
+
+
+/* =========================================
+   DESCRIPTION
+========================================= */
+
+.trucks-hero-text {
+  width: 100% !important;
+  max-width: 285px !important;
+
+  margin: 0 0 10px !important;
+
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+
+  font-weight: 500 !important;
+
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.trucks-hero-buttons {
+  width: auto !important;
+
+  display: flex !important;
+  align-items: center !important;
+
+  gap: 10px !important;
+
+  margin-top: 22px !important;
+
+  transform: none !important;
+}
+
+.trucks-hero-buttons a {
+  width: auto !important;
+
+  min-width: 130px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+
+  padding: 0 16px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 11px !important;
+
+  font-size: 11px !important;
+  font-weight: 700 !important;
+
+  white-space: nowrap !important;
+}
+
+
+  /* HERO ENTRY ANIMATION */
+  @keyframes trucksHeroEnter {
+
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+}
+
+          .trucks-feature-section{ padding:24px 0 16px !important; }
+          .trucks-list-section{ padding:16px 0 30px !important; }
+
+          .trucks-feature-section .container,
+          .trucks-list-section .container,
+          .trucks-cta-section .container{
+            width:calc(100% - 28px) !important;
+            margin:0 auto !important;
+          }
+
+          .trucks-section-head{ margin-bottom:12px !important; }
+
+          .trucks-section-title{
+            max-width:300px !important;
+            margin:0 auto 4px !important;
+            font-size:1.30rem !important;
+            line-height:1.08 !important;
+            letter-spacing:-.025em !important;
+          }
+
+          .trucks-section-text{
+            max-width:300px !important;
+            margin:0 auto !important;
+            font-size:.65rem !important;
+            line-height:1.35 !important;
+          }
+
+          .trucks-feature-grid{
+            grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+            gap:8px !important;
+          }
+
+          .trucks-feature-card{
+            min-height:112px !important;
+            padding:11px !important;
+            border-radius:13px !important;
+            box-shadow:0 8px 18px rgba(15,49,88,.06) !important;
+            animation:cardIn .5s ease both;
+            transition:transform .2s ease, box-shadow .2s ease !important;
+          }
+
+          .trucks-feature-card:nth-child(2){animation-delay:.05s;}
+          .trucks-feature-card:nth-child(3){animation-delay:.10s;}
+          .trucks-feature-card:nth-child(4){animation-delay:.15s;}
+
+          .trucks-feature-card:active{
+            transform:scale(.98);
+          }
+
+          .trucks-feature-icon{
+            width:32px !important;
+            height:32px !important;
+            margin-bottom:8px !important;
+            border-radius:9px !important;
+          }
+
+          .trucks-feature-icon svg{
+            width:16px !important;
+            height:16px !important;
+          }
+
+          .trucks-feature-title{
+            margin-bottom:3px !important;
+            font-size:.72rem !important;
+            line-height:1.16 !important;
+          }
+
+          .trucks-feature-text{
+            font-size:.57rem !important;
+            line-height:1.30 !important;
+          }
+
+          .trucks-grid{
+            grid-template-columns:1fr !important;
+            gap:9px !important;
+          }
+
+          .trucks-card{
+            display:grid !important;
+            grid-template-columns:98px minmax(0,1fr) !important;
+            border-radius:14px !important;
+            box-shadow:0 8px 20px rgba(10,48,92,.07) !important;
+            animation:cardIn .5s ease both;
+            transition:transform .2s ease, box-shadow .2s ease !important;
+          }
+
+          .trucks-card:active{
+            transform:scale(.99);
+          }
+
+          .trucks-image-wrap{
+            min-height:0 !important;
+            padding:9px !important;
+          }
+
+          .trucks-image{
+            width:100% !important;
+            max-width:90px !important;
+            height:80px !important;
+          }
+
+          .trucks-card-body{
+            min-width:0 !important;
+            padding:10px 10px 9px !important;
+          }
+
+          .trucks-card-title{
+            margin-bottom:5px !important;
+            font-size:.76rem !important;
+            line-height:1.15 !important;
+          }
+
+          .trucks-pill-wrap{
+            gap:4px !important;
+            margin-bottom:5px !important;
+          }
+
+          .trucks-pill{
+            padding:3px 5px !important;
+            font-size:.49rem !important;
+          }
+
+          .trucks-card-desc{
+            margin-bottom:5px !important;
+            font-size:.55rem !important;
+            line-height:1.28 !important;
+          }
+
+          .trucks-price-tag{
+            margin-bottom:5px !important;
+            padding:4px 6px !important;
+            border-radius:7px !important;
+            font-size:.53rem !important;
+          }
+
+          .trucks-card-btn{
+            gap:4px !important;
+            padding:5px 7px !important;
+            border-radius:7px !important;
+            font-size:.55rem !important;
+          }
+
+          .trucks-card-btn svg{
+            width:11px !important;
+            height:11px !important;
+          }
+
+          .trucks-cta-section{
+            padding:0 0 26px !important;
+          }
+
+          .trucks-cta-box{
+            padding:16px 13px !important;
+            border-radius:16px !important;
+            animation:cardIn .5s ease both;
+          }
+
+          .trucks-cta-title{
+            margin-bottom:5px !important;
+            font-size:1.15rem !important;
+            line-height:1.1 !important;
+          }
+
+          .trucks-cta-text{
+            max-width:300px !important;
+            margin:0 auto 10px !important;
+            font-size:.64rem !important;
+            line-height:1.35 !important;
+          }
+
+          .trucks-cta-buttons{
+            display:grid !important;
+            grid-template-columns:1fr 1fr !important;
+            gap:7px !important;
+          }
+
+          .trucks-cta-buttons a{
+            min-height:38px !important;
+            padding:0 7px !important;
+            border-radius:9px !important;
+            font-size:.66rem !important;
+          }
+
+          @keyframes truckHeroIn{
+            from{opacity:0;transform:translateY(14px);}
+            to{opacity:1;transform:translateY(0);}
+          }
+
+          @keyframes cardIn{
+            from{opacity:0;transform:translateY(12px);}
+            to{opacity:1;transform:translateY(0);}
+          }
+
+          @media (prefers-reduced-motion: reduce){
+            .trucks-hero-content,
+            .trucks-feature-card,
+            .trucks-card,
+            .trucks-cta-box{
+              animation:none !important;
+              transition:none !important;
+            }
+          }
+        }
+      `}</style>
     </div>
   );
 };
@@ -283,18 +687,45 @@ const styles = {
 
   heroSection: {
     position: 'relative',
-    padding: '90px 0 80px',
-    backgroundImage: 'url("/truck-images/trucks-hero-bg.jpg")',
+
+    /* Home page hero madhiri balanced desktop height */
+    height: '520px',
+    minHeight: '520px',
+    padding: '0',
+
+    backgroundImage: 'url("/truck-images/trucks-hero-bg.png")',
+
+    /* Hero full area fill aagum */
     backgroundSize: 'cover',
-    backgroundPosition: 'center',
+
+    /* Main parking + trucks visible */
+    backgroundPosition: 'center center',
+
     backgroundRepeat: 'no-repeat',
+
     overflow: 'hidden',
+
+    display: 'flex',
+    alignItems: 'center',
   },
+
 
   heroOverlay: {
     position: 'absolute',
     inset: 0,
-    background: 'linear-gradient(90deg, rgba(9,41,79,0.78), rgba(9,41,79,0.45))',
+
+    /* Left text readable,
+       right side image visible
+    */
+    background: `
+    linear-gradient(
+      90deg,
+      rgba(3, 20, 40, 0.88) 0%,
+      rgba(3, 22, 43, 0.72) 38%,
+      rgba(4, 24, 46, 0.38) 68%,
+      rgba(5, 20, 38, 0.12) 100%
+    )
+  `,
   },
 
   heroContent: {

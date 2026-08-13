@@ -1,0 +1,1987 @@
+.tracking-page {
+    min-height: 100vh;
+    overflow-x: hidden;
+    background:
+        linear-gradient(180deg,
+            #eef3f9 0%,
+            #f7f9fc 48%,
+            #eef3f9 100%);
+}
+
+.tracking-shell {
+    width: min(1180px,
+            calc(100% - 40px));
+
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.tracking-hero {
+    position: relative;
+
+    min-height: 430px;
+    height: 430px;
+    padding: 0;
+
+    background-image: url('/tracking-images/tracking-hero.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    overflow: hidden;
+}
+
+/* Premium dark overlay - left side text clear-ah theriyum */
+.tracking-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(90deg,
+            rgba(3, 20, 40, 0.90) 0%,
+            rgba(3, 24, 48, 0.72) 38%,
+            rgba(4, 27, 52, 0.32) 65%,
+            rgba(4, 22, 42, 0.08) 100%);
+
+    pointer-events: none;
+}
+
+/* Hero content overlay-ku mela irukkanum */
+.tracking-hero>* {
+    position: relative;
+    z-index: 2;
+}
+
+
+.tracking-hero-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(90deg,
+            rgba(3, 20, 40, 0.97) 0%,
+            rgba(3, 23, 46, 0.84) 42%,
+            rgba(5, 25, 49, 0.38) 70%,
+            rgba(5, 19, 36, 0.10) 100%);
+}
+
+.tracking-hero-inner {
+    position: relative;
+
+    z-index: 2;
+
+    min-height: 430px;
+    height: 430px;
+
+    display: flex;
+    align-items: center;
+}
+
+.tracking-hero-copy {
+    max-width: 620px;
+
+    color: #ffffff;
+
+    animation:
+        trackingFadeUp 0.65s ease both;
+}
+
+.tracking-hero-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 16px;
+
+    padding: 8px 14px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.22);
+
+    border-radius: 999px;
+
+    background:
+        rgba(255, 255, 255, 0.10);
+
+    backdrop-filter:
+        blur(10px);
+
+    font-size: 0.78rem;
+
+    font-weight: 800;
+}
+
+.tracking-hero-dot {
+    width: 8px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #ff871f;
+
+    box-shadow:
+        0 0 12px rgba(255, 135, 31, 0.85);
+}
+
+.tracking-hero-title {
+    max-width: 590px;
+
+    margin:
+        0 0 14px;
+
+    color: #ffffff;
+
+    font-size:
+        clamp(2.8rem,
+            4vw,
+            4rem);
+
+    font-weight: 900;
+
+    line-height: 1.02;
+
+    letter-spacing:
+        -0.04em;
+}
+
+.tracking-hero-title span {
+    color: #ff871f;
+}
+
+.tracking-hero-description {
+    max-width: 530px;
+
+    margin:
+        0 0 18px;
+
+    color:
+        rgba(255,
+            255,
+            255,
+            0.86);
+
+    font-size: 0.96rem;
+
+    line-height: 1.55;
+}
+
+.tracking-hero-features {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+.tracking-hero-features span {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding:
+        7px 10px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.13);
+
+    border-radius: 999px;
+
+    background:
+        rgba(255, 255, 255, 0.10);
+
+    color: #ffffff;
+
+    font-size: 0.70rem;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.tracking-content {
+    padding:
+        28px 0 52px;
+}
+
+
+/* =========================================================
+   SEARCH CARD
+========================================================= */
+
+.tracking-search-card,
+.tracking-empty-card,
+.tracking-summary-card,
+.tracking-map-card {
+    border:
+        1px solid rgba(15, 48, 87, 0.08);
+
+    background:
+        linear-gradient(145deg,
+            #ffffff 0%,
+            #f9fbff 100%);
+
+    box-shadow:
+        0 16px 40px rgba(10, 35, 66, 0.08);
+
+    animation:
+        trackingCardIn 0.5s ease both;
+}
+
+.tracking-search-card {
+    margin-bottom: 20px;
+
+    padding: 28px;
+
+    border-radius: 24px;
+}
+
+.tracking-search-heading {
+    max-width: 650px;
+
+    margin:
+        0 auto 14px;
+
+    text-align: center;
+}
+
+.tracking-small-label {
+    display: inline-block;
+
+    margin-bottom: 6px;
+
+    color: #ff7a00;
+
+    font-size: 0.62rem;
+
+    font-weight: 900;
+
+    letter-spacing:
+        0.15em;
+}
+
+.tracking-search-heading h2 {
+    margin: 6px 0 8px;
+
+    font-size: 38px;
+    line-height: 1.15;
+    font-weight: 800;
+
+    color: #0b427c;
+
+    letter-spacing: -0.8px;
+    text-align: center;
+}
+
+.tracking-search-heading p {
+    margin: 0 auto;
+
+    font-size: 16px;
+    line-height: 1.6;
+
+    color: #667a96;
+    text-align: center;
+
+    max-width: 620px;
+}
+
+.tracking-security-note {
+    width: fit-content;
+
+    margin:
+        0 auto 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding:
+        7px 10px;
+
+    border:
+        1px solid #d8e8ff;
+
+    border-radius: 999px;
+
+    background:
+        #eff6ff;
+
+    color: #12386d;
+
+    font-size: 0.72rem;
+
+    font-weight: 700;
+}
+
+.tracking-form {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr) minmax(0, 1fr) auto;
+
+    align-items: end;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+.tracking-field {
+    min-width: 0;
+}
+
+.tracking-field label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #0b315d;
+
+    font-size: 0.78rem;
+
+    font-weight: 800;
+}
+
+.tracking-field input {
+    width: 100%;
+
+    height: 46px;
+
+    padding:
+        0 13px;
+
+    border:
+        1px solid #d6e0ec;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #0b315d;
+
+    font-size: 0.84rem;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.tracking-field input:focus {
+    border-color: #ff8c1a;
+
+    box-shadow:
+        0 0 0 3px rgba(255, 140, 26, 0.12);
+}
+
+.tracking-submit-btn {
+    height: 46px;
+
+    min-width: 150px;
+
+    padding:
+        0 18px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    border: 0;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(135deg,
+            #ff9b35,
+            #ff7600);
+
+    color: #ffffff;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 22px rgba(255, 122, 0, 0.22);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.tracking-submit-btn:hover {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 14px 28px rgba(255, 122, 0, 0.28);
+}
+
+.tracking-submit-btn:disabled {
+    opacity: 0.72;
+
+    cursor: wait;
+}
+
+.tracking-spinner {
+    width: 16px;
+
+    height: 16px;
+
+    border:
+        2px solid rgba(255, 255, 255, 0.35);
+
+    border-top-color:
+        #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        trackingSpin 0.8s linear infinite;
+}
+
+.tracking-error {
+    margin:
+        -6px 0 14px;
+
+    padding:
+        10px 12px;
+
+    border-radius: 10px;
+
+    background:
+        #fff1f2;
+
+    color:
+        #be123c;
+
+    font-size: 0.76rem;
+
+    font-weight: 700;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.tracking-progress h3 {
+    margin:
+        0 0 14px;
+
+    color: #0b315d;
+
+    font-size: 0.94rem;
+}
+
+.tracking-stepper {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 8px;
+}
+
+.tracking-step {
+    min-width: 0;
+}
+
+.tracking-step-top {
+    display: flex;
+
+    align-items: center;
+}
+
+.tracking-step-circle {
+    width: 36px;
+
+    height: 36px;
+
+    min-width: 36px;
+
+    display: grid;
+
+    place-items: center;
+
+    border:
+        2px solid #d7dfeb;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    color: #8ea0b7;
+
+    transition:
+        all 0.25s ease;
+}
+
+.tracking-step-circle.active {
+    border-color:
+        #ff8c1a;
+
+    background:
+        linear-gradient(135deg,
+            #ff9b35,
+            #ff7600);
+
+    color: #ffffff;
+
+    box-shadow:
+        0 8px 18px rgba(255, 122, 0, 0.20);
+}
+
+.tracking-step-line {
+    flex: 1;
+
+    height: 5px;
+
+    margin-left: 7px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background:
+        #e7edf5;
+}
+
+.tracking-step-line span {
+    display: block;
+
+    width: 0;
+
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(90deg,
+            #ff9b35,
+            #ff7600);
+
+    transition:
+        width 0.35s ease;
+}
+
+.tracking-step-line span.filled {
+    width: 100%;
+}
+
+.tracking-step-label {
+    display: block;
+
+    margin-top: 8px;
+
+    color: #94a3b8;
+
+    font-size: 0.68rem;
+
+    font-weight: 700;
+}
+
+.tracking-step-label.active {
+    color: #0b315d;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.tracking-empty-card {
+    overflow: hidden;
+
+    border-radius: 22px;
+}
+
+.tracking-card-header {
+    padding:
+        17px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    border-bottom:
+        1px solid #e7eef7;
+}
+
+.tracking-card-header h3 {
+    margin: 0;
+
+    color: #0b315d;
+
+    font-size: 1rem;
+}
+
+.tracking-card-header p {
+    margin:
+        4px 0 0;
+
+    color: #64748b;
+
+    font-size: 0.72rem;
+}
+
+.tracking-awaiting-badge,
+.tracking-live-badge {
+    flex-shrink: 0;
+
+    padding:
+        6px 9px;
+
+    border-radius: 999px;
+
+    font-size: 0.62rem;
+
+    font-weight: 800;
+}
+
+.tracking-awaiting-badge {
+    background:
+        #f1f5f9;
+
+    color:
+        #64748b;
+}
+
+.tracking-live-badge {
+    background:
+        #e8fff1;
+
+    color:
+        #0f9d58;
+}
+
+.tracking-empty-body {
+    min-height: 250px;
+
+    padding:
+        26px 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+}
+
+.tracking-route-demo {
+    position: relative;
+
+    width: 150px;
+
+    height: 66px;
+
+    margin-bottom: 14px;
+}
+
+.tracking-route-demo>span {
+    position: absolute;
+
+    top: 50%;
+
+    left: 0;
+
+    right: 0;
+
+    height: 6px;
+
+    transform:
+        translateY(-50%);
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(90deg,
+            #dfe9f6,
+            #c9d8eb);
+}
+
+.tracking-route-demo>div {
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    width: 64px;
+
+    height: 64px;
+
+    transform:
+        translate(-50%, -50%);
+
+    display: grid;
+
+    place-items: center;
+
+    border:
+        1px solid #e6eef8;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    color: #ff7a00;
+
+    box-shadow:
+        0 10px 24px rgba(18, 56, 109, 0.10);
+}
+
+.tracking-empty-body h3 {
+    margin:
+        0 0 5px;
+
+    color: #0b315d;
+
+    font-size: 1rem;
+}
+
+.tracking-empty-body p {
+    max-width: 420px;
+
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 0.76rem;
+
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+.tracking-results {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 0.95fr) minmax(0, 1.05fr);
+
+    gap: 18px;
+}
+
+.tracking-summary-card,
+.tracking-map-card {
+    overflow: hidden;
+
+    border-radius: 22px;
+}
+
+.tracking-status-banner {
+    padding:
+        18px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    background:
+        linear-gradient(135deg,
+            #0f3057,
+            #163d73);
+
+    color: #ffffff;
+}
+
+.tracking-status-banner span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color:
+        rgba(255,
+            255,
+            255,
+            0.60);
+
+    font-size: 0.56rem;
+
+    font-weight: 800;
+
+    letter-spacing:
+        0.12em;
+}
+
+.tracking-status-banner h3 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 1.12rem;
+}
+
+.tracking-status-banner p {
+    margin:
+        4px 0 0;
+
+    color:
+        rgba(255,
+            255,
+            255,
+            0.70);
+
+    font-size: 0.66rem;
+}
+
+.tracking-active-badge {
+    padding:
+        6px 9px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(34, 197, 94, 0.15);
+
+    color:
+        #bbf7d0;
+
+    font-size: 0.62rem;
+
+    font-weight: 800;
+}
+
+.tracking-invoice-wrap {
+    padding:
+        12px 16px 0;
+}
+
+.tracking-invoice-btn {
+    width: 100%;
+
+    min-height: 42px;
+
+    border: 0;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(135deg,
+            #ff9b35,
+            #ff7600);
+
+    color: #ffffff;
+
+    font-size: 0.76rem;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.tracking-summary-grid {
+    padding: 16px;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 9px;
+}
+
+.tracking-summary-item {
+    min-width: 0;
+
+    padding: 11px;
+
+    border:
+        1px solid #e7eef7;
+
+    border-radius: 12px;
+
+    background:
+        #f8fbff;
+}
+
+.tracking-summary-item>span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #64748b;
+
+    font-size: 0.62rem;
+
+    font-weight: 700;
+}
+
+.tracking-summary-item strong {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    overflow-wrap: anywhere;
+
+    color: #0b315d;
+
+    font-size: 0.72rem;
+
+    line-height: 1.35;
+}
+
+
+/* =========================================================
+   MAP
+========================================================= */
+
+.tracking-map-wrap {
+    position: relative;
+
+    width: 100%;
+
+    height: 360px;
+
+    overflow: hidden;
+
+    background:
+        #eef4fb;
+}
+
+.tracking-map {
+    width: 100%;
+
+    height: 100%;
+
+    z-index: 1;
+}
+
+.tracking-truck-tooltip {
+    padding: 0 !important;
+
+    border: none !important;
+
+    background:
+        transparent !important;
+
+    box-shadow:
+        none !important;
+}
+
+.tracking-truck-tooltip::before {
+    display: none !important;
+}
+
+.tracking-truck-marker {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+}
+
+.tracking-truck-marker img {
+    width: 46px;
+
+    height: 46px;
+
+    filter:
+        drop-shadow(0 7px 12px rgba(0, 0, 0, 0.22));
+
+    animation:
+        trackingTruckPulse 1.5s ease-in-out infinite alternate;
+}
+
+.tracking-truck-marker span {
+    margin-top: 3px;
+
+    padding:
+        3px 7px;
+
+    border-radius: 6px;
+
+    background:
+        #0f3057;
+
+    color: #ffffff;
+
+    font-size: 0.62rem;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+.tracking-gps-badge {
+    position: absolute;
+
+    left: 13px;
+
+    bottom: 13px;
+
+    z-index: 999;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding:
+        7px 10px;
+
+    border:
+        1px solid #dbe7f4;
+
+    border-radius: 999px;
+
+    background: #ffffff;
+
+    color: #0b315d;
+
+    box-shadow:
+        0 10px 24px rgba(10, 35, 66, 0.12);
+
+    font-size: 0.64rem;
+
+    font-weight: 800;
+}
+
+.tracking-route-card {
+    padding:
+        15px 18px;
+
+    background: #ffffff;
+}
+
+.tracking-route-point {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+}
+
+.tracking-route-dot {
+    width: 11px;
+
+    height: 11px;
+
+    min-width: 11px;
+
+    border-radius: 50%;
+}
+
+.tracking-route-dot.pickup {
+    background: #22c55e;
+}
+
+.tracking-route-dot.current {
+    width: 13px;
+
+    height: 13px;
+
+    min-width: 13px;
+
+    background: #ff7a00;
+
+    box-shadow:
+        0 0 0 5px rgba(255, 122, 0, 0.14);
+}
+
+.tracking-route-dot.drop {
+    background: #ef4444;
+}
+
+.tracking-route-point>div>span {
+    display: block;
+
+    color: #64748b;
+
+    font-size: 0.58rem;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.tracking-route-point strong {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #0b315d;
+
+    font-size: 0.72rem;
+
+    line-height: 1.35;
+}
+
+.tracking-route-connector {
+    width: 2px;
+
+    height: 17px;
+
+    margin-left: 5px;
+
+    background: #dbe7f4;
+}
+
+.tracking-map-actions {
+    padding:
+        12px 16px;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 8px;
+
+    border-top:
+        1px solid #e7eef7;
+}
+
+.tracking-open-map-btn,
+.tracking-refresh-btn {
+    min-height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    font-size: 0.68rem;
+
+    font-weight: 800;
+}
+
+.tracking-open-map-btn {
+    text-decoration: none;
+
+    background:
+        linear-gradient(135deg,
+            #ff9b35,
+            #ff7600);
+
+    color: #ffffff;
+}
+
+.tracking-refresh-btn {
+    border:
+        1px solid #dbe7f4;
+
+    background: #ffffff;
+
+    color: #0b315d;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes trackingFadeUp {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+@keyframes trackingCardIn {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+@keyframes trackingSpin {
+    to {
+        transform:
+            rotate(360deg);
+    }
+}
+
+@keyframes trackingTruckPulse {
+    from {
+        transform:
+            translateY(0);
+    }
+
+    to {
+        transform:
+            translateY(-3px);
+    }
+}
+
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 992px) {
+
+    .tracking-results {
+        grid-template-columns: 1fr;
+    }
+
+    .tracking-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .tracking-submit-btn {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    .tracking-search-heading h2 {
+        font-size: 34px;
+    }
+
+    .tracking-search-heading p {
+        font-size: 15px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .tracking-shell {
+        width: calc(100% - 28px);
+        max-width: none;
+        margin: 0 auto;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+
+    /* ================= HERO ================= */
+
+    .tracking-hero {
+        position: relative;
+
+        min-height: 355px;
+        height: 355px;
+        padding: 0;
+
+        background:
+            url('/tracking-images/tracking-mobile-hero.png') 72% center / cover no-repeat;
+
+        overflow: hidden;
+    }
+
+    .tracking-hero::before {
+        background:
+            linear-gradient(90deg,
+                rgba(3, 20, 40, 0.92) 0%,
+                rgba(3, 22, 43, 0.76) 43%,
+                rgba(4, 24, 46, 0.38) 70%,
+                rgba(5, 20, 38, 0.10) 100%);
+    }
+
+    .tracking-hero-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: transparent;
+        pointer-events: none;
+    }
+
+     .tracking-hero-inner {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  height: 355px;
+  min-height: 355px;
+
+  margin: 0;
+
+  /* premium left/right space */
+  padding: 28px 22px 18px;
+
+  display: flex;
+
+  /* IMPORTANT:
+     content top-middle area-ku varum
+  */
+  align-items: flex-start;
+
+  box-sizing: border-box;
+}
+
+
+.tracking-hero-copy {
+  width: 100%;
+  max-width: 320px;
+
+  /* top-la konjam premium breathing space */
+  margin-top: 60px;
+
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  text-align: left;
+}
+
+  /* =========================
+     HERO BADGE
+  ========================= */
+
+  .tracking-hero-badge {
+    width: fit-content;
+
+    margin: 0 0 13px;
+
+    padding: 8px 12px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    border: 1px solid rgba(255, 255, 255, 0.22);
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.11);
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    color: #ffffff;
+
+    font-size: 10px;
+    line-height: 1;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    box-shadow:
+      0 6px 18px rgba(0, 0, 0, 0.12);
+  }
+
+
+  .tracking-hero-dot {
+    width: 7px;
+    height: 7px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #ff7a00;
+
+    box-shadow:
+      0 0 10px rgba(255, 122, 0, 0.75);
+  }
+
+
+  /* =========================
+     HERO TITLE
+  ========================= */
+
+  .tracking-hero-title {
+    width: 100%;
+    max-width: 300px;
+
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    font-size: 30px;
+    line-height: 1.02;
+
+    font-weight: 900;
+
+    letter-spacing: -0.8px;
+  }
+
+
+  .tracking-hero-title span {
+    color: #ff7a00;
+  }
+
+
+  /* =========================
+     HERO DESCRIPTION
+  ========================= */
+
+  .tracking-hero-description {
+    width: 100%;
+    max-width: 295px;
+
+    margin: 0 0 13px;
+
+    color: rgba(255, 255, 255, 0.92);
+
+    font-size: 10.5px;
+    line-height: 1.45;
+
+    font-weight: 500;
+  }
+
+
+  /* =========================
+     HERO PILLS
+  ========================= */
+
+  .tracking-hero-features {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin: 0;
+  }
+
+
+  .tracking-hero-features span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 7px 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.10);
+
+    color: #ffffff;
+
+    font-size: 8.5px;
+    line-height: 1;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+
+  .tracking-hero-features span svg {
+    width: 12px;
+    height: 12px;
+
+    flex-shrink: 0;
+  }
+
+    /* ================= CONTENT ================= */
+    .tracking-content {
+        padding: 12px 0 30px;
+    }
+
+
+    /* ================= SEARCH CARD ================= */
+
+    .tracking-search-card {
+        width: 100%;
+
+        margin: 0 0 10px;
+        padding: 14px 13px;
+
+        border-radius: 18px;
+
+        box-sizing: border-box;
+    }
+
+    .tracking-search-heading {
+        width: 100%;
+
+        margin: 0 0 8px;
+
+        text-align: center;
+    }
+
+    .tracking-small-label {
+        display: block;
+
+        margin: 0 0 5px;
+
+        color: #ff7a00;
+
+        font-size: 7.5px;
+        line-height: 1;
+        font-weight: 800;
+
+        letter-spacing: 1.6px;
+
+        text-align: center;
+    }
+
+    .tracking-search-heading h2 {
+        width: 100%;
+        max-width: 250px;
+
+        margin: 0 auto 6px;
+
+        color: #0b427c;
+
+        font-size: 24px;
+        line-height: 1.04;
+        font-weight: 800;
+
+        letter-spacing: -0.55px;
+
+        text-align: center;
+    }
+
+    .tracking-search-heading p {
+        width: 100%;
+        max-width: 285px;
+
+        margin: 0 auto;
+
+        color: #687d99;
+
+        font-size: 11px;
+        line-height: 1.4;
+
+        text-align: center;
+    }
+
+    .tracking-security-note {
+        width: fit-content;
+
+        margin: 9px auto 10px;
+        padding: 5px 8px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 5px;
+
+        border-radius: 999px;
+
+        font-size: 8px;
+        line-height: 1;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+    .tracking-security-note svg {
+        width: 11px;
+        height: 11px;
+        flex-shrink: 0;
+    }
+
+
+    /* ================= FORM ================= */
+
+    .tracking-form {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 7px;
+
+        margin-bottom: 11px;
+    }
+
+    .tracking-field label {
+        margin-bottom: 4px;
+
+        font-size: 0.63rem;
+    }
+
+    .tracking-field input {
+        height: 38px;
+
+        padding: 0 9px;
+
+        border-radius: 9px;
+
+        font-size: 0.69rem;
+    }
+
+    .tracking-submit-btn {
+        grid-column: 1 / -1;
+
+        width: 100%;
+        min-width: 0;
+        height: 39px;
+
+        border-radius: 9px;
+
+        font-size: 0.70rem;
+    }
+
+
+    /* ================= PROGRESS ================= */
+
+    .tracking-progress h3 {
+        margin-bottom: 9px;
+
+        font-size: 0.72rem;
+    }
+
+    .tracking-stepper {
+        gap: 4px;
+    }
+
+    .tracking-step-circle {
+        width: 29px;
+        height: 29px;
+        min-width: 29px;
+
+        border-width: 1.5px;
+    }
+
+    .tracking-step-circle svg {
+        width: 13px;
+        height: 13px;
+    }
+
+    .tracking-step-line {
+        height: 4px;
+
+        margin-left: 4px;
+    }
+
+    .tracking-step-label {
+        margin-top: 5px;
+
+        font-size: 0.52rem;
+    }
+
+
+    /* ================= EMPTY STATE ================= */
+
+    .tracking-empty-card {
+        border-radius: 17px;
+    }
+
+    .tracking-card-header {
+        padding: 12px 13px;
+    }
+
+    .tracking-card-header h3 {
+        font-size: 0.82rem;
+    }
+
+    .tracking-card-header p {
+        font-size: 0.59rem;
+    }
+
+    .tracking-awaiting-badge,
+    .tracking-live-badge {
+        padding: 5px 7px;
+
+        font-size: 0.52rem;
+    }
+
+    .tracking-empty-body {
+        min-height: 180px;
+
+        padding: 18px 14px;
+    }
+
+    .tracking-route-demo {
+        width: 115px;
+        height: 52px;
+
+        margin-bottom: 10px;
+    }
+
+    .tracking-route-demo>div {
+        width: 50px;
+        height: 50px;
+    }
+
+    .tracking-empty-body h3 {
+        font-size: 0.82rem;
+    }
+
+    .tracking-empty-body p {
+        max-width: 280px;
+
+        font-size: 0.62rem;
+    }
+
+
+    /* ================= RESULTS ================= */
+
+    .tracking-results {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+    }
+
+    .tracking-summary-card,
+    .tracking-map-card {
+        border-radius: 17px;
+    }
+
+    .tracking-status-banner {
+        padding: 13px 14px;
+    }
+
+    .tracking-status-banner h3 {
+        font-size: 0.90rem;
+    }
+
+    .tracking-status-banner p {
+        font-size: 0.56rem;
+    }
+
+    .tracking-active-badge {
+        padding: 5px 7px;
+
+        font-size: 0.52rem;
+    }
+
+    .tracking-invoice-wrap {
+        padding: 9px 11px 0;
+    }
+
+    .tracking-invoice-btn {
+        min-height: 38px;
+
+        font-size: 0.68rem;
+    }
+
+    .tracking-summary-grid {
+        padding: 11px;
+
+        gap: 7px;
+    }
+
+    .tracking-summary-item {
+        padding: 9px;
+
+        border-radius: 10px;
+    }
+
+    .tracking-summary-item>span {
+        font-size: 0.55rem;
+    }
+
+    .tracking-summary-item strong {
+        font-size: 0.63rem;
+    }
+
+
+    /* ================= MAP ================= */
+
+    .tracking-map-wrap {
+        height: 280px;
+    }
+
+    .tracking-map-actions {
+        padding: 9px 11px;
+
+        gap: 7px;
+    }
+
+    .tracking-open-map-btn,
+    .tracking-refresh-btn {
+        min-height: 37px;
+
+        border-radius: 9px;
+
+        font-size: 0.61rem;
+    }
+
+    .tracking-route-card {
+        padding: 12px 14px;
+    }
+
+    .tracking-route-point>div>span {
+        font-size: 0.52rem;
+    }
+
+    .tracking-route-point strong {
+        font-size: 0.63rem;
+    }
+
+    .tracking-gps-badge {
+        left: 9px;
+        bottom: 9px;
+
+        padding: 6px 8px;
+
+        font-size: 0.54rem;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .tracking-shell {
+        width: calc(100% - 24px);
+    }
+
+    .tracking-hero-inner {
+        width: calc(100% - 24px);
+        padding-bottom: 12px;
+    }
+
+    .tracking-hero-copy {
+        max-width: 305px;
+    }
+
+    .tracking-hero-title {
+        max-width: 290px;
+
+        font-size: 26px;
+    }
+
+    .tracking-hero-description {
+        max-width: 285px;
+
+        font-size: 9.5px;
+    }
+
+    .tracking-hero-features span {
+        padding: 5px 7px;
+
+        font-size: 7.8px;
+    }
+
+    .tracking-search-card {
+        padding: 13px 12px;
+    }
+
+    .tracking-search-heading h2 {
+        max-width: 235px;
+
+        font-size: 23px;
+    }
+
+    .tracking-search-heading p {
+        max-width: 265px;
+
+        font-size: 10.5px;
+    }
+
+    .tracking-security-note {
+        font-size: 7.8px;
+    }
+}
+
+
+/* =========================================================
+   EXTRA SMALL MOBILE
+========================================================= */
+
+@media (max-width: 360px) {
+
+    .tracking-shell,
+    .tracking-hero-inner {
+        width: calc(100% - 20px);
+    }
+
+    .tracking-hero-title {
+        font-size: 24px;
+    }
+
+    .tracking-hero-description {
+        font-size: 9px;
+    }
+
+    .tracking-form {
+        grid-template-columns: 1fr;
+    }
+
+    .tracking-submit-btn {
+        grid-column: auto;
+    }
+
+    .tracking-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tracking-map-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .tracking-hero-copy,
+    .tracking-search-card,
+    .tracking-empty-card,
+    .tracking-summary-card,
+    .tracking-map-card,
+    .tracking-truck-marker img {
+        animation: none !important;
+        transition: none !important;
+    }
+}

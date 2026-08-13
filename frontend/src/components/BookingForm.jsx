@@ -129,7 +129,7 @@ const BookingForm = () => {
     } catch (err) {
       console.log("Distance calculate panna error: ", err);
     }
-    
+
     setDistanceKm(0);
     return 0;
   };
@@ -249,30 +249,30 @@ const BookingForm = () => {
   };
 
   return (
-    <div style={styles.wrapper}>
-      <div className="glass-card" style={styles.formCard}>
-        <div style={styles.topRow}>
-          <div style={styles.badge}>
+    <div className="booking-form-wrapper" style={styles.wrapper}>
+      <div className="glass-card booking-form-card" style={styles.formCard}>
+        <div className="booking-top-row" style={styles.topRow}>
+          <div className="booking-badge" style={styles.badge}>
             <Truck size={15} />
             Instant Booking
           </div>
 
-          <div style={styles.liveTag}>
+          <div className="booking-live-tag" style={styles.liveTag}>
             ● Live Tracking
           </div>
         </div>
 
-        <h3 style={styles.title}>
+        <h3 className="booking-form-title" style={styles.title}>
           Book a Truck <span style={styles.highlight}>Instantly</span>
         </h3>
 
-        <p style={styles.subtitle}>
+        <p className="booking-form-subtitle" style={styles.subtitle}>
           Fast booking with secure tracking & instant confirmation.
         </p>
 
-        <form onSubmit={handleSubmit} style={styles.formGrid}>
+        <form className="booking-form-grid" onSubmit={handleSubmit} style={styles.formGrid}>
           <div className="form-group">
-            <label style={styles.label}>
+            <label className="booking-label" style={styles.label}>
               <User size={15} />
               Full Name
             </label>
@@ -281,8 +281,8 @@ const BookingForm = () => {
               <input
                 type="text"
                 name="customer_name"
-                className="form-control"
-                placeholder="Name"
+                className="form-control booking-input"
+                placeholder="Enter your full name"
                 value={formData.customer_name}
                 onChange={handleChange}
                 required
@@ -292,7 +292,7 @@ const BookingForm = () => {
           </div>
 
           <div className="form-group">
-            <label style={styles.label}>
+            <label className="booking-label" style={styles.label}>
               <Phone size={15} />
               Mobile Number
             </label>
@@ -301,7 +301,7 @@ const BookingForm = () => {
               <input
                 type="tel"
                 name="mobile"
-                className="form-control"
+                className="form-control booking-input"
                 placeholder="+91 99999 99999"
                 value={formData.mobile}
                 onChange={handleChange}
@@ -312,7 +312,7 @@ const BookingForm = () => {
           </div>
 
           <div className="form-group">
-            <label style={styles.label}>
+            <label className="booking-label" style={styles.label}>
               <MapPin size={15} />
               Pickup Location
             </label>
@@ -345,7 +345,8 @@ const BookingForm = () => {
                 <input
                   type="text"
                   name="pickup_location"
-                  placeholder="Pickup Location"
+                  className="booking-input"
+                  placeholder="Enter pickup location"
                   value={formData.pickup_location}
                   onChange={handleChange}
                   required
@@ -356,7 +357,7 @@ const BookingForm = () => {
           </div>
 
           <div className="form-group">
-            <label style={styles.label}>
+            <label className="booking-label" style={styles.label}>
               <MapPin size={15} />
               Drop Location
             </label>
@@ -389,7 +390,8 @@ const BookingForm = () => {
                 <input
                   type="text"
                   name="drop_location"
-                  placeholder="Drop Location"
+                  className="booking-input"
+                  placeholder="Enter drop location"
                   value={formData.drop_location}
                   onChange={handleChange}
                   required
@@ -400,7 +402,7 @@ const BookingForm = () => {
           </div>
 
           <div
-            className="form-group"
+            className="form-group booking-select-row"
             style={{
               gridColumn: '1 / -1',
               display: 'flex',
@@ -408,15 +410,15 @@ const BookingForm = () => {
             }}
           >
 
-            <div style={{ flex: 1 }}>
-              <label style={styles.label}>
+            <div className="booking-select-column" style={{ flex: 1 }}>
+              <label className="booking-label" style={styles.label}>
                 <Truck size={15} />
                 Truck Type
               </label>
 
               <select
                 name="truck_type"
-                className="form-control"
+                className="form-control booking-select"
                 value={formData.truck_type}
                 onChange={handleChange}
                 style={styles.select}
@@ -473,6 +475,7 @@ const BookingForm = () => {
                 <div style={{ marginTop: "14px" }}>
                   <select
                     name="trailer_size"
+                    className="booking-select"
                     value={formData.trailer_size || ""}
                     onChange={handleChange}
                     style={styles.select}
@@ -501,15 +504,15 @@ const BookingForm = () => {
               )}
             </div>
 
-            <div style={{ flex: 1 }}>
-              <label style={styles.label}>
+            <div className="booking-select-column" style={{ flex: 1 }}>
+              <label className="booking-label" style={styles.label}>
                 <ShieldCheck size={15} />
                 Trip Level
               </label>
 
               <select
                 name="trip_level"
-                className="form-control"
+                className="form-control booking-select"
                 value={formData.trip_level}
                 onChange={handleChange}
                 style={styles.select}
@@ -589,7 +592,7 @@ const BookingForm = () => {
             </div>
           )}
 
-          <div style={styles.actions}>
+          <div className="booking-actions" style={styles.actions}>
             {!estimate ? (
               <button
                 type="button"
@@ -599,7 +602,7 @@ const BookingForm = () => {
                 Check Truck Fare
               </button>
             ) : (
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div className="booking-confirm-actions" style={{ display: 'flex', gap: '10px' }}>
                 <button
                   type="submit"
                   style={styles.confirmBtn}
@@ -614,6 +617,7 @@ const BookingForm = () => {
                     setEstimate(null);
                     setEstimateDetails(null);
                   }}
+                  className="booking-clear-btn"
                   style={{
                     ...styles.fareBtn,
                     width: '35%',
@@ -631,6 +635,394 @@ const BookingForm = () => {
             ℹ️ After booking, you will receive Booking ID & Tracking OTP.
           </div>
         </form>
+
+        <style>{`
+          .booking-form-wrapper,
+          .booking-form-wrapper * {
+            box-sizing: border-box;
+          }
+
+          .booking-form-wrapper {
+            width: 100%;
+          }
+
+          .booking-form-card {
+            width: 100%;
+            min-width: 0;
+            border: 1px solid rgba(255,255,255,.75) !important;
+            background: linear-gradient(145deg, rgba(255,255,255,.99), rgba(246,249,254,.97)) !important;
+            box-shadow:
+              0 28px 70px rgba(4,18,38,.22),
+              inset 0 1px 0 rgba(255,255,255,.95) !important;
+          }
+
+          .booking-form-card .form-group {
+            min-width: 0;
+          }
+
+          .booking-form-card input,
+          .booking-form-card select {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+          }
+
+          .booking-form-card input:focus,
+          .booking-form-card select:focus {
+            border-color: #6aa4ef !important;
+            box-shadow: 0 0 0 4px rgba(37,99,235,.09), 0 8px 18px rgba(15,49,88,.06) !important;
+          }
+
+          .booking-badge,
+          .booking-live-tag {
+            white-space: nowrap;
+          }
+
+
+          /* =========================================
+             LAPTOP / DESKTOP COMPACT BOOKING FORM
+             Mobile styles below remain unchanged
+          ========================================= */
+          @media (min-width: 769px) {
+            .booking-form-wrapper {
+              width: 100%;
+            }
+
+            .booking-form-card {
+              padding: 20px 22px !important;
+              border-radius: 22px !important;
+            }
+
+            .booking-top-row {
+              margin-bottom: 10px !important;
+            }
+
+            .booking-badge,
+            .booking-live-tag {
+              padding: 6px 11px !important;
+              font-size: 0.72rem !important;
+            }
+
+            .booking-form-title {
+              font-size: 1.55rem !important;
+              line-height: 1.05 !important;
+              margin-bottom: 4px !important;
+            }
+
+            .booking-form-subtitle {
+              font-size: 0.80rem !important;
+              margin-bottom: 14px !important;
+              line-height: 1.35 !important;
+            }
+
+            .booking-form-grid {
+              gap: 0 12px !important;
+            }
+
+            .booking-form-card .form-group {
+              margin-bottom: 9px !important;
+            }
+
+            .booking-label {
+              font-size: 0.76rem !important;
+              margin-bottom: 5px !important;
+              gap: 5px !important;
+            }
+
+            .booking-label svg {
+              width: 13px !important;
+              height: 13px !important;
+            }
+
+            .booking-form-card input,
+            .booking-form-card select {
+              min-height: 42px !important;
+              height: 42px !important;
+              padding: 8px 12px !important;
+              border-radius: 12px !important;
+              font-size: 0.82rem !important;
+            }
+
+            .booking-select-row {
+              gap: 12px !important;
+              margin-bottom: 10px !important;
+            }
+
+            .booking-actions {
+              margin-bottom: 9px !important;
+            }
+
+            .booking-actions button {
+              min-height: 44px !important;
+              padding: 9px 14px !important;
+              border-radius: 12px !important;
+              font-size: 0.84rem !important;
+            }
+
+            .booking-form-grid > div:last-child {
+              padding: 9px 12px !important;
+              border-radius: 12px !important;
+              font-size: 0.72rem !important;
+            }
+
+            .booking-confirm-actions {
+              gap: 8px !important;
+            }
+          }
+
+          @media (max-width: 430px) {
+            .booking-form-card {
+              padding: 14px 13px !important;
+              border-radius: 18px !important;
+            }
+
+            .booking-form-title {
+              font-size: 1.38rem !important;
+            }
+
+            .booking-form-card input,
+            .booking-form-card select {
+              min-height: 38px !important;
+              padding: 7px 9px !important;
+              font-size: .77rem !important;
+            }
+
+            .booking-label {
+              font-size: .69rem !important;
+            }
+
+            .booking-select-row {
+              gap: 7px !important;
+            }
+
+            .booking-confirm-actions {
+              flex-direction: column !important;
+            }
+
+            .booking-clear-btn {
+              width: 100% !important;
+            }
+          }
+
+@media (max-width: 768px) {
+            .booking-form-wrapper {
+              width: 100% !important;
+              padding: 0 !important;
+              background: transparent !important;
+            }
+
+            .booking-form-card {
+              width: 100% !important;
+              padding: 12px !important;
+              border-radius: 17px !important;
+              border: 1px solid #e6edf6 !important;
+              background:
+                linear-gradient(145deg, #ffffff 0%, #f8fbff 100%) !important;
+              box-shadow:
+                0 10px 24px rgba(15,49,88,.08),
+                inset 0 1px 0 rgba(255,255,255,.95) !important;
+            }
+
+            .booking-top-row {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: flex-start !important;
+              gap: 6px !important;
+              flex-wrap: nowrap !important;
+              margin-bottom: 9px !important;
+            }
+
+            .booking-badge,
+            .booking-live-tag {
+              padding: 6px 9px !important;
+              border-radius: 999px !important;
+              font-size: .66rem !important;
+              line-height: 1 !important;
+              white-space: nowrap !important;
+            }
+
+            .booking-badge svg {
+              width: 12px !important;
+              height: 12px !important;
+            }
+
+            .booking-form-title {
+              margin-bottom: 3px !important;
+              font-size: 1.26rem !important;
+              line-height: 1.04 !important;
+              letter-spacing: -.02em !important;
+            }
+
+            .booking-form-subtitle {
+              margin-bottom: 10px !important;
+              font-size: .70rem !important;
+              line-height: 1.35 !important;
+            }
+
+            /* Keep fields in compact 2-column mobile layout */
+            .booking-form-grid {
+              display: grid !important;
+              grid-template-columns: minmax(0,1fr) minmax(0,1fr) !important;
+              column-gap: 7px !important;
+              row-gap: 0 !important;
+            }
+
+            .booking-form-card .form-group {
+              min-width: 0 !important;
+              margin-bottom: 7px !important;
+            }
+
+            .booking-label {
+              margin-bottom: 3px !important;
+              gap: 4px !important;
+              font-size: .66rem !important;
+              line-height: 1.15 !important;
+              white-space: nowrap !important;
+            }
+
+            .booking-label svg {
+              width: 12px !important;
+              height: 12px !important;
+              flex-shrink: 0 !important;
+            }
+
+            .booking-form-card input,
+            .booking-form-card select {
+              width: 100% !important;
+              max-width: 100% !important;
+              min-width: 0 !important;
+              min-height: 39px !important;
+              height: 39px !important;
+              padding: 7px 9px !important;
+              border-radius: 10px !important;
+              border: 1px solid #dbe5f1 !important;
+              background: #ffffff !important;
+              font-size: .73rem !important;
+              box-shadow: none !important;
+            }
+
+            .booking-form-card input::placeholder {
+              color: #8a94a4 !important;
+              font-size: .71rem !important;
+            }
+
+            .booking-select-row {
+              grid-column: 1 / -1 !important;
+              display: grid !important;
+              grid-template-columns: minmax(0,1fr) minmax(0,1fr) !important;
+              gap: 7px !important;
+              margin: 0 0 7px !important;
+            }
+
+            .booking-select-column {
+              width: 100% !important;
+              min-width: 0 !important;
+            }
+
+            .booking-actions {
+              grid-column: 1 / -1 !important;
+              width: 100% !important;
+              margin-bottom: 6px !important;
+            }
+
+            .booking-actions button {
+              width: 100% !important;
+              min-height: 40px !important;
+              padding: 8px 10px !important;
+              border-radius: 10px !important;
+              font-size: .77rem !important;
+              box-shadow: 0 8px 18px rgba(37,99,235,.18) !important;
+            }
+
+            .booking-confirm-actions {
+              width: 100% !important;
+              gap: 6px !important;
+            }
+
+            .booking-clear-btn {
+              min-height: 40px !important;
+            }
+
+            /* Distance / estimate sections span full width */
+            .booking-form-grid > div[style*="grid-column"],
+            .booking-form-grid > div[style*="gridColumn"] {
+              grid-column: 1 / -1 !important;
+            }
+
+            /* Bottom info note */
+            .booking-form-grid > div:last-child {
+              grid-column: 1 / -1 !important;
+              padding: 7px 8px !important;
+              border-radius: 10px !important;
+              font-size: .62rem !important;
+              line-height: 1.25 !important;
+            }
+          }
+
+          @media (max-width: 430px) {
+            .booking-form-card {
+              padding: 11px !important;
+              border-radius: 16px !important;
+            }
+
+            .booking-top-row {
+              gap: 5px !important;
+              margin-bottom: 8px !important;
+            }
+
+            .booking-badge,
+            .booking-live-tag {
+              padding: 5px 8px !important;
+              font-size: .63rem !important;
+            }
+
+            .booking-form-title {
+              font-size: 1.20rem !important;
+            }
+
+            .booking-form-subtitle {
+              font-size: .67rem !important;
+              margin-bottom: 9px !important;
+            }
+
+            .booking-form-grid {
+              column-gap: 6px !important;
+            }
+
+            .booking-label {
+              font-size: .63rem !important;
+            }
+
+            .booking-form-card input,
+            .booking-form-card select {
+              min-height: 38px !important;
+              height: 38px !important;
+              padding: 6px 8px !important;
+              font-size: .70rem !important;
+            }
+
+            .booking-form-card input::placeholder {
+              font-size: .68rem !important;
+            }
+
+            .booking-actions button {
+              min-height: 39px !important;
+              font-size: .74rem !important;
+            }
+          }
+
+          @media (max-width: 350px) {
+            .booking-form-grid {
+              grid-template-columns: 1fr !important;
+            }
+
+            .booking-select-row {
+              grid-template-columns: 1fr !important;
+            }
+          }
+
+        `}</style>
       </div>
     </div>
   );
@@ -742,6 +1134,7 @@ const styles = {
     outline: 'none',
     fontSize: '1rem',
     cursor: 'pointer',
+    boxSizing: 'border-box',
   },
 
   estimateBox: {
