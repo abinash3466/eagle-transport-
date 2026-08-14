@@ -136,7 +136,7 @@ const CreateBooking = () => {
     try {
       const saved = await createBooking(newBooking);
       const savedBooking = saved.booking || saved;
-      
+
       setBooking({
         ...form,
         bookingId: savedBooking.bookingId || "Generated",
@@ -158,8 +158,8 @@ const CreateBooking = () => {
   };
 
   return (
-    <div style={styles.page}>
-      <div style={styles.heroCard}>
+    <div className="create-booking-page" style={styles.page}>
+      <div className="create-booking-hero" style={styles.heroCard}>
         <div>
           <div style={styles.badge}>
             <Sparkles size={16} />
@@ -172,7 +172,7 @@ const CreateBooking = () => {
           </p>
         </div>
 
-        <div style={styles.heroMiniCard}>
+        <div className="create-booking-total" style={styles.heroMiniCard}>
           <p style={styles.miniLabel}>Total Amount (With GST)</p>
           <h3 style={styles.amount}>
             ₹{priceEstimate.toLocaleString('en-IN')}
@@ -185,11 +185,11 @@ const CreateBooking = () => {
         </div>
       </div>
 
-      <div style={styles.grid}>
-        <div className="card" style={styles.formCard}>
+      <div className="create-booking-grid" style={styles.grid}>
+        <div className="card create-booking-form-card" style={styles.formCard}>
           <h3 style={styles.sectionTitle}>Shipment Details</h3>
 
-          <form onSubmit={handleSubmit} style={styles.formGrid}>
+          <form className="create-booking-form-grid" onSubmit={handleSubmit} style={styles.formGrid}>
             <Field icon={<User size={18} />} label="Customer Name">
               <input
                 name="customerName"
@@ -397,30 +397,31 @@ const CreateBooking = () => {
               />
             </div>
 
-            <button className="btn btn-primary" style={styles.submitBtn}>
+            <button className="btn btn-primary create-booking-submit" style={styles.submitBtn}>
               <CheckCircle2 size={18} />
               Create Booking
             </button>
           </form>
         </div>
 
-        <div className="card" style={styles.previewCard}>
+        <div className="card create-booking-preview-card" style={styles.previewCard}>
           <h3 style={styles.sectionTitle}>Booking Preview</h3>
 
           {!booking ? (
-            <div style={styles.emptyPreview}>
+            <div className="create-booking-empty" style={styles.emptyPreview}>
               <Package size={54} />
               <h4>No booking created yet</h4>
               <p>Fill the form and create booking to generate Booking ID and OTP.</p>
             </div>
           ) : (
-            <div style={styles.ticket}>
-              <div style={styles.ticketTop}>
+            <div className="create-booking-ticket" style={styles.ticket}>
+              <div className="create-booking-ticket-top" style={styles.ticketTop}>
                 <div>
                   <p style={styles.ticketLabel}>Booking ID</p>
                   <h2 style={styles.bookingId}>{booking.bookingId}</h2>
                 </div>
                 <button
+                  className="create-booking-copy"
                   style={styles.copyBtn}
                   onClick={() => navigator.clipboard.writeText(booking.bookingId)}
                 >
@@ -428,7 +429,7 @@ const CreateBooking = () => {
                 </button>
               </div>
 
-              <div style={styles.otpBox}>
+              <div className="create-booking-otp" style={styles.otpBox}>
                 Tracking OTP: <strong>{booking.otp}</strong>
               </div>
 
@@ -448,7 +449,7 @@ const CreateBooking = () => {
                 <strong style={{ color: '#ff7a00', fontSize: '1.2rem' }}>₹{booking.amount.toLocaleString('en-IN')}</strong>
               </div>
 
-              <div style={styles.statusBox}>
+              <div className="create-booking-status" style={styles.statusBox}>
                 <CheckCircle2 size={18} />
                 Booking Created Successfully
               </div>
@@ -456,13 +457,236 @@ const CreateBooking = () => {
           )}
         </div>
       </div>
+      <style>{`
+        @media (max-width: 768px) {
+          .create-booking-page {
+            gap: 14px !important;
+            padding-bottom: 14px !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            overflow-x: hidden !important;
+          }
+
+          .create-booking-hero {
+            grid-template-columns: 1fr !important;
+            gap: 14px !important;
+            padding: 18px !important;
+            border-radius: 22px !important;
+            box-shadow: 0 16px 34px rgba(15, 74, 136, 0.18) !important;
+          }
+
+          .create-booking-hero > div:first-child > div:first-child {
+            padding: 7px 11px !important;
+            margin-bottom: 10px !important;
+            font-size: 11px !important;
+            gap: 6px !important;
+          }
+
+          .create-booking-hero h2 {
+            font-size: 26px !important;
+            line-height: 1.08 !important;
+            letter-spacing: -0.7px !important;
+          }
+
+          .create-booking-hero > div:first-child > p {
+            margin-top: 8px !important;
+            font-size: 12px !important;
+            line-height: 1.5 !important;
+            max-width: 100% !important;
+          }
+
+          .create-booking-total {
+            padding: 14px 15px !important;
+            border-radius: 17px !important;
+            backdrop-filter: blur(10px) !important;
+          }
+
+          .create-booking-total p:first-child {
+            font-size: 10px !important;
+          }
+
+          .create-booking-total h3 {
+            margin: 5px 0 !important;
+            font-size: 25px !important;
+            line-height: 1 !important;
+          }
+
+          .create-booking-total p:last-child {
+            font-size: 10px !important;
+            line-height: 1.45 !important;
+          }
+
+          .create-booking-grid {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+          }
+
+          .create-booking-form-card,
+          .create-booking-preview-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            padding: 16px !important;
+            border-radius: 20px !important;
+            box-sizing: border-box !important;
+            box-shadow: 0 12px 28px rgba(15, 74, 136, 0.10) !important;
+          }
+
+          .create-booking-form-card > h3,
+          .create-booking-preview-card > h3 {
+            margin-bottom: 14px !important;
+            font-size: 17px !important;
+            letter-spacing: -0.25px !important;
+          }
+
+          .create-booking-form-grid {
+            grid-template-columns: 1fr !important;
+            gap: 11px !important;
+          }
+
+          .create-booking-field {
+            min-width: 0 !important;
+          }
+
+          .create-booking-label {
+            margin-bottom: 6px !important;
+            gap: 7px !important;
+            font-size: 11px !important;
+          }
+
+          .create-booking-label svg {
+            width: 15px !important;
+            height: 15px !important;
+          }
+
+          .create-booking-form-grid input,
+          .create-booking-form-grid select,
+          .create-booking-form-grid textarea {
+            width: 100% !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+            padding: 11px 12px !important;
+            border-radius: 12px !important;
+            font-size: 12px !important;
+            font-weight: 650 !important;
+            box-shadow: 0 4px 12px rgba(15, 74, 136, 0.04) !important;
+          }
+
+          .create-booking-form-grid textarea {
+            min-height: 78px !important;
+          }
+
+          .create-booking-submit {
+            min-height: 44px !important;
+            margin-top: 1px !important;
+            padding: 0 14px !important;
+            border-radius: 13px !important;
+            font-size: 12px !important;
+            box-shadow: 0 10px 22px rgba(79, 70, 229, 0.20) !important;
+            transition: transform .16s ease, box-shadow .16s ease !important;
+          }
+
+          .create-booking-submit:active {
+            transform: scale(.98) !important;
+          }
+
+          .create-booking-empty {
+            min-height: 150px !important;
+            gap: 6px !important;
+            padding: 14px 8px !important;
+          }
+
+          .create-booking-empty svg {
+            width: 38px !important;
+            height: 38px !important;
+          }
+
+          .create-booking-empty h4 {
+            margin: 3px 0 !important;
+            font-size: 14px !important;
+          }
+
+          .create-booking-empty p {
+            margin: 0 !important;
+            font-size: 10px !important;
+            line-height: 1.45 !important;
+          }
+
+          .create-booking-ticket {
+            padding: 14px !important;
+            border-radius: 17px !important;
+          }
+
+          .create-booking-ticket-top {
+            margin-bottom: 10px !important;
+            gap: 10px !important;
+          }
+
+          .create-booking-ticket-top h2 {
+            font-size: 21px !important;
+            overflow-wrap: anywhere !important;
+          }
+
+          .create-booking-copy {
+            padding: 9px !important;
+            border-radius: 11px !important;
+            flex-shrink: 0 !important;
+          }
+
+          .create-booking-otp {
+            margin: 10px 0 12px !important;
+            padding: 11px 12px !important;
+            border-radius: 12px !important;
+            font-size: 11px !important;
+          }
+
+          .create-booking-info-row {
+            padding: 9px 0 !important;
+            gap: 10px !important;
+            font-size: 11px !important;
+            align-items: flex-start !important;
+          }
+
+          .create-booking-info-row > span {
+            color: #64748b !important;
+            flex: 0 0 38% !important;
+          }
+
+          .create-booking-info-row > strong {
+            text-align: right !important;
+            overflow-wrap: anywhere !important;
+          }
+
+          .create-booking-status {
+            margin-top: 12px !important;
+            padding: 10px !important;
+            border-radius: 12px !important;
+            gap: 7px !important;
+            font-size: 11px !important;
+          }
+        }
+
+        @media (max-width: 420px) {
+          .create-booking-hero { padding: 16px !important; border-radius: 19px !important; }
+          .create-booking-hero h2 { font-size: 23px !important; }
+          .create-booking-total h3 { font-size: 22px !important; }
+          .create-booking-form-card, .create-booking-preview-card { padding: 14px !important; border-radius: 18px !important; }
+          .create-booking-form-grid { gap: 10px !important; }
+          .create-booking-form-grid input, .create-booking-form-grid select, .create-booking-form-grid textarea { padding: 10px 11px !important; font-size: 11.5px !important; }
+          .create-booking-submit { min-height: 42px !important; }
+          .create-booking-info-row { font-size: 10.5px !important; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .create-booking-submit { transition: none !important; }
+        }
+      `}</style>
     </div>
   );
 };
 
 const Field = ({ icon, label, children }) => (
-  <div>
-    <label style={styles.label}>
+  <div className="create-booking-field">
+    <label className="create-booking-label" style={styles.label}>
       {icon}
       {label}
     </label>
@@ -471,7 +695,7 @@ const Field = ({ icon, label, children }) => (
 );
 
 const Info = ({ label, value }) => (
-  <div style={styles.infoRow}>
+  <div className="create-booking-info-row" style={styles.infoRow}>
     <span>{label}</span>
     <strong>{value || '-'}</strong>
   </div>

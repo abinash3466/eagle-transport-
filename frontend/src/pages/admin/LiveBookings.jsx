@@ -39,15 +39,15 @@ const LiveBookings = () => {
   const GST_PERCENTAGE = 5;
 
   const openBookingReport = (booking) => {
-  const bookingMongoId = booking?._id || booking?.id;
+    const bookingMongoId = booking?._id || booking?.id;
 
-  if (!bookingMongoId) {
-    alert('Booking ID not found');
-    return;
-  }
+    if (!bookingMongoId) {
+      alert('Booking ID not found');
+      return;
+    }
 
-  window.open(`${API_URL}/bookings/${bookingMongoId}/invoice`, '_blank');
-};
+    window.open(`${API_URL}/bookings/${bookingMongoId}/invoice`, '_blank');
+  };
 
   const fetchData = async () => {
     try {
@@ -89,14 +89,14 @@ const LiveBookings = () => {
   };
 
   useEffect(() => {
-  fetchData();
-
-  const interval = setInterval(() => {
     fetchData();
-  }, 120000);
 
-  return () => clearInterval(interval);
-}, []);
+    const interval = setInterval(() => {
+      fetchData();
+    }, 120000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const getBookingId = (booking) => booking.bookingId || booking.id || booking._id;
   const getCustomer = (booking) => booking.customerName || booking.customer || 'Unknown Customer';
@@ -122,67 +122,67 @@ const LiveBookings = () => {
     driver?.driverName || driver?.name || driver?.fullName || 'Driver';
 
   const getTruckName = (truck) =>
-  truck?.name ||
-  truck?.truckName ||
-  truck?.number ||
-  truck?.truckNumber ||
-  truck?.vehicleNumber ||
-  'Unassigned';
+    truck?.name ||
+    truck?.truckName ||
+    truck?.number ||
+    truck?.truckNumber ||
+    truck?.vehicleNumber ||
+    'Unassigned';
 
-const getTruckText = (booking) => {
-  const truck = booking.truck || booking.assignedTruck;
+  const getTruckText = (booking) => {
+    const truck = booking.truck || booking.assignedTruck;
 
-  if (!truck) return 'Unassigned';
+    if (!truck) return 'Unassigned';
 
-  const name =
-    truck.name ||
-    truck.truckName ||
-    truck.number ||
-    truck.truckNumber ||
-    truck.vehicleNumber ||
-    'Truck';
+    const name =
+      truck.name ||
+      truck.truckName ||
+      truck.number ||
+      truck.truckNumber ||
+      truck.vehicleNumber ||
+      'Truck';
 
-  const type =
-    truck.category ||
-    truck.truckType ||
-    truck.type ||
-    '';
+    const type =
+      truck.category ||
+      truck.truckType ||
+      truck.type ||
+      '';
 
-  return type ? `${name} • ${type}` : name;
-};
+    return type ? `${name} • ${type}` : name;
+  };
 
-const getDriverText = (booking) => {
-  const driver = booking.driver || booking.assignedDriver;
+  const getDriverText = (booking) => {
+    const driver = booking.driver || booking.assignedDriver;
 
-  if (!driver) return 'Unassigned';
+    if (!driver) return 'Unassigned';
 
-  const name = driver.driverName || driver.name || driver.fullName || 'Driver';
-  const phone = driver.phone || driver.mobile || driver.mobileNumber || 'No phone';
+    const name = driver.driverName || driver.name || driver.fullName || 'Driver';
+    const phone = driver.phone || driver.mobile || driver.mobileNumber || 'No phone';
 
-  return `${name} • ${phone}`;
-};
+    return `${name} • ${phone}`;
+  };
 
-const isBookingAssigned = (booking) => {
-  const hasTruck = Boolean(
-    booking.truck?._id ||
-    booking.truck?.id ||
-    booking.truck ||
-    booking.assignedTruck?._id ||
-    booking.assignedTruck?.id ||
-    booking.assignedTruck
-  );
+  const isBookingAssigned = (booking) => {
+    const hasTruck = Boolean(
+      booking.truck?._id ||
+      booking.truck?.id ||
+      booking.truck ||
+      booking.assignedTruck?._id ||
+      booking.assignedTruck?.id ||
+      booking.assignedTruck
+    );
 
-  const hasDriver = Boolean(
-    booking.driver?._id ||
-    booking.driver?.id ||
-    booking.driver ||
-    booking.assignedDriver?._id ||
-    booking.assignedDriver?.id ||
-    booking.assignedDriver
-  );
+    const hasDriver = Boolean(
+      booking.driver?._id ||
+      booking.driver?.id ||
+      booking.driver ||
+      booking.assignedDriver?._id ||
+      booking.assignedDriver?.id ||
+      booking.assignedDriver
+    );
 
-  return hasTruck && hasDriver;
-};
+    return hasTruck && hasDriver;
+  };
 
   const normalizeStatus = (status) => {
     const s = (status || '').toLowerCase();
@@ -232,11 +232,11 @@ const isBookingAssigned = (booking) => {
     delivered: bookings.filter((b) => normalizeStatus(b.status) === 'Delivered').length,
   };
   const liveMapBookings = useMemo(() => {
-  return bookings.filter((booking) => {
-    const status = normalizeStatus(booking.status);
-    return status === 'Dispatched' || status === 'In Transit';
-  });
-}, [bookings]);
+    return bookings.filter((booking) => {
+      const status = normalizeStatus(booking.status);
+      return status === 'Dispatched' || status === 'In Transit';
+    });
+  }, [bookings]);
 
   const getStatusClass = (status) => {
     const s = normalizeStatus(status);
@@ -410,7 +410,7 @@ const isBookingAssigned = (booking) => {
     const outstanding = getOutstandingAmount(booking);
 
     return (
-      <div style={styles.actionPanel}>
+      <div className="lb-action-panel" style={styles.actionPanel}>
         {!isBookingAssigned(booking) && status === 'Booked' && (
           <div>
             <p style={styles.actionTitle}>Assign Truck & Driver</p>
@@ -443,7 +443,7 @@ const isBookingAssigned = (booking) => {
 
         <div>
           <p style={styles.actionTitle}>Payment Details</p>
-          <div style={styles.paymentSummaryBox}>
+          <div className="lb-payment-summary" style={styles.paymentSummaryBox}>
             <span>Base Freight <strong>{formatMoney(getBaseAmount(booking))}</strong></span>
             <span>GST ({GST_PERCENTAGE}%) <strong>{formatMoney(getGstAmount(booking))}</strong></span>
             <span>Invoice Total <strong>{formatMoney(invoiceTotal)}</strong></span>
@@ -475,7 +475,7 @@ const isBookingAssigned = (booking) => {
 
         <div>
           <p style={styles.actionTitle}>Status History</p>
-          <div style={styles.historyBox}>
+          <div className="lb-history-box" style={styles.historyBox}>
             {(booking.statusHistory || []).length === 0 ? <p style={styles.subText}>No history yet</p> : (
               booking.statusHistory.map((item, index) => (
                 <div key={index} style={styles.historyItem}>
@@ -491,111 +491,111 @@ const isBookingAssigned = (booking) => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+    <div className="lb-page" style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       {/* 🔥 TOP HEADER */}
-    <div style={styles.headerRow}>
-      <div>
-        <h1 style={styles.pageTitle}>Live Bookings</h1>
-        <p style={styles.pageSub}>
-          Manage and monitor Eagle Transport operations from this section.
-        </p>
-      </div>
-
-      <button style={styles.topRefreshBtn} onClick={fetchData}>
-        🔄 Refresh
-      </button>
-    </div>
-      <div className="card" style={styles.liveMapCard}>
-  <div style={styles.liveMapHeader}>
-    <div>
-      <h3 style={styles.liveMapTitle}>Live Fleet Tracking Map</h3>
-      <p style={styles.liveMapSub}>
-        Auto-refresh every 2 minuts • Current location, pickup and drop route overview
-      </p>
-    </div>
-
-    <span className="badge badge-info">
-      {liveMapBookings.length} Live
-    </span>
-  </div>
-
-  {liveMapBookings.length === 0 ? (
-    <div style={styles.liveMapEmpty}>
-      No live trucks currently on route
-    </div>
-  ) : (
-    <div style={styles.liveMapGrid}>
-  {liveMapBookings.map((booking) => {
-    const currentLocationText =
-      booking?.liveLocation?.lat && booking?.liveLocation?.lng
-        ? `${booking.liveLocation.lat}, ${booking.liveLocation.lng}`
-        : booking?.currentLocation || booking?.pickup || 'India';
-
-    const mapQuery = encodeURIComponent(currentLocationText);
-
-    return (
-      <div key={booking._id || booking.bookingId} style={styles.liveMapItem}>
-        
-        {/* MAP */}
-        <div style={styles.mapBox}>
-          <iframe
-            title={`map-${booking._id}`}
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            src={`https://maps.google.com/maps?q=${mapQuery}&z=12&output=embed`}
-          />
+      <div className="lb-header-row" style={styles.headerRow}>
+        <div>
+          <h1 className="lb-page-title" style={styles.pageTitle}>Live Bookings</h1>
+          <p className="lb-page-sub" style={styles.pageSub}>
+            Manage and monitor Eagle Transport operations from this section.
+          </p>
         </div>
 
-        {/* ROUTE PANEL */}
-        <div style={styles.routeMiniPanel}>
-          <div style={styles.routeMiniTop}>
-            <div>
-              <h4 style={styles.routeMiniTitle}>
-                {getBookingId(booking)}
-              </h4>
-              <p style={styles.routeMiniSub}>
-                {getTruckText(booking)} • {getDriverText(booking)}
-              </p>
-            </div>
-
-            <span className={`badge badge-${getStatusClass(booking.status)}`}>
-              {normalizeStatus(booking.status)}
-            </span>
+        <button className="lb-refresh-btn" style={styles.topRefreshBtn} onClick={fetchData}>
+          🔄 Refresh
+        </button>
+      </div>
+      <div className="card lb-map-card" style={styles.liveMapCard}>
+        <div className="lb-map-header" style={styles.liveMapHeader}>
+          <div>
+            <h3 style={styles.liveMapTitle}>Live Fleet Tracking Map</h3>
+            <p style={styles.liveMapSub}>
+              Auto-refresh every 2 minuts • Current location, pickup and drop route overview
+            </p>
           </div>
 
-          <div style={styles.routeLineBox}>
-            <div style={styles.routePoint}>
-              <span style={styles.pickupDot}></span>
-              <p><b>Pickup:</b> {getPickup(booking)}</p>
-            </div>
-
-            <div style={styles.routeConnector}></div>
-
-            <div style={styles.routePoint}>
-              <span style={styles.currentDot}></span>
-              <p><b>Current:</b> {currentLocationText}</p>
-            </div>
-
-            <div style={styles.routeConnector}></div>
-
-            <div style={styles.routePoint}>
-              <span style={styles.dropDot}></span>
-              <p><b>Drop:</b> {getDrop(booking)}</p>
-            </div>
-          </div>
+          <span className="badge badge-info">
+            {liveMapBookings.length} Live
+          </span>
         </div>
 
-      </div>
-    );
-  })}
-</div>
-  )}
-</div>
+        {liveMapBookings.length === 0 ? (
+          <div style={styles.liveMapEmpty}>
+            No live trucks currently on route
+          </div>
+        ) : (
+          <div className="lb-map-grid" style={styles.liveMapGrid}>
+            {liveMapBookings.map((booking) => {
+              const currentLocationText =
+                booking?.liveLocation?.lat && booking?.liveLocation?.lng
+                  ? `${booking.liveLocation.lat}, ${booking.liveLocation.lng}`
+                  : booking?.currentLocation || booking?.pickup || 'India';
 
-      <div style={styles.summaryGrid}>
-        <div className="glass-card" style={styles.summaryCard}>
-          <div style={{ ...styles.summaryIconWrap, backgroundColor: 'rgba(15, 74, 136, 0.10)', color: 'var(--primary-blue)' }}>
+              const mapQuery = encodeURIComponent(currentLocationText);
+
+              return (
+                <div className="lb-map-item" key={booking._id || booking.bookingId} style={styles.liveMapItem}>
+
+                  {/* MAP */}
+                  <div className="lb-map-box" style={styles.mapBox}>
+                    <iframe
+                      title={`map-${booking._id}`}
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      src={`https://maps.google.com/maps?q=${mapQuery}&z=12&output=embed`}
+                    />
+                  </div>
+
+                  {/* ROUTE PANEL */}
+                  <div className="lb-route-panel" style={styles.routeMiniPanel}>
+                    <div style={styles.routeMiniTop}>
+                      <div>
+                        <h4 style={styles.routeMiniTitle}>
+                          {getBookingId(booking)}
+                        </h4>
+                        <p style={styles.routeMiniSub}>
+                          {getTruckText(booking)} • {getDriverText(booking)}
+                        </p>
+                      </div>
+
+                      <span className={`badge badge-${getStatusClass(booking.status)}`}>
+                        {normalizeStatus(booking.status)}
+                      </span>
+                    </div>
+
+                    <div style={styles.routeLineBox}>
+                      <div style={styles.routePoint}>
+                        <span style={styles.pickupDot}></span>
+                        <p><b>Pickup:</b> {getPickup(booking)}</p>
+                      </div>
+
+                      <div style={styles.routeConnector}></div>
+
+                      <div style={styles.routePoint}>
+                        <span style={styles.currentDot}></span>
+                        <p><b>Current:</b> {currentLocationText}</p>
+                      </div>
+
+                      <div style={styles.routeConnector}></div>
+
+                      <div style={styles.routePoint}>
+                        <span style={styles.dropDot}></span>
+                        <p><b>Drop:</b> {getDrop(booking)}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <div className="lb-summary-grid" style={styles.summaryGrid}>
+        <div className="glass-card lb-summary-card" style={styles.summaryCard}>
+          <div style={{ ...styles.summaryIconWrap, background: 'rgba(15, 74, 136, 0.10)', color: 'var(--primary-blue)' }}>
             <Package size={22} />
           </div>
           <div>
@@ -604,8 +604,8 @@ const isBookingAssigned = (booking) => {
           </div>
         </div>
 
-        <div className="glass-card" style={styles.summaryCard}>
-          <div style={{ ...styles.summaryIconWrap, backgroundColor: 'rgba(16, 185, 129, 0.10)', color: 'var(--success)' }}>
+        <div className="glass-card lb-summary-card" style={styles.summaryCard}>
+          <div style={{ ...styles.summaryIconWrap, background: 'rgba(16, 185, 129, 0.10)', color: 'var(--success)' }}>
             <Truck size={22} />
           </div>
           <div>
@@ -614,8 +614,8 @@ const isBookingAssigned = (booking) => {
           </div>
         </div>
 
-        <div className="glass-card" style={styles.summaryCard}>
-          <div style={{ ...styles.summaryIconWrap, backgroundColor: 'rgba(245, 158, 11, 0.10)', color: 'var(--warning)' }}>
+        <div className="glass-card lb-summary-card" style={styles.summaryCard}>
+          <div style={{ ...styles.summaryIconWrap, background: 'rgba(245, 158, 11, 0.10)', color: 'var(--warning)' }}>
             <Filter size={22} />
           </div>
           <div>
@@ -624,8 +624,8 @@ const isBookingAssigned = (booking) => {
           </div>
         </div>
 
-        <div className="glass-card" style={styles.summaryCard}>
-          <div style={{ ...styles.summaryIconWrap, backgroundColor: 'rgba(59, 130, 246, 0.10)', color: 'var(--info)' }}>
+        <div className="glass-card lb-summary-card" style={styles.summaryCard}>
+          <div style={{ ...styles.summaryIconWrap, background: 'rgba(59, 130, 246, 0.10)', color: 'var(--info)' }}>
             <CircleDollarSign size={22} />
           </div>
           <div>
@@ -635,9 +635,9 @@ const isBookingAssigned = (booking) => {
         </div>
       </div>
 
-      <div className="card" style={{ padding: 0, overflow: 'hidden', borderRadius: '24px' }}>
-        <div style={styles.topBar}>
-          <div style={styles.tabWrap}>
+      <div className="card lb-bookings-shell" style={{ padding: 0, overflow: 'hidden', borderRadius: '24px' }}>
+        <div className="lb-topbar" style={styles.topBar}>
+          <div className="lb-tabs" style={styles.tabWrap}>
             {tabs.map((tab) => (
               <button
                 key={tab}
@@ -652,8 +652,8 @@ const isBookingAssigned = (booking) => {
             ))}
           </div>
 
-          <div style={styles.topActions}>
-            <div style={styles.searchBox}>
+          <div className="lb-top-actions" style={styles.topActions}>
+            <div className="lb-search-box" style={styles.searchBox}>
               <Search size={16} color="var(--text-muted)" />
               <input
                 type="text"
@@ -675,17 +675,17 @@ const isBookingAssigned = (booking) => {
         )}
 
         {!loading && filteredBookings.length > 0 && (
-          <div style={styles.cardList}>
+          <div className="lb-card-list" style={styles.cardList}>
             {filteredBookings.map((booking, idx) => (
               <motion.div
                 key={booking._id || booking.bookingId}
-                className="glass-card"
+                className="glass-card lb-booking-card"
                 style={styles.bookingCard}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
               >
-                <div style={styles.bookingTop}>
+                <div className="lb-booking-top" style={styles.bookingTop}>
                   <div>
                     <h3 style={styles.bookingTitle}>{getBookingId(booking)}</h3>
                     <p style={styles.subText}>
@@ -701,6 +701,7 @@ const isBookingAssigned = (booking) => {
                   </span>
 
                   <button
+                    className="lb-pdf-btn"
                     style={{
                       marginTop: '10px',
                       padding: '6px 12px',
@@ -711,13 +712,13 @@ const isBookingAssigned = (booking) => {
                       fontWeight: '600',
                       cursor: 'pointer'
                     }}
-                      onClick={() => openBookingReport(booking)}
-                      >
-                       PDF Report
+                    onClick={() => openBookingReport(booking)}
+                  >
+                    PDF Report
                   </button>
                 </div>
 
-                <div style={styles.infoGrid}>
+                <div className="lb-info-grid" style={styles.infoGrid}>
                   <div style={styles.infoItem}>
                     <p style={styles.infoLabel}>Route</p>
                     <p style={styles.infoValue}>
@@ -765,9 +766,596 @@ const isBookingAssigned = (booking) => {
           </div>
         )}
       </div>
+      <style>{liveBookingsMobileCss}</style>
     </div>
   );
 };
+
+
+
+const liveBookingsMobileCss = `
+  /* =========================================================
+     LIVE BOOKINGS - PREMIUM MOBILE RESPONSIVE
+     Desktop/laptop styles remain untouched.
+  ========================================================= */
+
+  @media (max-width: 768px) {
+    .lb-page {
+      width: 100% !important;
+      min-width: 0 !important;
+      gap: 14px !important;
+      overflow-x: hidden !important;
+    }
+
+    /* ---------- PAGE HEADER ---------- */
+    .lb-header-row {
+      width: 100% !important;
+      display: grid !important;
+      grid-template-columns: 1fr auto !important;
+      align-items: center !important;
+      gap: 10px !important;
+      padding: 2px 2px 0 !important;
+    }
+
+    .lb-page-title {
+      font-size: 22px !important;
+      line-height: 1.08 !important;
+      letter-spacing: -0.45px !important;
+    }
+
+    .lb-page-sub {
+      margin-top: 4px !important;
+      max-width: 245px !important;
+      font-size: 10.5px !important;
+      line-height: 1.35 !important;
+    }
+
+    .lb-refresh-btn {
+      min-width: 42px !important;
+      min-height: 42px !important;
+      padding: 0 11px !important;
+      border-radius: 12px !important;
+      font-size: 0 !important;
+      box-shadow: 0 8px 18px rgba(255, 122, 0, 0.18) !important;
+      transition: transform .16s ease, box-shadow .16s ease !important;
+    }
+
+    .lb-refresh-btn::after {
+      content: "↻";
+      font-size: 20px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .lb-refresh-btn:active {
+      transform: scale(.94) !important;
+    }
+
+    /* ---------- LIVE MAP ---------- */
+    .lb-map-card {
+      width: 100% !important;
+      min-width: 0 !important;
+      padding: 14px !important;
+      border-radius: 19px !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      border: 1px solid rgba(15, 74, 136, .08) !important;
+      box-shadow: 0 10px 26px rgba(15, 59, 115, .07) !important;
+    }
+
+    .lb-map-header {
+      display: grid !important;
+      grid-template-columns: 1fr auto !important;
+      align-items: start !important;
+      gap: 9px !important;
+      margin-bottom: 12px !important;
+    }
+
+    .lb-map-header h3 {
+      font-size: 16px !important;
+      line-height: 1.2 !important;
+    }
+
+    .lb-map-header p {
+      margin-top: 4px !important;
+      font-size: 9.5px !important;
+      line-height: 1.35 !important;
+      max-width: 240px !important;
+    }
+
+    .lb-map-header .badge {
+      padding: 5px 8px !important;
+      border-radius: 999px !important;
+      font-size: 9px !important;
+      white-space: nowrap !important;
+    }
+
+    .lb-map-grid {
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+    }
+
+    .lb-map-item {
+      width: 100% !important;
+      min-width: 0 !important;
+      border-radius: 15px !important;
+      box-shadow: 0 8px 20px rgba(15, 59, 115, .06) !important;
+      animation: lbCardEnter .28s ease both;
+    }
+
+    .lb-map-box {
+      height: 170px !important;
+    }
+
+    .lb-route-panel {
+      padding: 12px !important;
+    }
+
+    .lb-route-panel > div:first-child {
+      gap: 8px !important;
+      margin-bottom: 11px !important;
+    }
+
+    .lb-route-panel h4 {
+      font-size: 12.5px !important;
+    }
+
+    .lb-route-panel p {
+      font-size: 9.5px !important;
+      line-height: 1.35 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .lb-route-panel .badge {
+      font-size: 8.5px !important;
+      padding: 5px 7px !important;
+      white-space: nowrap !important;
+    }
+
+    /* ---------- SUMMARY ---------- */
+    .lb-summary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 9px !important;
+    }
+
+    .lb-summary-card {
+      min-width: 0 !important;
+      padding: 12px 10px !important;
+      gap: 9px !important;
+      border-radius: 15px !important;
+      border: 1px solid rgba(15, 74, 136, .07) !important;
+      box-shadow: 0 7px 18px rgba(15, 59, 115, .055) !important;
+      animation: lbCardEnter .30s ease both;
+    }
+
+    .lb-summary-card > div:first-child {
+      width: 36px !important;
+      height: 36px !important;
+      min-width: 36px !important;
+      border-radius: 11px !important;
+    }
+
+    .lb-summary-card > div:first-child svg {
+      width: 17px !important;
+      height: 17px !important;
+    }
+
+    .lb-summary-card p {
+      font-size: 9px !important;
+      line-height: 1.2 !important;
+    }
+
+    .lb-summary-card h4 {
+      margin-top: 3px !important;
+      font-size: 17px !important;
+      line-height: 1 !important;
+    }
+
+    /* ---------- FILTER / SEARCH ---------- */
+    .lb-bookings-shell {
+      width: 100% !important;
+      min-width: 0 !important;
+      border-radius: 18px !important;
+      box-shadow: 0 10px 26px rgba(15, 59, 115, .06) !important;
+    }
+
+    .lb-topbar {
+      width: 100% !important;
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      gap: 9px !important;
+      padding: 12px !important;
+      box-sizing: border-box !important;
+    }
+
+    .lb-tabs {
+      width: 100% !important;
+      display: grid !important;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+      gap: 5px !important;
+    }
+
+    .lb-tabs button {
+      width: 100% !important;
+      min-width: 0 !important;
+      min-height: 36px !important;
+      padding: 6px 3px !important;
+      border-radius: 9px !important;
+      font-size: 9px !important;
+      line-height: 1 !important;
+      white-space: nowrap !important;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease !important;
+    }
+
+    .lb-tabs button:active {
+      transform: scale(.96) !important;
+    }
+
+    .lb-top-actions,
+    .lb-search-box {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+
+    .lb-search-box {
+      min-height: 39px !important;
+      padding: 7px 10px !important;
+      border-radius: 11px !important;
+      background: #f9fbfe !important;
+    }
+
+    .lb-search-box input {
+      min-width: 0 !important;
+      font-size: 11px !important;
+    }
+
+    /* ---------- BOOKING CARDS ---------- */
+    .lb-card-list {
+      padding: 10px !important;
+      gap: 10px !important;
+    }
+
+    .lb-booking-card {
+      width: 100% !important;
+      min-width: 0 !important;
+      padding: 13px !important;
+      border-radius: 16px !important;
+      box-sizing: border-box !important;
+      border: 1px solid #e7eef7 !important;
+      box-shadow: 0 8px 20px rgba(15, 59, 115, .055) !important;
+      animation: lbCardEnter .30s ease both;
+    }
+
+    .lb-booking-top {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      gap: 8px !important;
+      align-items: start !important;
+      margin-bottom: 11px !important;
+    }
+
+    .lb-booking-top > div {
+      min-width: 0 !important;
+    }
+
+    .lb-booking-top h3 {
+      font-size: 14px !important;
+      line-height: 1.15 !important;
+    }
+
+    .lb-booking-top p {
+      font-size: 9.5px !important;
+      line-height: 1.35 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .lb-booking-top > .badge {
+      padding: 5px 7px !important;
+      font-size: 8.5px !important;
+      white-space: nowrap !important;
+    }
+
+    .lb-pdf-btn {
+      grid-column: 1 / -1 !important;
+      justify-self: start !important;
+      margin-top: 0 !important;
+      min-height: 34px !important;
+      padding: 0 11px !important;
+      border-radius: 9px !important;
+      font-size: 9.5px !important;
+      box-shadow: 0 6px 14px rgba(255, 122, 0, .14) !important;
+      transition: transform .16s ease, box-shadow .16s ease !important;
+    }
+
+    .lb-pdf-btn:active {
+      transform: scale(.96) !important;
+    }
+
+    /* ---------- INFO GRID ---------- */
+    .lb-info-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 7px !important;
+      margin-bottom: 10px !important;
+    }
+
+    .lb-info-grid > div {
+      min-width: 0 !important;
+      padding: 9px !important;
+      border-radius: 11px !important;
+      background: linear-gradient(145deg, #f9fbfe, #f4f8fd) !important;
+    }
+
+    .lb-info-grid p:first-child {
+      margin-bottom: 3px !important;
+      font-size: 8.5px !important;
+    }
+
+    .lb-info-grid p:last-child {
+      font-size: 10px !important;
+      line-height: 1.35 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    /* ---------- OPERATIONS PANEL ---------- */
+    .lb-action-panel {
+      width: 100% !important;
+      grid-template-columns: 1fr !important;
+      gap: 8px !important;
+      padding: 9px !important;
+      border-radius: 13px !important;
+      box-sizing: border-box !important;
+      background: linear-gradient(145deg, #f8fbff 0%, #f3f7fc 100%) !important;
+    }
+
+    .lb-action-panel > div {
+      width: 100% !important;
+      min-width: 0 !important;
+      padding: 10px !important;
+      border-radius: 11px !important;
+      background: rgba(255,255,255,.82) !important;
+      border: 1px solid #e6edf6 !important;
+      box-sizing: border-box !important;
+    }
+
+    .lb-action-panel > div > p:first-child {
+      margin-bottom: 7px !important;
+      font-size: 10px !important;
+      letter-spacing: .05px !important;
+    }
+
+    .lb-action-panel select,
+    .lb-action-panel input {
+      min-height: 39px !important;
+      padding: 7px 9px !important;
+      margin-bottom: 6px !important;
+      border-radius: 9px !important;
+      font-size: 10px !important;
+      box-sizing: border-box !important;
+    }
+
+    .lb-action-panel button {
+      min-height: 39px !important;
+      padding: 7px 10px !important;
+      border-radius: 9px !important;
+      font-size: 10px !important;
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease !important;
+    }
+
+    .lb-action-panel button:active {
+      transform: scale(.975) !important;
+    }
+
+    .lb-payment-summary {
+      gap: 5px !important;
+      padding: 9px !important;
+      margin-bottom: 7px !important;
+      border-radius: 9px !important;
+      font-size: 9.5px !important;
+    }
+
+    .lb-payment-summary span {
+      display: flex !important;
+      justify-content: space-between !important;
+      gap: 8px !important;
+    }
+
+    .lb-history-box {
+      max-height: 135px !important;
+      gap: 6px !important;
+    }
+
+    .lb-history-box > div {
+      padding: 8px !important;
+      border-radius: 9px !important;
+      font-size: 9px !important;
+    }
+
+    /* ---------- EMPTY STATES ---------- */
+    .lb-bookings-shell > div[style*="textAlign"] {
+      padding: 20px 12px !important;
+      font-size: 11px !important;
+    }
+
+    /* ---------- MOTION ---------- */
+    @keyframes lbCardEnter {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .lb-map-item,
+      .lb-summary-card,
+      .lb-booking-card {
+        animation: none !important;
+      }
+
+      .lb-tabs button,
+      .lb-refresh-btn,
+      .lb-pdf-btn,
+      .lb-action-panel button {
+        transition: none !important;
+      }
+    }
+  }
+
+  /* =========================================================
+     SMALL MOBILE - 420px AND BELOW
+  ========================================================= */
+  @media (max-width: 420px) {
+    .lb-page {
+      gap: 11px !important;
+    }
+
+    .lb-header-row {
+      gap: 7px !important;
+    }
+
+    .lb-page-title {
+      font-size: 20px !important;
+    }
+
+    .lb-page-sub {
+      max-width: 215px !important;
+      font-size: 9.5px !important;
+    }
+
+    .lb-refresh-btn {
+      min-width: 38px !important;
+      min-height: 38px !important;
+      padding: 0 9px !important;
+      border-radius: 11px !important;
+    }
+
+    .lb-map-card {
+      padding: 11px !important;
+      border-radius: 17px !important;
+    }
+
+    .lb-map-header h3 {
+      font-size: 14.5px !important;
+    }
+
+    .lb-map-header p {
+      max-width: 205px !important;
+      font-size: 8.8px !important;
+    }
+
+    .lb-map-box {
+      height: 145px !important;
+    }
+
+    .lb-route-panel {
+      padding: 10px !important;
+    }
+
+    .lb-summary-grid {
+      gap: 7px !important;
+    }
+
+    .lb-summary-card {
+      padding: 10px 8px !important;
+      gap: 7px !important;
+      border-radius: 13px !important;
+    }
+
+    .lb-summary-card > div:first-child {
+      width: 32px !important;
+      height: 32px !important;
+      min-width: 32px !important;
+      border-radius: 10px !important;
+    }
+
+    .lb-summary-card p {
+      font-size: 8.3px !important;
+    }
+
+    .lb-summary-card h4 {
+      font-size: 15px !important;
+    }
+
+    .lb-topbar {
+      padding: 9px !important;
+      gap: 7px !important;
+    }
+
+    .lb-tabs {
+      gap: 4px !important;
+    }
+
+    .lb-tabs button {
+      min-height: 33px !important;
+      padding: 5px 2px !important;
+      border-radius: 8px !important;
+      font-size: 8.2px !important;
+    }
+
+    .lb-search-box {
+      min-height: 37px !important;
+    }
+
+    .lb-card-list {
+      padding: 8px !important;
+      gap: 8px !important;
+    }
+
+    .lb-booking-card {
+      padding: 11px !important;
+      border-radius: 14px !important;
+    }
+
+    .lb-booking-top h3 {
+      font-size: 13px !important;
+    }
+
+    .lb-booking-top p {
+      font-size: 8.8px !important;
+    }
+
+    .lb-info-grid {
+      gap: 5px !important;
+    }
+
+    .lb-info-grid > div {
+      padding: 8px !important;
+      border-radius: 10px !important;
+    }
+
+    .lb-info-grid p:first-child {
+      font-size: 8px !important;
+    }
+
+    .lb-info-grid p:last-child {
+      font-size: 9.3px !important;
+    }
+
+    .lb-action-panel {
+      padding: 7px !important;
+      gap: 7px !important;
+    }
+
+    .lb-action-panel > div {
+      padding: 8px !important;
+      border-radius: 10px !important;
+    }
+
+    .lb-action-panel select,
+    .lb-action-panel input,
+    .lb-action-panel button {
+      min-height: 37px !important;
+      font-size: 9.5px !important;
+    }
+
+    .lb-payment-summary {
+      font-size: 8.8px !important;
+    }
+  }
+`;
 
 
 const styles = {
@@ -1021,162 +1609,162 @@ const styles = {
   },
 
   liveMapCard: {
-  padding: '24px',
-  borderRadius: '24px',
-  overflow: 'hidden',
-},
+    padding: '24px',
+    borderRadius: '24px',
+    overflow: 'hidden',
+  },
 
-liveMapHeader: {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  gap: '16px',
-  flexWrap: 'wrap',
-  marginBottom: '18px',
-},
+  liveMapHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '16px',
+    flexWrap: 'wrap',
+    marginBottom: '18px',
+  },
 
-liveMapTitle: {
-  margin: 0,
-  color: 'var(--dark-blue)',
-  fontWeight: '800',
-},
+  liveMapTitle: {
+    margin: 0,
+    color: 'var(--dark-blue)',
+    fontWeight: '800',
+  },
 
-liveMapSub: {
-  margin: '6px 0 0 0',
-  color: 'var(--text-muted)',
-  fontSize: '0.9rem',
-},
+  liveMapSub: {
+    margin: '6px 0 0 0',
+    color: 'var(--text-muted)',
+    fontSize: '0.9rem',
+  },
 
-liveMapEmpty: {
-  padding: '34px',
-  textAlign: 'center',
-  color: 'var(--text-muted)',
-  background: '#f8fbff',
-  borderRadius: '18px',
-  border: '1px solid var(--border-light)',
-},
+  liveMapEmpty: {
+    padding: '34px',
+    textAlign: 'center',
+    color: 'var(--text-muted)',
+    background: '#f8fbff',
+    borderRadius: '18px',
+    border: '1px solid var(--border-light)',
+  },
 
-liveMapGrid: {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-  gap: '18px',
-},
+  liveMapGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+    gap: '18px',
+  },
 
-liveMapItem: {
-  border: '1px solid var(--border-light)',
-  borderRadius: '22px',
-  overflow: 'hidden',
-  background: '#fff',
-  boxShadow: '0 10px 24px rgba(15, 59, 115, 0.06)',
-},
+  liveMapItem: {
+    border: '1px solid var(--border-light)',
+    borderRadius: '22px',
+    overflow: 'hidden',
+    background: '#fff',
+    boxShadow: '0 10px 24px rgba(15, 59, 115, 0.06)',
+  },
 
-mapBox: {
-  height: '260px',
-  background: '#eef4fb',
-},
+  mapBox: {
+    height: '260px',
+    background: '#eef4fb',
+  },
 
-routeMiniPanel: {
-  padding: '18px',
-},
+  routeMiniPanel: {
+    padding: '18px',
+  },
 
-routeMiniTop: {
-  display: 'flex',
-  justifyContent: 'space-between',
-  gap: '12px',
-  alignItems: 'flex-start',
-  marginBottom: '16px',
-},
+  routeMiniTop: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '12px',
+    alignItems: 'flex-start',
+    marginBottom: '16px',
+  },
 
-routeMiniTitle: {
-  margin: 0,
-  color: 'var(--dark-blue)',
-  fontWeight: '800',
-},
+  routeMiniTitle: {
+    margin: 0,
+    color: 'var(--dark-blue)',
+    fontWeight: '800',
+  },
 
-routeMiniSub: {
-  margin: '5px 0 0 0',
-  color: 'var(--text-muted)',
-  fontSize: '0.86rem',
-},
+  routeMiniSub: {
+    margin: '5px 0 0 0',
+    color: 'var(--text-muted)',
+    fontSize: '0.86rem',
+  },
 
-routeLineBox: {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '6px',
-},
+  routeLineBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+  },
 
-routePoint: {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '10px',
-  color: 'var(--dark-blue)',
-  fontSize: '0.9rem',
-},
+  routePoint: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    color: 'var(--dark-blue)',
+    fontSize: '0.9rem',
+  },
 
-pickupDot: {
-  width: '12px',
-  height: '12px',
-  borderRadius: '50%',
-  background: 'var(--success)',
-  minWidth: '12px',
-},
+  pickupDot: {
+    width: '12px',
+    height: '12px',
+    borderRadius: '50%',
+    background: 'var(--success)',
+    minWidth: '12px',
+  },
 
-currentDot: {
-  width: '14px',
-  height: '14px',
-  borderRadius: '50%',
-  background: 'var(--accent-orange)',
-  minWidth: '14px',
-  boxShadow: '0 0 0 6px rgba(255, 140, 26, 0.15)',
-},
+  currentDot: {
+    width: '14px',
+    height: '14px',
+    borderRadius: '50%',
+    background: 'var(--accent-orange)',
+    minWidth: '14px',
+    boxShadow: '0 0 0 6px rgba(255, 140, 26, 0.15)',
+  },
 
-dropDot: {
-  width: '12px',
-  height: '12px',
-  borderRadius: '50%',
-  background: 'var(--danger)',
-  minWidth: '12px',
-},
+  dropDot: {
+    width: '12px',
+    height: '12px',
+    borderRadius: '50%',
+    background: 'var(--danger)',
+    minWidth: '12px',
+  },
 
-routeConnector: {
-  width: '2px',
-  height: '18px',
-  background: 'var(--border-light)',
-  marginLeft: '6px',
-},
-headerRow: {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  flexWrap: "wrap",
-  gap: "12px",
-},
+  routeConnector: {
+    width: '2px',
+    height: '18px',
+    background: 'var(--border-light)',
+    marginLeft: '6px',
+  },
+  headerRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: "12px",
+  },
 
-pageTitle: {
-  margin: 0,
-  fontSize: "28px",
-  fontWeight: "900",
-  color: "var(--dark-blue)",
-},
+  pageTitle: {
+    margin: 0,
+    fontSize: "28px",
+    fontWeight: "900",
+    color: "var(--dark-blue)",
+  },
 
-pageSub: {
-  margin: "6px 0 0 0",
-  color: "var(--text-muted)",
-},
+  pageSub: {
+    margin: "6px 0 0 0",
+    color: "var(--text-muted)",
+  },
 
-topRefreshBtn: {
-  background: "linear-gradient(135deg, #ff7a00, #ff9a2f)",
-  border: "none",
-  color: "#fff",
-  padding: "10px 20px",
-  borderRadius: "999px",
-  fontWeight: "800",
-  cursor: "pointer",
-  display: "flex",
-  alignItems: "center",
-  gap: "8px",
-  boxShadow: "0 10px 20px rgba(255,122,0,0.25)",
-},
+  topRefreshBtn: {
+    background: "linear-gradient(135deg, #ff7a00, #ff9a2f)",
+    border: "none",
+    color: "#fff",
+    padding: "10px 20px",
+    borderRadius: "999px",
+    fontWeight: "800",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    boxShadow: "0 10px 20px rgba(255,122,0,0.25)",
+  },
 };
 
 export default LiveBookings;

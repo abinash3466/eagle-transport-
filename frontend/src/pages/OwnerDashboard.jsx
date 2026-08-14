@@ -245,25 +245,25 @@ const AddDriverForm = () => {
 
     <div>
 
-      <div style={styles.premiumFormWrapper}>
+      <div className="owner-add-form-wrap" style={styles.premiumFormWrapper}>
 
         <div style={styles.formGlow1}></div>
         <div style={styles.formGlow2}></div>
 
-        <div className="card" style={styles.premiumFormCard}>
+        <div className="card owner-add-form-card" style={styles.premiumFormCard}>
 
-          <div style={styles.formTopSection}>
+          <div className="owner-add-form-head" style={styles.formTopSection}>
 
             <div style={styles.formIconWrap}>
               <UserPlus size={28} />
             </div>
 
             <div>
-              <h2 style={styles.premiumFormTitle}>
+              <h2 className="owner-add-form-title" style={styles.premiumFormTitle}>
                 Add Driver
               </h2>
 
-              <p style={styles.premiumFormSubTitle}>
+              <p className="owner-add-form-subtitle" style={styles.premiumFormSubTitle}>
                 Create driver login credentials and assign available truck.
               </p>
             </div>
@@ -272,6 +272,7 @@ const AddDriverForm = () => {
 
           <form
             onSubmit={handleSubmit}
+            className="owner-add-form-grid"
             style={styles.premiumFormGrid}
           >
 
@@ -515,7 +516,7 @@ const AddDriverForm = () => {
 
             {/* Submit */}
             <button
-              className="btn btn-primary"
+              className="btn btn-primary owner-add-form-submit"
               style={styles.premiumSubmitBtn}
             >
               <Save size={18} />
@@ -553,28 +554,28 @@ const AddTruckForm = () => {
   });
 
   const validateTruckForm = () => {
-  let newErrors = {};
+    let newErrors = {};
 
-  if (!form.truckName.trim()) {
-    newErrors.truckName = "Truck Name is required";
-  }
+    if (!form.truckName.trim()) {
+      newErrors.truckName = "Truck Name is required";
+    }
 
-  if (!form.truckNumber.trim()) {
-    newErrors.truckNumber = "Truck Number is required";
-  }
+    if (!form.truckNumber.trim()) {
+      newErrors.truckNumber = "Truck Number is required";
+    }
 
-  if (!form.capacity.trim()) {
-    newErrors.capacity = "Capacity is required";
-  }
+    if (!form.capacity.trim()) {
+      newErrors.capacity = "Capacity is required";
+    }
 
-  if (!form.rcBook.trim()) {
-    newErrors.rcBook = "RC Book Number is required";
-  }
+    if (!form.rcBook.trim()) {
+      newErrors.rcBook = "RC Book Number is required";
+    }
 
-  setErrors(newErrors);
+    setErrors(newErrors);
 
-  return Object.keys(newErrors).length === 0;
-};
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -606,7 +607,7 @@ const AddTruckForm = () => {
         truckName: '',
         truckNumber: '',
         truckType: '',
-        trailerSize:"",
+        trailerSize: "",
         capacity: '',
         rcBook: '',
         insurance: '',
@@ -623,68 +624,68 @@ const AddTruckForm = () => {
   };
 
   return (
-  <div>
-    <div style={styles.premiumFormWrapper}>
-      <div style={styles.formGlow1}></div>
-      <div style={styles.formGlow2}></div>
+    <div>
+      <div className="owner-add-form-wrap" style={styles.premiumFormWrapper}>
+        <div style={styles.formGlow1}></div>
+        <div style={styles.formGlow2}></div>
 
-      <div className="card" style={styles.premiumFormCard}>
-        <div style={styles.formTopSection}>
-          <div
-            style={{
-              ...styles.formIconWrap,
-              background:
-                "linear-gradient(135deg, #ff9800 0%, #ff5722 100%)",
-            }}
-          >
-            <Truck size={28} />
+        <div className="card owner-add-form-card" style={styles.premiumFormCard}>
+          <div className="owner-add-form-head" style={styles.formTopSection}>
+            <div
+              style={{
+                ...styles.formIconWrap,
+                background:
+                  "linear-gradient(135deg, #ff9800 0%, #ff5722 100%)",
+              }}
+            >
+              <Truck size={28} />
+            </div>
+
+            <div>
+              <h2 className="owner-add-form-title" style={styles.premiumFormTitle}>Add Truck</h2>
+
+              <p className="owner-add-form-subtitle" style={styles.premiumFormSubTitle}>
+                Add truck details, RC book, permit, fitness, and insurance information.
+              </p>
+            </div>
           </div>
 
-          <div>
-            <h2 style={styles.premiumFormTitle}>Add Truck</h2>
-
-            <p style={styles.premiumFormSubTitle}>
-              Add truck details, RC book, permit, fitness, and insurance information.
-            </p>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} style={styles.premiumFormGrid}>
-          <input
+          <form className="owner-add-form-grid" onSubmit={handleSubmit} style={styles.premiumFormGrid}>
+            <input
               style={{
                 ...styles.premiumInput,
                 border: errors.driverName
                   ? "2px solid #ef4444"
                   : styles.premiumInput.border,
               }}
-            placeholder="Truck Name"
-            value={form.truckName}
-            onChange={(e) =>
-              setForm({ ...form, truckName: e.target.value })
-            }
-            required
-          />
-          {errors.truckName && (
-            <span style={styles.errorText}>{errors.truckName}</span>
-          )}
+              placeholder="Truck Name"
+              value={form.truckName}
+              onChange={(e) =>
+                setForm({ ...form, truckName: e.target.value })
+              }
+              required
+            />
+            {errors.truckName && (
+              <span style={styles.errorText}>{errors.truckName}</span>
+            )}
 
-          <input
+            <input
               style={{
                 ...styles.premiumInput,
                 border: errors.driverName
                   ? "2px solid #ef4444"
                   : styles.premiumInput.border,
               }}
-            placeholder="Truck Number"
-            value={form.truckNumber}
-            onChange={(e) =>
-              setForm({ ...form, truckNumber: e.target.value })
-            }
-            required
-          />
-          {errors.truckNumber && (
-            <span style={styles.errorText}>{errors.truckNumber}</span>
-          )}
+              placeholder="Truck Number"
+              value={form.truckNumber}
+              onChange={(e) =>
+                setForm({ ...form, truckNumber: e.target.value })
+              }
+              required
+            />
+            {errors.truckNumber && (
+              <span style={styles.errorText}>{errors.truckNumber}</span>
+            )}
 
             <div style={{ width: "100%" }}>
               <select
@@ -789,208 +790,208 @@ const AddTruckForm = () => {
               )}
             </div>
 
-          <input
+            <input
               style={{
                 ...styles.premiumInput,
                 border: errors.driverName
                   ? "2px solid #ef4444"
                   : styles.premiumInput.border,
               }}
-            placeholder="Capacity (e.g. 15 Ton)"
-            value={form.capacity}
-            onChange={(e) =>
-              setForm({ ...form, capacity: e.target.value })
-            }
-            required
-          />
-          {errors.capacity && (
-            <span style={styles.errorText}>{errors.capacity}</span>
-          )}
+              placeholder="Capacity (e.g. 15 Ton)"
+              value={form.capacity}
+              onChange={(e) =>
+                setForm({ ...form, capacity: e.target.value })
+              }
+              required
+            />
+            {errors.capacity && (
+              <span style={styles.errorText}>{errors.capacity}</span>
+            )}
 
-          <input
-            style={{
-              ...styles.premiumInput,
-              border: errors.driverName
-              ? "2px solid #ef4444"
-              : styles.premiumInput.border,
-            }}
-            placeholder="RC Book Number"
-            value={form.rcBook}
-            onChange={(e) =>
-              setForm({ ...form, rcBook: e.target.value })
-            }
-            required
-          />
-          {errors.rcBook && (
-            <span style={styles.errorText}>{errors.rcBook}</span>
-          )}
+            <input
+              style={{
+                ...styles.premiumInput,
+                border: errors.driverName
+                  ? "2px solid #ef4444"
+                  : styles.premiumInput.border,
+              }}
+              placeholder="RC Book Number"
+              value={form.rcBook}
+              onChange={(e) =>
+                setForm({ ...form, rcBook: e.target.value })
+              }
+              required
+            />
+            {errors.rcBook && (
+              <span style={styles.errorText}>{errors.rcBook}</span>
+            )}
 
-          <input
-            style={{
-              ...styles.premiumInput,
-              border: errors.driverName
-              ? "2px solid #ef4444"
-              : styles.premiumInput.border,
-            }}
-            placeholder="Insurance Number"
-            value={form.insurance}
-            onChange={(e) =>
-              setForm({ ...form, insurance: e.target.value })
-            }
-          />
-          {errors.insurance && (
-            <span style={styles.errorText}>{errors.insurance}</span>
-          )}
+            <input
+              style={{
+                ...styles.premiumInput,
+                border: errors.driverName
+                  ? "2px solid #ef4444"
+                  : styles.premiumInput.border,
+              }}
+              placeholder="Insurance Number"
+              value={form.insurance}
+              onChange={(e) =>
+                setForm({ ...form, insurance: e.target.value })
+              }
+            />
+            {errors.insurance && (
+              <span style={styles.errorText}>{errors.insurance}</span>
+            )}
 
-          <input
-            style={{
-              ...styles.premiumInput,
-              border: errors.driverName
-              ? "2px solid #ef4444"
-              : styles.premiumInput.border,
-            }}
-            placeholder="Permit Number"
-            value={form.permit}
-            onChange={(e) =>
-              setForm({ ...form, permit: e.target.value })
-            }
-          />
-          {errors.permit && (
-            <span style={styles.errorText}>{errors.permit}</span>
-          )}
+            <input
+              style={{
+                ...styles.premiumInput,
+                border: errors.driverName
+                  ? "2px solid #ef4444"
+                  : styles.premiumInput.border,
+              }}
+              placeholder="Permit Number"
+              value={form.permit}
+              onChange={(e) =>
+                setForm({ ...form, permit: e.target.value })
+              }
+            />
+            {errors.permit && (
+              <span style={styles.errorText}>{errors.permit}</span>
+            )}
 
-          <input
-            style={{
-              ...styles.premiumInput,
-              border: errors.driverName
-              ? "2px solid #ef4444"
-              : styles.premiumInput.border,
-            }}
-            placeholder="Fitness Certificate Number"
-            value={form.fitness}
-            onChange={(e) =>
-              setForm({ ...form, fitness: e.target.value })
-            }
-          />
-          {errors.fitness && (
-            <span style={styles.errorText}>{errors.fitness}</span>
-          )}
+            <input
+              style={{
+                ...styles.premiumInput,
+                border: errors.driverName
+                  ? "2px solid #ef4444"
+                  : styles.premiumInput.border,
+              }}
+              placeholder="Fitness Certificate Number"
+              value={form.fitness}
+              onChange={(e) =>
+                setForm({ ...form, fitness: e.target.value })
+              }
+            />
+            {errors.fitness && (
+              <span style={styles.errorText}>{errors.fitness}</span>
+            )}
 
-          <input
-            style={{
-              ...styles.premiumInput,
-              border: errors.driverName
-              ? "2px solid #ef4444"
-              : styles.premiumInput.border,
-            }}
-            placeholder="GPS Device Number"
-            value={form.gpsDeviceNumber}
-            onChange={(e) =>
-              setForm({ ...form, gpsDeviceNumber: e.target.value })
-            }
-          />
-          {errors.gpsDeviceNumber && (
-            <span style={styles.errorText}>{errors.gpsDeviceNumber}</span>
-          )}
+            <input
+              style={{
+                ...styles.premiumInput,
+                border: errors.driverName
+                  ? "2px solid #ef4444"
+                  : styles.premiumInput.border,
+              }}
+              placeholder="GPS Device Number"
+              value={form.gpsDeviceNumber}
+              onChange={(e) =>
+                setForm({ ...form, gpsDeviceNumber: e.target.value })
+              }
+            />
+            {errors.gpsDeviceNumber && (
+              <span style={styles.errorText}>{errors.gpsDeviceNumber}</span>
+            )}
 
-          <input
-            style={{
-              ...styles.premiumInput,
-              border: errors.driverName
-              ? "2px solid #ef4444"
-              : styles.premiumInput.border,
-            }}
-            placeholder="GPS Provider (e.g. Airtel GPS)"
-            value={form.gpsProvider}
-            onChange={(e) =>
-              setForm({ ...form, gpsProvider: e.target.value })
-            }
-          />
-          {errors.gpsProvider && (
-            <span style={styles.errorText}>{errors.gpsProvider}</span>
-          )}
+            <input
+              style={{
+                ...styles.premiumInput,
+                border: errors.driverName
+                  ? "2px solid #ef4444"
+                  : styles.premiumInput.border,
+              }}
+              placeholder="GPS Provider (e.g. Airtel GPS)"
+              value={form.gpsProvider}
+              onChange={(e) =>
+                setForm({ ...form, gpsProvider: e.target.value })
+              }
+            />
+            {errors.gpsProvider && (
+              <span style={styles.errorText}>{errors.gpsProvider}</span>
+            )}
 
-          <select
-            style={{
-              ...styles.premiumInput,
-              border: errors.driverName
-              ? "2px solid #ef4444"
-              : styles.premiumInput.border,
-            }}
-            value={form.gpsInstalled}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                gpsInstalled: e.target.value === "true",
-              })
-            }
-          >
-            <option value={false}>GPS Not Installed</option>
-            <option value={true}>GPS Installed</option>
-          </select>
+            <select
+              style={{
+                ...styles.premiumInput,
+                border: errors.driverName
+                  ? "2px solid #ef4444"
+                  : styles.premiumInput.border,
+              }}
+              value={form.gpsInstalled}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  gpsInstalled: e.target.value === "true",
+                })
+              }
+            >
+              <option value={false}>GPS Not Installed</option>
+              <option value={true}>GPS Installed</option>
+            </select>
 
-          <select
-            style={{
-              ...styles.premiumInput,
-              border: errors.driverName
-              ? "2px solid #ef4444"
-              : styles.premiumInput.border,
-            }}
-            value={form.fuelType}
-            onChange={(e) =>
-              setForm({ ...form, fuelType: e.target.value })
-            }
-          >
-            <option>Diesel</option>
-            <option>Petrol</option>
-            <option>CNG</option>
-            <option>Electric</option>
-          </select>
+            <select
+              style={{
+                ...styles.premiumInput,
+                border: errors.driverName
+                  ? "2px solid #ef4444"
+                  : styles.premiumInput.border,
+              }}
+              value={form.fuelType}
+              onChange={(e) =>
+                setForm({ ...form, fuelType: e.target.value })
+              }
+            >
+              <option>Diesel</option>
+              <option>Petrol</option>
+              <option>CNG</option>
+              <option>Electric</option>
+            </select>
 
-          <input
-            style={{
-              ...styles.premiumInput,
-              border: errors.driverName
-              ? "2px solid #ef4444"
-              : styles.premiumInput.border,
-            }}
-            placeholder="Truck Owner Name"
-            value={form.ownerName}
-            onChange={(e) =>
-              setForm({ ...form, ownerName: e.target.value })
-            }
-          />
-          {errors.ownerName && (
-            <span style={styles.errorText}>{errors.ownerName}</span>
-          )}
+            <input
+              style={{
+                ...styles.premiumInput,
+                border: errors.driverName
+                  ? "2px solid #ef4444"
+                  : styles.premiumInput.border,
+              }}
+              placeholder="Truck Owner Name"
+              value={form.ownerName}
+              onChange={(e) =>
+                setForm({ ...form, ownerName: e.target.value })
+              }
+            />
+            {errors.ownerName && (
+              <span style={styles.errorText}>{errors.ownerName}</span>
+            )}
 
-          <button
-            className="btn btn-primary"
-            style={styles.premiumSubmitBtn}
-          >
-            <Save size={18} />
-            Save Truck
-          </button>
-        </form>
+            <button
+              className="btn btn-primary owner-add-form-submit"
+              style={styles.premiumSubmitBtn}
+            >
+              <Save size={18} />
+              Save Truck
+            </button>
+          </form>
+        </div>
       </div>
+
+      {trucks.length > 0 && (
+        <div className="card" style={styles.listCard}>
+          <h3 style={styles.formTitle}>Added Trucks</h3>
+
+          {trucks.map((truck) => (
+            <div key={truck.id} style={styles.listItem}>
+              <strong>{truck.truckName}</strong>
+              <span>{truck.truckNumber}</span>
+              <span>{truck.truckType}</span>
+              <span>{truck.capacity}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-
-    {trucks.length > 0 && (
-      <div className="card" style={styles.listCard}>
-        <h3 style={styles.formTitle}>Added Trucks</h3>
-
-        {trucks.map((truck) => (
-          <div key={truck.id} style={styles.listItem}>
-            <strong>{truck.truckName}</strong>
-            <span>{truck.truckNumber}</span>
-            <span>{truck.truckType}</span>
-            <span>{truck.capacity}</span>
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-);
+  );
 };
 
 const OwnerDashboard = () => {
@@ -1011,21 +1012,21 @@ const OwnerDashboard = () => {
   }, [navigate]);
 
   useEffect(() => {
-  const fetchNotifications = async () => {
-    try {
-      const res = await fetchWithAuth(`${API_URL}/bookings/notifications/all`);
-      const data = await res.json();
-      setNotifications(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Notification fetch error:", error);
-    }
-  };
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetchWithAuth(`${API_URL}/bookings/notifications/all`);
+        const data = await res.json();
+        setNotifications(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Notification fetch error:", error);
+      }
+    };
 
-  fetchNotifications();
+    fetchNotifications();
 
-  const interval = setInterval(fetchNotifications, 10000);
-  return () => clearInterval(interval);
-}, []);
+    const interval = setInterval(fetchNotifications, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleTabChange = (name) => {
     setActiveTab(name);
@@ -1047,7 +1048,7 @@ const OwnerDashboard = () => {
     { name: 'Create Booking', icon: <Package size={20} />, component: <CreateBooking /> },
     { name: 'Smart Dispatch AI', icon: <Activity size={20} />, component: <SmartDispatch /> },
     { name: 'Settings', icon: <Settings size={20} />, component: <SettingsPage /> },
-    
+
   ];
 
 
@@ -1059,36 +1060,37 @@ const OwnerDashboard = () => {
 
   const SidebarContent = () => (
     <>
-      <div style={styles.sidebarHeader}>
-        <div style={styles.brandWrap}>
-          <div style={styles.brandLogoWrap}>
-            <img src={eagleLogo} alt="Eagle Transport Logo" style={styles.brandLogo} />
+      <div className="owner-sidebar-header" style={styles.sidebarHeader}>
+        <div className="owner-sidebar-brand" style={styles.brandWrap}>
+          <div className="owner-sidebar-logo-wrap" style={styles.brandLogoWrap}>
+            <img className="owner-sidebar-logo" src={eagleLogo} alt="Eagle Transport Logo" style={styles.brandLogo} />
           </div>
           <div>
-            <h2 style={styles.sidebarTitle}>Eagle Transport</h2>
-            <p style={styles.sidebarSubTitle}>Owner Control Panel</p>
+            <h2 className="owner-sidebar-title" style={styles.sidebarTitle}>Eagle Transport</h2>
+            <p className="owner-sidebar-subtitle" style={styles.sidebarSubTitle}>Owner Control Panel</p>
           </div>
         </div>
       </div>
 
-      <div style={styles.menu}>
+      <div className="owner-sidebar-menu" style={styles.menu}>
         {menuItems.map((item) => (
           <button
             key={item.name}
+            className={`owner-sidebar-menu-item ${activeTab === item.name ? "is-active" : ""}`}
             style={{
               ...styles.menuItem,
               ...(activeTab === item.name ? styles.activeMenuItem : {}),
             }}
             onClick={() => handleTabChange(item.name)}
           >
-            <span style={styles.menuIcon}>{item.icon}</span>
+            <span className="owner-sidebar-menu-icon" style={styles.menuIcon}>{item.icon}</span>
             <span style={{ flex: 1 }}>{item.name}</span>
             {activeTab === item.name && <ChevronRight size={16} />}
           </button>
         ))}
       </div>
 
-      <div style={styles.sidebarFooterCard}>
+      <div className="owner-sidebar-footer-card" style={styles.sidebarFooterCard}>
         <div style={styles.sidebarFooterTop}>
           <Activity size={18} />
           <span>Operations Running Smoothly</span>
@@ -1098,8 +1100,8 @@ const OwnerDashboard = () => {
         </p>
       </div>
 
-      <div style={styles.logoutWrap}>
-        <button style={styles.logoutBtn} onClick={handleLogout}>
+      <div className="owner-sidebar-logout-wrap" style={styles.logoutWrap}>
+        <button className="owner-sidebar-logout-btn" style={styles.logoutBtn} onClick={handleLogout}>
           <LogOut size={20} /> Logout
         </button>
       </div>
@@ -1129,10 +1131,10 @@ const OwnerDashboard = () => {
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
               style={styles.mobileSidebar}
-              className="mobile-only"
+              className="mobile-only owner-mobile-sidebar"
             >
-              <div style={styles.mobileCloseWrap}>
-                <button onClick={() => setIsMobileMenuOpen(false)} style={styles.mobileCloseBtn}>
+              <div className="owner-mobile-close-wrap" style={styles.mobileCloseWrap}>
+                <button className="owner-mobile-close-btn" onClick={() => setIsMobileMenuOpen(false)} style={styles.mobileCloseBtn}>
                   <X size={28} />
                 </button>
               </div>
@@ -1145,33 +1147,35 @@ const OwnerDashboard = () => {
       <div style={styles.main} className="owner-dashboard-main">
         <div style={styles.topbar} className="owner-dashboard-topbar">
           <div style={styles.topbarLeft}>
-            <button className="mobile-only" onClick={() => setIsMobileMenuOpen(true)} style={styles.mobileMenuBtn}>
+            <button className="mobile-only owner-mobile-menu-btn" onClick={() => setIsMobileMenuOpen(true)} style={styles.mobileMenuBtn}>
               <Menu size={28} />
             </button>
 
-            <button style={styles.homeBtn} onClick={() => navigate('/')}>
+            <button className="owner-home-btn" style={styles.homeBtn} onClick={() => navigate('/')}>
               <Home size={18} /> Home
             </button>
 
-            <div style={styles.searchBar} className="desktop-only">
+            <div style={styles.searchBar} className="desktop-only owner-search-bar">
               <Search size={18} color="var(--text-muted)" />
               <input
                 type="text"
                 placeholder="Search bookings, trucks, drivers..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                className="owner-search-input"
                 style={styles.searchInput} // Styles-il searchInput add seiyavum
               />
             </div>
           </div>
 
-          <div style={styles.topActions}>                       
+          <div style={styles.topActions}>
             <div style={styles.notificationWrap}>
-  
 
-  <div style={styles.notificationWrap}>
+
+              <div style={styles.notificationWrap}>
                 <button
                   type="button"
+                  className="owner-notification-btn"
                   style={styles.notificationBtn}
                   onClick={async () => {
                     const willOpen = !showNotificationDropdown;
@@ -1214,48 +1218,48 @@ const OwnerDashboard = () => {
                   )}
                 </button>
 
-  {showNotificationDropdown && (
-    <div style={styles.notificationDropdown}>
-      <h4 style={styles.notificationTitle}>Notifications</h4>
+                {showNotificationDropdown && (
+                  <div style={styles.notificationDropdown}>
+                    <h4 style={styles.notificationTitle}>Notifications</h4>
 
-      {notifications.length === 0 ? (
-        <p style={styles.notificationEmpty}>No notifications</p>
-      ) : (
-        notifications.map((item) => (
-          <div
-            key={item._id}
-            style={{
-              ...styles.notificationItem,
-              ...(item.isRead ? styles.notificationRead : styles.notificationUnread),
-            }}
-            onClick={async () => {
-              await fetchWithAuth(
-                `${API_URL}/bookings/notifications/${item._id}/read`,
-                { method: "PUT" }
-              );
+                    {notifications.length === 0 ? (
+                      <p style={styles.notificationEmpty}>No notifications</p>
+                    ) : (
+                      notifications.map((item) => (
+                        <div
+                          key={item._id}
+                          style={{
+                            ...styles.notificationItem,
+                            ...(item.isRead ? styles.notificationRead : styles.notificationUnread),
+                          }}
+                          onClick={async () => {
+                            await fetchWithAuth(
+                              `${API_URL}/bookings/notifications/${item._id}/read`,
+                              { method: "PUT" }
+                            );
 
-              setNotifications((prev) =>
-                prev.map((n) =>
-                  n._id === item._id ? { ...n, isRead: true } : n
-                )
-              );
-            }}
-          >
-            <strong>{item.message}</strong>
-            <small>
-              {item.createdAt
-                ? new Date(item.createdAt).toLocaleString("en-IN")
-                : ""}
-            </small>
-          </div>
-        ))
-      )}
-    </div>
-  )}
-</div>
-</div>
-            <div style={styles.profile}>
-              <img src="/admin.png" alt="Admin User" style={styles.avatarImg} />
+                            setNotifications((prev) =>
+                              prev.map((n) =>
+                                n._id === item._id ? { ...n, isRead: true } : n
+                              )
+                            );
+                          }}
+                        >
+                          <strong>{item.message}</strong>
+                          <small>
+                            {item.createdAt
+                              ? new Date(item.createdAt).toLocaleString("en-IN")
+                              : ""}
+                          </small>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="owner-profile" style={styles.profile}>
+              <img className="owner-avatar" src="/admin.png" alt="Admin User" style={styles.avatarImg} />
               <div className="desktop-only">
                 <p style={styles.profileName}>Admin User</p>
                 <p style={styles.profileRole}>Owner</p>
@@ -1272,19 +1276,23 @@ const OwnerDashboard = () => {
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -18 }}
-                transition={{ duration: 0.25 }}
+                transition={{ duration: 0.16, ease: 'easeOut' }}
               >
-                <div style={styles.contentHeader} className="owner-dashboard-header">                
+                <div style={styles.contentHeader} className="owner-dashboard-header">
                   <div style={styles.headerActionWrap}>
                     {activeTab === 'Trucks & Drivers' && (
-                      <>
-                        <button className="btn btn-primary" style={styles.primaryActionBtn} onClick={() => handleTabChange('Add Truck')}>
-                          + Add Truck
+                      <div className="fleet-premium-actions">
+                        <button className="fleet-premium-action fleet-premium-action--truck" onClick={() => handleTabChange('Add Truck')}>
+                          <span className="fleet-premium-action__icon"><Truck size={19} /></span>
+                          <span className="fleet-premium-action__copy"><strong>Add Truck</strong><small>New vehicle</small></span>
+                          <span className="fleet-premium-action__plus">+</span>
                         </button>
-                        <button className="btn btn-primary" style={styles.primaryActionBtn} onClick={() => handleTabChange('Add Driver')}>
-                          + Add Driver
+                        <button className="fleet-premium-action fleet-premium-action--driver" onClick={() => handleTabChange('Add Driver')}>
+                          <span className="fleet-premium-action__icon"><UserPlus size={19} /></span>
+                          <span className="fleet-premium-action__copy"><strong>Add Driver</strong><small>New member</small></span>
+                          <span className="fleet-premium-action__plus">+</span>
                         </button>
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -1297,6 +1305,21 @@ const OwnerDashboard = () => {
       </div>
 
       <style>{`
+
+        /* Premium fleet quick actions */
+        .fleet-premium-actions { display:flex; gap:10px; width:100%; justify-content:flex-end; margin-bottom:10px; }
+        .fleet-premium-action { min-width:164px; height:58px; padding:7px 10px; border:1px solid rgba(15,74,136,.10); border-radius:17px; display:flex; align-items:center; gap:9px; cursor:pointer; color:#0b315d; background:linear-gradient(145deg,#fff 0%,#f5f9fd 100%); box-shadow:0 8px 22px rgba(8,47,89,.08); transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease; -webkit-tap-highlight-color:transparent; }
+        .fleet-premium-action:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(8,47,89,.13); border-color:rgba(15,91,159,.20); }
+        .fleet-premium-action:active { transform:scale(.975); }
+        .fleet-premium-action__icon { width:40px; height:40px; flex:0 0 40px; border-radius:12px; display:grid; place-items:center; color:#fff; background:linear-gradient(135deg,#0f5b9f,#123b6c); box-shadow:0 7px 16px rgba(15,74,136,.18); }
+        .fleet-premium-action--truck .fleet-premium-action__icon { background:linear-gradient(135deg,#ff9a2f,#ef6c00); box-shadow:0 7px 16px rgba(239,108,0,.18); }
+        .fleet-premium-action__copy { display:flex; flex-direction:column; text-align:left; line-height:1.08; flex:1; }
+        .fleet-premium-action__copy strong { font-size:12.5px; font-weight:800; white-space:nowrap; }
+        .fleet-premium-action__copy small { margin-top:4px; font-size:9px; color:#8090a3; font-weight:650; white-space:nowrap; }
+        .fleet-premium-action__plus { width:23px; height:23px; flex:0 0 23px; display:grid; place-items:center; border-radius:8px; background:#edf4fb; color:#0f5b9f; font-size:17px; font-weight:700; }
+        @media (max-width:768px) { .fleet-premium-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:0 0 10px; } .fleet-premium-action { min-width:0; width:100%; height:52px; padding:6px 8px; border-radius:15px; gap:7px; } .fleet-premium-action__icon { width:36px; height:36px; flex-basis:36px; border-radius:11px; } .fleet-premium-action__icon svg { width:17px; height:17px; } .fleet-premium-action__copy strong { font-size:11px; } .fleet-premium-action__copy small { font-size:8px; } .fleet-premium-action__plus { width:20px; height:20px; flex-basis:20px; font-size:15px; border-radius:7px; } }
+        @media (max-width:380px) { .fleet-premium-action { height:48px; padding:5px 7px; } .fleet-premium-action__icon { width:33px; height:33px; flex-basis:33px; } .fleet-premium-action__copy small { display:none; } .fleet-premium-action__plus { width:18px; height:18px; flex-basis:18px; } }
+
         @media (max-width: 1024px) {
           .desktop-only { display: none !important; }
 
@@ -1304,49 +1327,729 @@ const OwnerDashboard = () => {
             margin-left: 0 !important;
             width: 100% !important;
             max-width: 100% !important;
-            min-width: 100% !important;
+            min-width: 0 !important;
+            overflow-x: hidden !important;
           }
 
           .owner-dashboard-topbar {
-            padding: 0 16px !important;
-            height: auto !important;
-            min-height: 74px !important;
-            flex-wrap: wrap !important;
-            gap: 12px !important;
+            width: 100% !important;
+            min-height: 68px !important;
+            height: 68px !important;
+            padding: 8px 14px !important;
+            flex-wrap: nowrap !important;
+            gap: 8px !important;
+            box-sizing: border-box !important;
           }
 
           .owner-dashboard-content-outer {
-            padding: 16px !important;
+            width: 100% !important;
+            padding: 12px !important;
+            box-sizing: border-box !important;
+          }
+
+          .owner-dashboard-content {
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: auto !important;
+            padding: 12px !important;
+            border-radius: 19px !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+          }
+
+          .owner-dashboard-header {
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            gap: 6px !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
           }
 
           .owner-dashboard-quickstats {
             grid-template-columns: 1fr 1fr !important;
           }
-
-          .owner-dashboard-content {
-            padding: 20px !important;
-            border-radius: 22px !important;
-            min-height: auto !important;
-          }
-
-          .owner-dashboard-header {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-          }
         }
 
         @media (max-width: 640px) {
-          .owner-dashboard-quickstats {
-            grid-template-columns: 1fr !important;
+          .owner-dashboard-topbar {
+            min-height: 64px !important;
+            height: 64px !important;
+            padding: 7px 10px !important;
+          }
+
+          .owner-dashboard-topbar > div:first-child,
+          .owner-dashboard-topbar > div:last-child {
+            gap: 7px !important;
+          }
+
+          .owner-mobile-menu-btn,
+          .owner-notification-btn {
+            width: 40px !important;
+            min-width: 40px !important;
+            height: 40px !important;
+            padding: 0 !important;
+            border-radius: 12px !important;
+          }
+
+          .owner-mobile-menu-btn svg,
+          .owner-notification-btn svg {
+            width: 21px !important;
+            height: 21px !important;
+          }
+
+          .owner-home-btn {
+            min-height: 40px !important;
+            padding: 0 13px !important;
+            gap: 6px !important;
+            border-radius: 12px !important;
+            font-size: 12px !important;
+          }
+
+          .owner-home-btn svg {
+            width: 16px !important;
+            height: 16px !important;
+          }
+
+          .owner-profile {
+            gap: 0 !important;
+          }
+
+          .owner-avatar {
+            width: 40px !important;
+            height: 40px !important;
+          }
+
+          .owner-dashboard-content-outer {
+            padding: 9px !important;
           }
 
           .owner-dashboard-content {
-            padding: 16px !important;
+            padding: 9px !important;
+            border-radius: 17px !important;
+          }
+
+          .owner-dashboard-quickstats {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 9px !important;
+          }
+        }
+
+        @media (max-width: 380px) {
+          .owner-dashboard-topbar {
+            padding: 6px 8px !important;
+          }
+
+          .owner-home-btn {
+            padding: 0 10px !important;
+          }
+
+          .owner-avatar {
+            width: 36px !important;
+            height: 36px !important;
+          }
+        }
+
+
+
+        /* =========================================================
+           OWNER DASHBOARD — PREMIUM MOBILE SIDEBAR + DARK TOPBAR
+           UI ONLY. No API / calculations / functions are changed.
+        ========================================================= */
+
+        /* Theme-safe topbar (desktop + mobile) */
+        .owner-dashboard-topbar {
+          transition:
+            background-color .22s ease,
+            border-color .22s ease,
+            box-shadow .22s ease,
+            color .22s ease !important;
+        }
+
+        [data-theme="dark"] .owner-dashboard-topbar {
+          background: rgba(7, 24, 43, .92) !important;
+          border-bottom-color: rgba(148, 163, 184, .13) !important;
+          box-shadow: 0 8px 26px rgba(0, 0, 0, .18) !important;
+          color: #eaf3ff !important;
+          backdrop-filter: blur(18px) saturate(135%) !important;
+          -webkit-backdrop-filter: blur(18px) saturate(135%) !important;
+        }
+
+        [data-theme="dark"] .owner-search-bar {
+          background: rgba(255,255,255,.07) !important;
+          border-color: rgba(255,255,255,.10) !important;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.04) !important;
+        }
+
+        [data-theme="dark"] .owner-search-input {
+          color: #f8fbff !important;
+          background: transparent !important;
+        }
+
+        [data-theme="dark"] .owner-search-input::placeholder {
+          color: #91a4bb !important;
+        }
+
+        [data-theme="dark"] .owner-notification-btn,
+        [data-theme="dark"] .owner-mobile-menu-btn {
+          color: #e7f1fc !important;
+          background: rgba(255,255,255,.07) !important;
+          border: 1px solid rgba(255,255,255,.10) !important;
+          box-shadow: 0 8px 20px rgba(0,0,0,.12) !important;
+        }
+
+        [data-theme="dark"] .owner-profile {
+          background: rgba(255,255,255,.06) !important;
+          border-color: rgba(255,255,255,.09) !important;
+          color: #f4f8fd !important;
+        }
+
+        [data-theme="dark"] .owner-profile p:first-child {
+          color: #f4f8fd !important;
+        }
+
+        [data-theme="dark"] .owner-profile p:last-child {
+          color: #9db0c5 !important;
+        }
+
+        [data-theme="dark"] .owner-home-btn {
+          background: linear-gradient(135deg, #145a9d 0%, #0d3c70 100%) !important;
+          border: 1px solid rgba(93, 170, 239, .20) !important;
+          box-shadow: 0 9px 22px rgba(0,0,0,.18) !important;
+        }
+
+        /* Mobile drawer */
+        @media (max-width: 1024px) {
+          .owner-mobile-sidebar {
+            width: min(252px, 82vw) !important;
+            max-width: 252px !important;
+            background:
+              linear-gradient(180deg, #071b33 0%, #0b2b50 55%, #103a69 100%) !important;
+            border-right: 1px solid rgba(255,255,255,.08) !important;
+            box-shadow: 18px 0 46px rgba(2, 12, 27, .30) !important;
+            overflow-x: hidden !important;
+            scrollbar-width: thin !important;
+            scrollbar-color: rgba(255,255,255,.18) transparent !important;
+          }
+
+          .owner-mobile-sidebar::-webkit-scrollbar {
+            width: 4px;
+          }
+
+          .owner-mobile-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+          }
+
+          .owner-mobile-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,.18);
+            border-radius: 999px;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-header {
+            padding: 16px 48px 14px 14px !important;
+            min-height: 68px !important;
+            border-bottom: 1px solid rgba(255,255,255,.08) !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-brand {
+            gap: 9px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-logo-wrap {
+            width: 38px !important;
+            height: 38px !important;
+            min-width: 38px !important;
+            border-radius: 11px !important;
+            box-shadow: 0 7px 18px rgba(255,140,26,.16) !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-logo {
+            width: 62px !important;
+            height: 62px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-title {
+            font-size: 13px !important;
+            line-height: 1.15 !important;
+            font-weight: 800 !important;
+            letter-spacing: -.15px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-subtitle {
+            margin-top: 3px !important;
+            font-size: 9.5px !important;
+            line-height: 1.2 !important;
+            color: rgba(255,255,255,.58) !important;
+          }
+
+          .owner-mobile-close-wrap {
+            top: 15px !important;
+            right: 12px !important;
+            z-index: 5 !important;
+          }
+
+          .owner-mobile-close-btn {
+            width: 36px !important;
+            height: 36px !important;
+            padding: 0 !important;
+            display: grid !important;
+            place-items: center !important;
+            border-radius: 11px !important;
+            color: #fff !important;
+            background: rgba(255,255,255,.08) !important;
+            border: 1px solid rgba(255,255,255,.09) !important;
+            box-shadow: 0 7px 18px rgba(0,0,0,.12) !important;
+            transition: transform .15s ease, background .15s ease !important;
+          }
+
+          .owner-mobile-close-btn svg {
+            width: 19px !important;
+            height: 19px !important;
+          }
+
+          .owner-mobile-close-btn:active {
+            transform: scale(.94) !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-menu {
+            padding: 11px 10px 8px !important;
+            gap: 4px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-menu-item {
+            min-height: 41px !important;
+            padding: 8px 10px !important;
+            gap: 9px !important;
+            border-radius: 11px !important;
+            font-size: 11.5px !important;
+            line-height: 1.15 !important;
+            font-weight: 700 !important;
+            letter-spacing: -.05px !important;
+            transition:
+              transform .14s ease,
+              background .14s ease,
+              border-color .14s ease,
+              box-shadow .14s ease !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-menu-item:active {
+            transform: scale(.975) !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-menu-item.is-active {
+            color: #fff !important;
+            background:
+              linear-gradient(135deg, rgba(255,140,26,.22), rgba(255,255,255,.09)) !important;
+            border-color: rgba(255,181,89,.20) !important;
+            box-shadow:
+              0 7px 17px rgba(0,0,0,.15),
+              inset 3px 0 0 #ff8c1a !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-menu-icon {
+            width: 27px !important;
+            height: 27px !important;
+            flex: 0 0 27px !important;
+            display: grid !important;
+            place-items: center !important;
+            border-radius: 8px !important;
+            background: rgba(255,255,255,.055) !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-menu-icon svg {
+            width: 15px !important;
+            height: 15px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-menu-item.is-active .owner-sidebar-menu-icon {
+            background: rgba(255,255,255,.10) !important;
+          }
+
+          /* Keep drawer short and useful on phones */
+          .owner-mobile-sidebar .owner-sidebar-footer-card {
+            display: none !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-logout-wrap {
+            padding: 8px 10px 14px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-logout-btn {
+            min-height: 41px !important;
+            padding: 8px 11px !important;
+            gap: 9px !important;
+            border-radius: 11px !important;
+            font-size: 11.5px !important;
+            background: rgba(239,68,68,.10) !important;
+            border: 1px solid rgba(248,113,113,.14) !important;
+            color: #ffe5e5 !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-logout-btn svg {
+            width: 15px !important;
+            height: 15px !important;
+          }
+        }
+
+        /* Large phones */
+        @media (max-width: 640px) {
+          .owner-dashboard-topbar {
+            background: rgba(255,255,255,.94) !important;
+            border-bottom: 1px solid rgba(15,74,136,.07) !important;
+            box-shadow: 0 5px 18px rgba(8,47,89,.06) !important;
+            backdrop-filter: blur(16px) saturate(130%) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(130%) !important;
+          }
+
+          [data-theme="dark"] .owner-dashboard-topbar {
+            background: rgba(6,22,40,.95) !important;
+            border-bottom-color: rgba(255,255,255,.08) !important;
+            box-shadow: 0 7px 20px rgba(0,0,0,.19) !important;
+          }
+
+          .owner-mobile-menu-btn,
+          .owner-notification-btn {
+            background: #f7faff !important;
+            color: #0b3b69 !important;
+            border: 1px solid #e4edf7 !important;
+            box-shadow: 0 5px 14px rgba(8,47,89,.055) !important;
+          }
+
+          [data-theme="dark"] .owner-mobile-menu-btn,
+          [data-theme="dark"] .owner-notification-btn {
+            background: rgba(255,255,255,.07) !important;
+            color: #eef6ff !important;
+            border-color: rgba(255,255,255,.10) !important;
+          }
+
+          .owner-home-btn {
+            min-width: 78px !important;
+            justify-content: center !important;
+            background: linear-gradient(135deg,#0f5b9f,#103d70) !important;
+            box-shadow: 0 7px 16px rgba(15,74,136,.16) !important;
+          }
+
+          .owner-avatar {
+            border: 2px solid rgba(15,91,159,.10) !important;
+            box-shadow: 0 5px 14px rgba(8,47,89,.08) !important;
+          }
+
+          [data-theme="dark"] .owner-avatar {
+            border-color: rgba(255,255,255,.12) !important;
+            box-shadow: 0 5px 14px rgba(0,0,0,.18) !important;
+          }
+
+          .owner-mobile-sidebar {
+            width: min(242px, 84vw) !important;
+            max-width: 242px !important;
+          }
+        }
+
+        /* Small phones */
+        @media (max-width: 420px) {
+          .owner-dashboard-topbar {
+            min-height: 58px !important;
+            height: 58px !important;
+            padding: 6px 8px !important;
+          }
+
+          .owner-mobile-menu-btn,
+          .owner-notification-btn {
+            width: 37px !important;
+            min-width: 37px !important;
+            height: 37px !important;
+            border-radius: 11px !important;
+          }
+
+          .owner-mobile-menu-btn svg,
+          .owner-notification-btn svg {
+            width: 18px !important;
+            height: 18px !important;
+          }
+
+          .owner-home-btn {
+            min-width: 70px !important;
+            min-height: 37px !important;
+            height: 37px !important;
+            padding: 0 10px !important;
+            border-radius: 11px !important;
+            font-size: 11px !important;
+          }
+
+          .owner-home-btn svg {
+            width: 14px !important;
+            height: 14px !important;
+          }
+
+          .owner-avatar {
+            width: 37px !important;
+            height: 37px !important;
+          }
+
+          .owner-mobile-sidebar {
+            width: min(228px, 86vw) !important;
+            max-width: 228px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-header {
+            min-height: 62px !important;
+            padding: 13px 43px 11px 11px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-logo-wrap {
+            width: 34px !important;
+            height: 34px !important;
+            min-width: 34px !important;
+            border-radius: 10px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-logo {
+            width: 56px !important;
+            height: 56px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-title {
+            font-size: 12px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-subtitle {
+            font-size: 8.8px !important;
+          }
+
+          .owner-mobile-close-wrap {
+            top: 12px !important;
+            right: 9px !important;
+          }
+
+          .owner-mobile-close-btn {
+            width: 33px !important;
+            height: 33px !important;
+            border-radius: 10px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-menu {
+            padding: 8px 8px 6px !important;
+            gap: 3px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-menu-item {
+            min-height: 38px !important;
+            padding: 7px 8px !important;
+            gap: 7px !important;
+            border-radius: 10px !important;
+            font-size: 10.5px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-menu-icon {
+            width: 25px !important;
+            height: 25px !important;
+            flex-basis: 25px !important;
+            border-radius: 7px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-menu-icon svg {
+            width: 14px !important;
+            height: 14px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-logout-wrap {
+            padding: 6px 8px 10px !important;
+          }
+
+          .owner-mobile-sidebar .owner-sidebar-logout-btn {
+            min-height: 38px !important;
+            border-radius: 10px !important;
+            font-size: 10.5px !important;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .owner-mobile-sidebar *,
+          .owner-dashboard-topbar *,
+          .owner-mobile-close-btn {
+            transition: none !important;
+          }
+        }
+
+
+        /* ==========================================
+           ADD DRIVER / ADD TRUCK - MOBILE PREMIUM
+        ========================================== */
+
+        @media (max-width: 768px) {
+          .owner-add-form-wrap {
+            width: 100% !important;
+            margin: 0 0 14px !important;
+            overflow: visible !important;
+          }
+
+          .owner-add-form-wrap > div[style*="position: absolute"] {
+            display: none !important;
+          }
+
+          .owner-add-form-card {
+            width: 100% !important;
+            padding: 18px 16px !important;
+            border-radius: 20px !important;
+            overflow: visible !important;
+            box-sizing: border-box !important;
+            background: linear-gradient(145deg, #ffffff 0%, #f7fbff 100%) !important;
+            border: 1px solid #e4edf7 !important;
+            box-shadow: 0 12px 30px rgba(8, 47, 89, 0.08) !important;
+          }
+
+          .owner-add-form-head {
+            width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 11px !important;
+            margin-bottom: 16px !important;
+          }
+
+          .owner-add-form-head > div:first-child {
+            width: 46px !important;
+            height: 46px !important;
+            min-width: 46px !important;
+            border-radius: 14px !important;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18) !important;
+          }
+
+          .owner-add-form-head > div:first-child svg {
+            width: 20px !important;
+            height: 20px !important;
+          }
+
+          .owner-add-form-title {
+            margin: 0 !important;
+            font-size: 20px !important;
+            line-height: 1.1 !important;
+            letter-spacing: -0.35px !important;
+            color: #0b315d !important;
+          }
+
+          .owner-add-form-subtitle {
+            margin: 4px 0 0 !important;
+            max-width: 245px !important;
+            font-size: 10.5px !important;
+            line-height: 1.4 !important;
+            color: #71839a !important;
+          }
+
+          .owner-add-form-grid {
+            width: 100% !important;
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+
+          .owner-add-form-grid > div {
+            width: 100% !important;
+            min-width: 0 !important;
+          }
+
+          .owner-add-form-grid input,
+          .owner-add-form-grid select,
+          .owner-add-form-grid textarea {
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: 44px !important;
+            padding: 0 12px !important;
+            border-radius: 12px !important;
+            border: 1px solid #d8e4f0 !important;
+            background: #ffffff !important;
+            color: #153b63 !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            outline: none !important;
+            box-shadow: 0 3px 10px rgba(8, 47, 89, 0.035) !important;
+            box-sizing: border-box !important;
+          }
+
+          .owner-add-form-grid textarea {
+            min-height: 86px !important;
+            padding: 11px 12px !important;
+            line-height: 1.45 !important;
+            resize: vertical !important;
+          }
+
+          .owner-add-form-grid input:focus,
+          .owner-add-form-grid select:focus,
+          .owner-add-form-grid textarea:focus {
+            border-color: #2b6fb0 !important;
+            box-shadow: 0 0 0 3px rgba(43, 111, 176, 0.08) !important;
+          }
+
+          .owner-add-form-grid span[style*="color"] {
+            display: block !important;
+            margin: 3px 2px 0 !important;
+            font-size: 9.5px !important;
+            line-height: 1.3 !important;
+          }
+
+          .owner-add-form-submit {
+            grid-column: 1 / -1 !important;
+            width: 100% !important;
+            min-height: 44px !important;
+            margin-top: 2px !important;
+            padding: 0 14px !important;
+            border-radius: 12px !important;
+            font-size: 12px !important;
+            gap: 7px !important;
+            background: linear-gradient(135deg, #0f5b9f 0%, #103d70 100%) !important;
+            box-shadow: 0 9px 20px rgba(15, 74, 136, 0.18) !important;
+          }
+
+          .owner-add-form-submit svg {
+            width: 15px !important;
+            height: 15px !important;
+          }
+        }
+
+        @media (max-width: 420px) {
+          .owner-add-form-card {
+            padding: 16px 13px !important;
             border-radius: 18px !important;
           }
 
-          .owner-dashboard-topbar {
-            padding: 12px !important;
+          .owner-add-form-head {
+            gap: 9px !important;
+            margin-bottom: 14px !important;
+          }
+
+          .owner-add-form-head > div:first-child {
+            width: 42px !important;
+            height: 42px !important;
+            min-width: 42px !important;
+            border-radius: 12px !important;
+          }
+
+          .owner-add-form-title {
+            font-size: 18px !important;
+          }
+
+          .owner-add-form-subtitle {
+            max-width: 215px !important;
+            font-size: 9.5px !important;
+          }
+
+          .owner-add-form-grid {
+            gap: 8px !important;
+          }
+
+          .owner-add-form-grid input,
+          .owner-add-form-grid select {
+            min-height: 42px !important;
+            font-size: 11.5px !important;
+          }
+
+          .owner-add-form-grid textarea {
+            min-height: 78px !important;
+            font-size: 11.5px !important;
+          }
+
+          .owner-add-form-submit {
+            min-height: 42px !important;
+            font-size: 11.5px !important;
           }
         }
 
@@ -1634,42 +2337,42 @@ const styles = {
   },
 
   notificationWrap: {
-  position: "relative",
-},
+    position: "relative",
+  },
 
-notificationDropdown: {
-  position: "absolute",
-  top: "54px",
-  right: 0,
-  width: "320px",
-  background: "#ffffff",
-  color: "#0f3158",
-  borderRadius: "18px",
-  padding: "16px",
-  boxShadow: "0 18px 45px rgba(0,0,0,0.22)",
-  zIndex: 999,
-},
+  notificationDropdown: {
+    position: "absolute",
+    top: "54px",
+    right: 0,
+    width: "320px",
+    background: "#ffffff",
+    color: "#0f3158",
+    borderRadius: "18px",
+    padding: "16px",
+    boxShadow: "0 18px 45px rgba(0,0,0,0.22)",
+    zIndex: 999,
+  },
 
-notificationTitle: {
-  margin: "0 0 12px",
-  fontSize: "16px",
-  fontWeight: 900,
-},
+  notificationTitle: {
+    margin: "0 0 12px",
+    fontSize: "16px",
+    fontWeight: 900,
+  },
 
-notificationEmpty: {
-  margin: 0,
-  color: "#64748b",
-},
+  notificationEmpty: {
+    margin: 0,
+    color: "#64748b",
+  },
 
-notificationItem: {
-  padding: "12px",
-  borderRadius: "14px",
-  background: "#f1f6ff",
-  marginBottom: "10px",
-  display: "flex",
-  flexDirection: "column",
-  gap: "6px",
-},
+  notificationItem: {
+    padding: "12px",
+    borderRadius: "14px",
+    background: "#f1f6ff",
+    marginBottom: "10px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px",
+  },
 
 
   badgeCount: {
@@ -1890,204 +2593,204 @@ notificationItem: {
     color: 'var(--dark-blue)',
   },
   notificationWrap: {
-  position: "relative",
-},
+    position: "relative",
+  },
 
-notificationBtn: {
-  position: "relative",
-  width: "44px",
-  height: "44px",
-  borderRadius: "14px",
-  border: "1px solid rgba(15, 74, 136, 0.12)",
-  background: "#ffffff",
-  color: "var(--dark-blue)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  cursor: "pointer",
-  boxShadow: "0 8px 20px rgba(15, 74, 136, 0.08)",
-},
+  notificationBtn: {
+    position: "relative",
+    width: "44px",
+    height: "44px",
+    borderRadius: "14px",
+    border: "1px solid rgba(15, 74, 136, 0.12)",
+    background: "#ffffff",
+    color: "var(--dark-blue)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    boxShadow: "0 8px 20px rgba(15, 74, 136, 0.08)",
+  },
 
-notificationCount: {
-  position: "absolute",
-  top: "-6px",
-  right: "-6px",
-  minWidth: "20px",
-  height: "20px",
-  padding: "0 6px",
-  borderRadius: "999px",
-  background: "#ef4444",
-  color: "#fff",
-  fontSize: "11px",
-  fontWeight: 900,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-},
+  notificationCount: {
+    position: "absolute",
+    top: "-6px",
+    right: "-6px",
+    minWidth: "20px",
+    height: "20px",
+    padding: "0 6px",
+    borderRadius: "999px",
+    background: "#ef4444",
+    color: "#fff",
+    fontSize: "11px",
+    fontWeight: 900,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
-notificationDropdown: {
-  position: "absolute",
-  top: "54px",
-  right: 0,
-  width: "320px",
-  maxHeight: "420px",
-  overflowY: "auto",
-  background: "#ffffff",
-  borderRadius: "18px",
-  padding: "14px",
-  boxShadow: "0 18px 45px rgba(0,0,0,0.18)",
-  border: "1px solid #e8eef6",
-  zIndex: 999,
-},
+  notificationDropdown: {
+    position: "absolute",
+    top: "54px",
+    right: 0,
+    width: "320px",
+    maxHeight: "420px",
+    overflowY: "auto",
+    background: "#ffffff",
+    borderRadius: "18px",
+    padding: "14px",
+    boxShadow: "0 18px 45px rgba(0,0,0,0.18)",
+    border: "1px solid #e8eef6",
+    zIndex: 999,
+  },
 
-notificationTitle: {
-  margin: "0 0 12px",
-  color: "var(--dark-blue)",
-  fontSize: "16px",
-  fontWeight: 900,
-},
+  notificationTitle: {
+    margin: "0 0 12px",
+    color: "var(--dark-blue)",
+    fontSize: "16px",
+    fontWeight: 900,
+  },
 
-notificationEmpty: {
-  margin: 0,
-  color: "var(--text-muted)",
-  fontWeight: 700,
-  textAlign: "center",
-  padding: "18px",
-},
+  notificationEmpty: {
+    margin: 0,
+    color: "var(--text-muted)",
+    fontWeight: 700,
+    textAlign: "center",
+    padding: "18px",
+  },
 
-notificationItem: {
-  padding: "12px",
-  borderRadius: "14px",
-  marginBottom: "10px",
-  cursor: "pointer",
-  display: "grid",
-  gap: "5px",
-  color: "var(--dark-blue)",
-},
+  notificationItem: {
+    padding: "12px",
+    borderRadius: "14px",
+    marginBottom: "10px",
+    cursor: "pointer",
+    display: "grid",
+    gap: "5px",
+    color: "var(--dark-blue)",
+  },
 
-notificationUnread: {
-  background: "#eef6ff",
-  border: "1px solid #cfe4ff",
-},
+  notificationUnread: {
+    background: "#eef6ff",
+    border: "1px solid #cfe4ff",
+  },
 
-notificationRead: {
-  background: "#f8fafc",
-  border: "1px solid #e8eef6",
-  opacity: 0.75,
-},
+  notificationRead: {
+    background: "#f8fafc",
+    border: "1px solid #e8eef6",
+    opacity: 0.75,
+  },
 
-premiumFormWrapper: {
-  position: "relative",
-  marginBottom: "28px",
-},
+  premiumFormWrapper: {
+    position: "relative",
+    marginBottom: "28px",
+  },
 
-formGlow1: {
-  position: "absolute",
-  width: "220px",
-  height: "220px",
-  background: "rgba(59,130,246,0.18)",
-  filter: "blur(70px)",
-  borderRadius: "50%",
-  top: "-40px",
-  left: "-40px",
-  zIndex: 0,
-},
+  formGlow1: {
+    position: "absolute",
+    width: "220px",
+    height: "220px",
+    background: "rgba(59,130,246,0.18)",
+    filter: "blur(70px)",
+    borderRadius: "50%",
+    top: "-40px",
+    left: "-40px",
+    zIndex: 0,
+  },
 
-formGlow2: {
-  position: "absolute",
-  width: "240px",
-  height: "240px",
-  background: "rgba(255,140,26,0.18)",
-  filter: "blur(70px)",
-  borderRadius: "50%",
-  bottom: "-40px",
-  right: "-40px",
-  zIndex: 0,
-},
+  formGlow2: {
+    position: "absolute",
+    width: "240px",
+    height: "240px",
+    background: "rgba(255,140,26,0.18)",
+    filter: "blur(70px)",
+    borderRadius: "50%",
+    bottom: "-40px",
+    right: "-40px",
+    zIndex: 0,
+  },
 
-premiumFormCard: {
-  position: "relative",
-  zIndex: 2,
-  padding: "34px",
-  borderRadius: "32px",
-  overflow: "hidden",
-  background:
-    "linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(248,250,255,0.98) 100%)",
-  border: "1px solid rgba(255,255,255,0.5)",
-  boxShadow: "0 25px 60px rgba(15, 74, 136, 0.12)",
-  backdropFilter: "blur(18px)",
-},
+  premiumFormCard: {
+    position: "relative",
+    zIndex: 2,
+    padding: "34px",
+    borderRadius: "32px",
+    overflow: "hidden",
+    background:
+      "linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(248,250,255,0.98) 100%)",
+    border: "1px solid rgba(255,255,255,0.5)",
+    boxShadow: "0 25px 60px rgba(15, 74, 136, 0.12)",
+    backdropFilter: "blur(18px)",
+  },
 
-formTopSection: {
-  display: "flex",
-  alignItems: "center",
-  gap: "18px",
-  marginBottom: "28px",
-},
+  formTopSection: {
+    display: "flex",
+    alignItems: "center",
+    gap: "18px",
+    marginBottom: "28px",
+  },
 
-formIconWrap: {
-  width: "72px",
-  height: "72px",
-  borderRadius: "24px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  color: "#fff",
-  background: "linear-gradient(135deg, #2563eb 0%, #06b6d4 100%)",
-  boxShadow: "0 12px 30px rgba(37,99,235,0.35)",
-},
+  formIconWrap: {
+    width: "72px",
+    height: "72px",
+    borderRadius: "24px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#fff",
+    background: "linear-gradient(135deg, #2563eb 0%, #06b6d4 100%)",
+    boxShadow: "0 12px 30px rgba(37,99,235,0.35)",
+  },
 
-premiumFormTitle: {
-  margin: 0,
-  fontSize: "2rem",
-  fontWeight: "900",
-  color: "#0f172a",
-},
+  premiumFormTitle: {
+    margin: 0,
+    fontSize: "2rem",
+    fontWeight: "900",
+    color: "#0f172a",
+  },
 
-premiumFormSubTitle: {
-  margin: "8px 0 0",
-  color: "#64748b",
-  fontSize: "0.96rem",
-  lineHeight: "1.7",
-},
+  premiumFormSubTitle: {
+    margin: "8px 0 0",
+    color: "#64748b",
+    fontSize: "0.96rem",
+    lineHeight: "1.7",
+  },
 
-premiumFormGrid: {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-  gap: "18px",
-},
+  premiumFormGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+    gap: "18px",
+  },
 
-premiumInput: {
-  width: "100%",
-  padding: "16px 18px",
-  borderRadius: "18px",
-  border: "1px solid #dbe7f5",
-  outline: "none",
-  fontSize: "0.98rem",
-  boxSizing: "border-box",
-  background: "rgba(255,255,255,0.9)",
-  color: "#0f172a",
-  fontWeight: "600",
-  transition: "all 0.25s ease",
-  boxShadow: "0 6px 18px rgba(15, 74, 136, 0.05)",
-},
+  premiumInput: {
+    width: "100%",
+    padding: "16px 18px",
+    borderRadius: "18px",
+    border: "1px solid #dbe7f5",
+    outline: "none",
+    fontSize: "0.98rem",
+    boxSizing: "border-box",
+    background: "rgba(255,255,255,0.9)",
+    color: "#0f172a",
+    fontWeight: "600",
+    transition: "all 0.25s ease",
+    boxShadow: "0 6px 18px rgba(15, 74, 136, 0.05)",
+  },
 
-premiumSubmitBtn: {
-  gridColumn: "1 / -1",
-  borderRadius: "20px",
-  padding: "16px 24px",
-  fontWeight: "800",
-  fontSize: "1rem",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: "10px",
-  border: "none",
-  background: "linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%)",
-  color: "#fff",
-  boxShadow: "0 18px 35px rgba(37,99,235,0.28)",
-  cursor: "pointer",
-},
+  premiumSubmitBtn: {
+    gridColumn: "1 / -1",
+    borderRadius: "20px",
+    padding: "16px 24px",
+    fontWeight: "800",
+    fontSize: "1rem",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "10px",
+    border: "none",
+    background: "linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%)",
+    color: "#fff",
+    boxShadow: "0 18px 35px rgba(37,99,235,0.28)",
+    cursor: "pointer",
+  },
 };
 
 export default OwnerDashboard;

@@ -137,9 +137,9 @@ const TollgateLogs = () => {
     `₹${Number(amount || 0).toLocaleString('en-IN')}`;
 
   return (
-    <div>
-      <div style={styles.summaryGrid}>
-        <div className="glass-card" style={styles.summaryCard}>
+    <div className="toll-mobile-page">
+      <div className="toll-summary-grid" style={styles.summaryGrid}>
+        <div className="glass-card toll-summary-card" style={styles.summaryCard}>
           <div style={{ ...styles.iconWrap, backgroundColor: 'rgba(15,74,136,0.1)', color: 'var(--primary-blue)' }}>
             <CreditCard size={28} />
           </div>
@@ -152,7 +152,7 @@ const TollgateLogs = () => {
           </div>
         </div>
 
-        <div className="glass-card" style={styles.summaryCard}>
+        <div className="glass-card toll-summary-card" style={styles.summaryCard}>
           <div style={{ ...styles.iconWrap, backgroundColor: 'rgba(16,185,129,0.1)', color: 'var(--success)' }}>
             <CheckCircle size={28} />
           </div>
@@ -165,7 +165,7 @@ const TollgateLogs = () => {
           </div>
         </div>
 
-        <div className="glass-card" style={styles.summaryCard}>
+        <div className="glass-card toll-summary-card" style={styles.summaryCard}>
           <div style={{ ...styles.iconWrap, backgroundColor: 'rgba(245,158,11,0.1)', color: 'var(--warning)' }}>
             <AlertCircle size={28} />
           </div>
@@ -179,14 +179,14 @@ const TollgateLogs = () => {
         </div>
       </div>
 
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={styles.tableHeader}>
+      <div className="card toll-history-card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="toll-table-header" style={styles.tableHeader}>
           <div style={styles.tableTitleWrap}>
             <History size={20} color="var(--text-muted)" />
             <h3 style={{ margin: 0 }}>Recent Toll Activity</h3>
           </div>
 
-          <button type="button" style={styles.refreshBtn} onClick={loadTollLogs} disabled={loading}>
+          <button className="toll-refresh-btn" type="button" style={styles.refreshBtn} onClick={loadTollLogs} disabled={loading}>
             <RefreshCw size={16} />
             Refresh
           </button>
@@ -199,8 +199,8 @@ const TollgateLogs = () => {
         ) : logs.length === 0 ? (
           <div style={styles.emptyBox}>No toll logs found. Driver toll entries will appear here.</div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={styles.table}>
+          <div className="toll-table-wrap" style={{ overflowX: 'auto' }}>
+            <table className="toll-table" style={styles.table}>
               <thead>
                 <tr>
                   <th style={styles.th}>Truck & Driver</th>
@@ -216,30 +216,31 @@ const TollgateLogs = () => {
 
                   return (
                     <motion.tr
+                      className="toll-row"
                       key={log._id || idx}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.04 }}
                       style={{ borderBottom: '1px solid var(--border-light)' }}
                     >
-                      <td style={styles.td}>
+                      <td className="toll-cell" data-label="Truck & Driver" style={styles.td}>
                         <p style={styles.mainText}>{getTruckNumber(log)}</p>
                         <p style={styles.subText}>{getDriverName(log)}</p>
                       </td>
 
-                      <td style={styles.td}>
+                      <td className="toll-cell" data-label="Tollgate Details" style={styles.td}>
                         <p style={styles.mainText}>{getTollgateName(log)}</p>
                         <p style={styles.subText}>{getTollPlace(log)}</p>
                       </td>
 
-                      <td style={styles.td}>{getCrossingTime(log)}</td>
+                      <td className="toll-cell" data-label="Crossing Time" style={styles.td}>{getCrossingTime(log)}</td>
 
-                      <td style={styles.td}>
+                      <td className="toll-cell toll-amount-cell" data-label="Amount Paid" style={styles.td}>
                         <p style={styles.mainText}>{formatMoney(log.amount)}</p>
                         <p style={styles.subText}>via {log.paymentMethod || log.mode || 'FASTag'}</p>
                       </td>
 
-                      <td style={styles.td}>
+                      <td className="toll-cell toll-status-cell" data-label="Status" style={styles.td}>
                         <span style={{ ...styles.badge, ...statusInfo.style }}>{statusInfo.label}</span>
                       </td>
                     </motion.tr>
@@ -250,9 +251,277 @@ const TollgateLogs = () => {
           </div>
         )}
       </div>
+
+      <style>{mobileCss}</style>
     </div>
   );
 };
+
+
+const mobileCss = `
+  @media (max-width: 768px) {
+    .toll-mobile-page {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+
+    .toll-summary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 9px !important;
+      margin-bottom: 14px !important;
+    }
+
+    .toll-summary-card {
+      min-width: 0 !important;
+      padding: 12px 10px !important;
+      gap: 9px !important;
+      border-radius: 15px !important;
+      box-shadow: 0 8px 20px rgba(15, 59, 115, .06) !important;
+      transition: transform .16s ease, box-shadow .16s ease !important;
+    }
+
+    .toll-summary-card:last-child {
+      grid-column: 1 / -1 !important;
+    }
+
+    .toll-summary-card > div:first-child {
+      width: 37px !important;
+      height: 37px !important;
+      min-width: 37px !important;
+      padding: 0 !important;
+      border-radius: 11px !important;
+      display: grid !important;
+      place-items: center !important;
+    }
+
+    .toll-summary-card > div:first-child svg {
+      width: 17px !important;
+      height: 17px !important;
+    }
+
+    .toll-summary-card p {
+      font-size: 8.8px !important;
+      line-height: 1.25 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .toll-summary-card h3 {
+      margin-top: 3px !important;
+      font-size: 16px !important;
+      line-height: 1.1 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .toll-summary-card:last-child {
+      display: grid !important;
+      grid-template-columns: 37px 1fr !important;
+      align-items: center !important;
+    }
+
+    .toll-history-card {
+      border-radius: 18px !important;
+      overflow: hidden !important;
+      box-shadow: 0 10px 26px rgba(15, 59, 115, .06) !important;
+    }
+
+    .toll-table-header {
+      padding: 12px 13px !important;
+      gap: 8px !important;
+    }
+
+    .toll-table-header h3 {
+      font-size: 14px !important;
+      line-height: 1.2 !important;
+      color: #0b315d !important;
+    }
+
+    .toll-table-header svg {
+      width: 16px !important;
+      height: 16px !important;
+    }
+
+    .toll-refresh-btn {
+      min-height: 36px !important;
+      padding: 0 10px !important;
+      border-radius: 10px !important;
+      gap: 5px !important;
+      font-size: 9.5px !important;
+      background: linear-gradient(145deg, #fff, #f3f8fd) !important;
+      box-shadow: 0 5px 14px rgba(15, 59, 115, .06) !important;
+      transition: transform .16s ease, box-shadow .16s ease !important;
+    }
+
+    .toll-refresh-btn svg {
+      width: 13px !important;
+      height: 13px !important;
+    }
+
+    .toll-history-card > div[style*="error"] {
+      margin: 10px !important;
+      padding: 10px !important;
+      border-radius: 11px !important;
+      font-size: 10px !important;
+    }
+
+    .toll-table-wrap {
+      overflow: visible !important;
+      padding: 9px !important;
+      background: #f7faff !important;
+    }
+
+    .toll-table {
+      width: 100% !important;
+      min-width: 0 !important;
+      display: block !important;
+      border-collapse: separate !important;
+    }
+
+    .toll-table thead {
+      display: none !important;
+    }
+
+    .toll-table tbody {
+      width: 100% !important;
+      display: grid !important;
+      gap: 9px !important;
+    }
+
+    .toll-row {
+      width: 100% !important;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 7px !important;
+      padding: 10px !important;
+      border: 1px solid #e3ebf5 !important;
+      border-radius: 15px !important;
+      background: #fff !important;
+      box-shadow: 0 6px 16px rgba(15, 59, 115, .05) !important;
+      animation: tollCardIn .24s ease both !important;
+    }
+
+    .toll-cell {
+      min-width: 0 !important;
+      display: block !important;
+      padding: 8px !important;
+      border: 1px solid #e8eef6 !important;
+      border-radius: 10px !important;
+      background: #f9fbfe !important;
+      font-size: 9px !important;
+      line-height: 1.35 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .toll-cell::before {
+      content: attr(data-label);
+      display: block;
+      margin-bottom: 4px;
+      color: #73849a;
+      font-size: 7.5px;
+      line-height: 1.1;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .toll-cell p:first-of-type {
+      margin-bottom: 3px !important;
+      font-size: 10px !important;
+      line-height: 1.3 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .toll-cell p:last-of-type {
+      font-size: 8.5px !important;
+      line-height: 1.3 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .toll-amount-cell {
+      background: #f2fbf7 !important;
+      border-color: #d9f2e6 !important;
+    }
+
+    .toll-amount-cell p:first-of-type {
+      color: #05845e !important;
+      font-size: 11px !important;
+    }
+
+    .toll-status-cell {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      justify-content: center !important;
+    }
+
+    .toll-status-cell span {
+      padding: 5px 8px !important;
+      font-size: 8px !important;
+    }
+
+    .toll-refresh-btn:active,
+    .toll-summary-card:active {
+      transform: scale(.97) !important;
+    }
+
+    @keyframes tollCardIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  }
+
+  @media (max-width: 420px) {
+    .toll-summary-grid {
+      gap: 7px !important;
+      margin-bottom: 12px !important;
+    }
+
+    .toll-summary-card {
+      padding: 10px 9px !important;
+    }
+
+    .toll-summary-card > div:first-child {
+      width: 34px !important;
+      height: 34px !important;
+      min-width: 34px !important;
+    }
+
+    .toll-summary-card h3 {
+      font-size: 14px !important;
+    }
+
+    .toll-table-header {
+      padding: 10px 11px !important;
+    }
+
+    .toll-table-header h3 {
+      font-size: 13px !important;
+    }
+
+    .toll-row {
+      gap: 6px !important;
+      padding: 8px !important;
+      border-radius: 13px !important;
+    }
+
+    .toll-cell {
+      padding: 7px !important;
+      border-radius: 9px !important;
+    }
+
+    .toll-cell::before {
+      font-size: 7px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toll-row,
+    .toll-refresh-btn,
+    .toll-summary-card {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+`;
 
 const styles = {
   summaryGrid: {

@@ -90,7 +90,7 @@ const Overview = ({ onNavigate, searchTerm, setSearchTerm }) => {
             headers: authHeader(),
           }
         ),
-        
+
         fetch(
           `${API_URL}/fuel`,
           {
@@ -462,7 +462,7 @@ Status: ${i.status ||
       `,
         })),
     },
-    
+
     {
       key: 'delivered',
       title: 'Delivered Trips',
@@ -531,7 +531,7 @@ Status: ${i.status ||
         text: `${getFuelLiters(fuel)} L • ${formatMoney(getFuelAmount(fuel))} • ${getFuelKm(fuel)} km • ${getFuelMileage(fuel).toFixed(1)} km/L`,
       })),
     },
-    
+
     {
       key: 'mileage',
       title: 'Mileage Report',
@@ -586,77 +586,78 @@ Status: ${i.status ||
 
   const recentActivity = bookings.length
     ? bookings.slice(0, 6).map((b) => ({
-        title: `Booking ${normalizeStatus(b.status)}`,
-        meta: `${b.bookingId || 'No ID'} • ${b.pickup || 'Pickup'} → ${b.drop || 'Drop'}`,
-        time: b.createdAt ? new Date(b.createdAt).toLocaleString('en-IN') : 'Recently',
-      }))
+      title: `Booking ${normalizeStatus(b.status)}`,
+      meta: `${b.bookingId || 'No ID'} • ${b.pickup || 'Pickup'} → ${b.drop || 'Drop'}`,
+      time: b.createdAt ? new Date(b.createdAt).toLocaleString('en-IN') : 'Recently',
+    }))
     : [
-        {
-          title: 'No activity yet',
-          meta: 'Production ready empty dashboard. Add trucks, drivers, and bookings to begin.',
-          time: 'Now',
-        },
-      ];
+      {
+        title: 'No activity yet',
+        meta: 'Production ready empty dashboard. Add trucks, drivers, and bookings to begin.',
+        time: 'Now',
+      },
+    ];
 
-      const searchResults = useMemo(() => {
-  const search = (searchTerm || '').toLowerCase();
+  const searchResults = useMemo(() => {
+    const search = (searchTerm || '').toLowerCase();
 
-  if (!search) return null;
+    if (!search) return null;
 
-  const matchedDrivers = drivers.filter((driver) =>
-    `${driver.name || ''} ${driver.phone || ''} ${driver.driverId || ''}`
-      .toLowerCase()
-      .includes(search)
-  );
+    const matchedDrivers = drivers.filter((driver) =>
+      `${driver.name || ''} ${driver.phone || ''} ${driver.driverId || ''}`
+        .toLowerCase()
+        .includes(search)
+    );
 
-  const matchedTrucks = trucks.filter((truck) =>
-    `${truck.name || ''} ${truck.number || ''} ${truck.category || ''}`
-      .toLowerCase()
-      .includes(search)
-  );
+    const matchedTrucks = trucks.filter((truck) =>
+      `${truck.name || ''} ${truck.number || ''} ${truck.category || ''}`
+        .toLowerCase()
+        .includes(search)
+    );
 
-  const matchedBookings = bookings.filter((booking) =>
-    `${booking.bookingId || ''} 
+    const matchedBookings = bookings.filter((booking) =>
+      `${booking.bookingId || ''} 
      ${booking.customerName || ''} 
      ${booking.phone || ''} 
      ${booking.pickup || ''} 
      ${booking.drop || ''}`
-      .toLowerCase()
-      .includes(search)
-  );
+        .toLowerCase()
+        .includes(search)
+    );
 
-  return {
-    drivers: matchedDrivers,
-    trucks: matchedTrucks,
-    bookings: matchedBookings,
-  };
-}, [searchTerm, drivers, trucks, bookings]);
+    return {
+      drivers: matchedDrivers,
+      trucks: matchedTrucks,
+      bookings: matchedBookings,
+    };
+  }, [searchTerm, drivers, trucks, bookings]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="card" style={styles.heroCard}>
-        <div>
-          <div style={styles.heroBadge}>Executive Overview</div>
-          <h2 style={styles.heroTitle}>Welcome Mr. Abinash</h2>
-          <p style={styles.heroText}>
+    <div className="owner-overview" style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="card overview-hero" style={styles.heroCard}>
+        <div className="overview-hero-main">
+          <div className="overview-hero-badge" style={styles.heroBadge}>Executive Overview</div>
+          <h2 className="overview-hero-title" style={styles.heroTitle}>Welcome Mr. Abinash</h2>
+          <p className="overview-hero-text" style={styles.heroText}>
             Real-time visibility across bookings, trucks, drivers, tolls, revenue, and emergency operations.
           </p>
 
-          <div style={styles.heroMetaWrap}>
-            <div style={styles.heroMeta}>
+          <div className="overview-hero-meta-wrap" style={styles.heroMetaWrap}>
+            <div className="overview-hero-meta" style={styles.heroMeta}>
               <CalendarDays size={16} />
               Today: {overview.liveBookings} Live Bookings
             </div>
-            <div style={styles.heroMeta}>
+            <div className="overview-hero-meta" style={styles.heroMeta}>
               <Clock3 size={16} />
               {overview.pendingBookings} Pending Deliveries
             </div>
-            <div style={styles.heroMeta}>
+            <div className="overview-hero-meta" style={styles.heroMeta}>
               <ShieldAlert size={16} />
               {overview.alertCount} Alert Needs Review
             </div>
             <button
               type="button"
+              className="overview-refresh-btn"
               style={styles.refreshBtn}
               onClick={loadData}
               disabled={loading}
@@ -664,14 +665,14 @@ Status: ${i.status ||
               <RefreshCw size={16} />
               {loading ? 'Refreshing...' : 'Refresh Data'}
             </button>
-            <div style={styles.lastUpdatedText}>
+            <div className="overview-last-updated" style={styles.lastUpdatedText}>
               Auto update: 2 min once
               {lastUpdated ? ` • Last: ${lastUpdated.toLocaleTimeString('en-IN')}` : ''}
             </div>
           </div>
         </div>
 
-        <div style={styles.heroSideCard}>
+        <div className="overview-fleet-card" style={styles.heroSideCard}>
           <p style={styles.heroSideLabel}>Fleet Utilization</p>
           <h3 style={styles.heroSideValue}>{overview.utilization}%</h3>
           <p style={styles.heroSideSub}>{overview.activeTrucks} / {overview.totalTrucks} trucks active</p>
@@ -683,7 +684,7 @@ Status: ${i.status ||
 
       {loading && <div className="card" style={styles.loadingCard}>Loading latest dashboard data...</div>}
 
-      <div style={styles.statsGrid}>
+      <div className="overview-stats-grid" style={styles.statsGrid}>
         {stats.map((stat, idx) => (
           <motion.button
             key={stat.key}
@@ -746,74 +747,74 @@ Status: ${i.status ||
 
       {searchTerm && searchResults && (
         <div className="card" style={styles.searchResultCard}>
-        <h3 style={styles.chartTitle}>
-          Search Results for "{searchTerm}"
-        </h3>
+          <h3 style={styles.chartTitle}>
+            Search Results for "{searchTerm}"
+          </h3>
 
-    {/* DRIVER RESULTS */}
-    {searchResults.drivers.length > 0 && (
-      <>
-        <h4 style={styles.resultHeading}>Drivers</h4>
+          {/* DRIVER RESULTS */}
+          {searchResults.drivers.length > 0 && (
+            <>
+              <h4 style={styles.resultHeading}>Drivers</h4>
 
-        {searchResults.drivers.map((driver, index) => (
-          <div key={index} style={styles.resultItem}>
-            <strong>{driver.name}</strong>
+              {searchResults.drivers.map((driver, index) => (
+                <div key={index} style={styles.resultItem}>
+                  <strong>{driver.name}</strong>
 
-            <p>Phone: {driver.phone}</p>
-            <p>Driver ID: {driver.driverId}</p>
-            <p>Status: {driver.status}</p>
-          </div>
-        ))}
-      </>
-    )}
+                  <p>Phone: {driver.phone}</p>
+                  <p>Driver ID: {driver.driverId}</p>
+                  <p>Status: {driver.status}</p>
+                </div>
+              ))}
+            </>
+          )}
 
-    {/* TRUCK RESULTS */}
-    {searchResults.trucks.length > 0 && (
-      <>
-        <h4 style={styles.resultHeading}>Trucks</h4>
+          {/* TRUCK RESULTS */}
+          {searchResults.trucks.length > 0 && (
+            <>
+              <h4 style={styles.resultHeading}>Trucks</h4>
 
-        {searchResults.trucks.map((truck, index) => (
-          <div key={index} style={styles.resultItem}>
-            <strong>{truck.name || truck.number}</strong>
+              {searchResults.trucks.map((truck, index) => (
+                <div key={index} style={styles.resultItem}>
+                  <strong>{truck.name || truck.number}</strong>
 
-            <p>Truck No: {truck.number}</p>
-            <p>Category: {truck.category}</p>
-            <p>Status: {truck.status}</p>
-          </div>
-        ))}
-      </>
-    )}
+                  <p>Truck No: {truck.number}</p>
+                  <p>Category: {truck.category}</p>
+                  <p>Status: {truck.status}</p>
+                </div>
+              ))}
+            </>
+          )}
 
-    {/* BOOKING RESULTS */}
-    {searchResults.bookings.length > 0 && (
-      <>
-        <h4 style={styles.resultHeading}>Bookings</h4>
+          {/* BOOKING RESULTS */}
+          {searchResults.bookings.length > 0 && (
+            <>
+              <h4 style={styles.resultHeading}>Bookings</h4>
 
-        {searchResults.bookings.map((booking, index) => (
-          <div key={index} style={styles.resultItem}>
-            <strong>{booking.bookingId}</strong>
+              {searchResults.bookings.map((booking, index) => (
+                <div key={index} style={styles.resultItem}>
+                  <strong>{booking.bookingId}</strong>
 
-            <p>Customer: {booking.customerName}</p>
-            <p>Phone: {booking.phone}</p>
-            <p>
-              Route: {booking.pickup} → {booking.drop}
-            </p>
+                  <p>Customer: {booking.customerName}</p>
+                  <p>Phone: {booking.phone}</p>
+                  <p>
+                    Route: {booking.pickup} → {booking.drop}
+                  </p>
 
-            <p>Status: {booking.status}</p>
-          </div>
-        ))}
-      </>
-    )}
+                  <p>Status: {booking.status}</p>
+                </div>
+              ))}
+            </>
+          )}
 
-    {searchResults.drivers.length === 0 &&
-      searchResults.trucks.length === 0 &&
-      searchResults.bookings.length === 0 && (
-        <p>No matching results found</p>
+          {searchResults.drivers.length === 0 &&
+            searchResults.trucks.length === 0 &&
+            searchResults.bookings.length === 0 && (
+              <p>No matching results found</p>
+            )}
+        </div>
       )}
-  </div>
-)}
 
-      <div style={styles.quickActionsGrid}>
+      <div className="overview-quick-actions" style={styles.quickActionsGrid}>
         {quickActions.map((action, index) => (
           <motion.button
             key={index}
@@ -831,7 +832,7 @@ Status: ${i.status ||
         ))}
       </div>
 
-      <div style={styles.chartsGrid}>
+      <div className="overview-charts" style={styles.chartsGrid}>
         <motion.div className="card" style={styles.chartCard}>
           <div style={styles.chartHeader}>
             <h3 style={styles.chartTitle}>Revenue Overview</h3>
@@ -876,6 +877,221 @@ Status: ${i.status ||
           </div>
         ))}
       </div>
+
+
+      <style>{`
+        @media (max-width: 640px) {
+          .owner-overview {
+            width: 100% !important;
+            min-width: 0 !important;
+            gap: 14px !important;
+          }
+
+          .overview-hero {
+            width: 100% !important;
+            min-width: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            grid-template-columns: none !important;
+            gap: 14px !important;
+            padding: 18px !important;
+            border-radius: 20px !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+            background: linear-gradient(145deg, #082b50 0%, #0d4278 58%, #155c9e 100%) !important;
+            box-shadow: 0 14px 34px rgba(7, 39, 75, 0.18) !important;
+          }
+
+          .overview-hero-main {
+            width: 100% !important;
+            min-width: 0 !important;
+          }
+
+          .overview-hero-badge {
+            margin: 0 0 9px !important;
+            padding: 6px 10px !important;
+            border-radius: 999px !important;
+            font-size: 10px !important;
+            line-height: 1 !important;
+          }
+
+          .overview-hero-title {
+            margin: 0 !important;
+            max-width: 100% !important;
+            font-size: 25px !important;
+            line-height: 1.08 !important;
+            letter-spacing: -0.55px !important;
+          }
+
+          .overview-hero-text {
+            max-width: 100% !important;
+            margin: 8px 0 0 !important;
+            font-size: 11.5px !important;
+            line-height: 1.5 !important;
+            color: rgba(255, 255, 255, 0.84) !important;
+          }
+
+          .overview-hero-meta-wrap {
+            width: 100% !important;
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 7px !important;
+            margin-top: 12px !important;
+            align-items: stretch !important;
+          }
+
+          .overview-hero-meta {
+            width: 100% !important;
+            min-width: 0 !important;
+            padding: 8px 9px !important;
+            border-radius: 11px !important;
+            gap: 6px !important;
+            font-size: 9.5px !important;
+            line-height: 1.28 !important;
+            justify-content: flex-start !important;
+          }
+
+          .overview-hero-meta svg,
+          .overview-refresh-btn svg {
+            width: 13px !important;
+            height: 13px !important;
+            flex-shrink: 0 !important;
+          }
+
+          .overview-refresh-btn {
+            width: 100% !important;
+            min-height: 34px !important;
+            padding: 7px 9px !important;
+            border-radius: 11px !important;
+            font-size: 9.5px !important;
+            justify-content: center !important;
+          }
+
+          .overview-last-updated {
+            grid-column: 1 / -1 !important;
+            width: 100% !important;
+            padding: 1px 0 !important;
+            font-size: 8.5px !important;
+            line-height: 1.35 !important;
+            text-align: left !important;
+          }
+
+          .overview-fleet-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            padding: 13px 14px !important;
+            border-radius: 15px !important;
+            box-sizing: border-box !important;
+          }
+
+          .overview-fleet-card p:first-child {
+            font-size: 10px !important;
+          }
+
+          .overview-fleet-card h3 {
+            margin: 3px 0 !important;
+            font-size: 27px !important;
+            line-height: 1 !important;
+          }
+
+          .overview-fleet-card p {
+            font-size: 10px !important;
+          }
+
+          .overview-fleet-card > div {
+            height: 7px !important;
+            margin-top: 10px !important;
+          }
+
+          .overview-stats-grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 9px !important;
+          }
+
+          .overview-stats-grid > button {
+            min-width: 0 !important;
+            padding: 12px !important;
+            border-radius: 15px !important;
+            box-sizing: border-box !important;
+          }
+
+          .overview-stats-grid h3 {
+            margin-top: 5px !important;
+            font-size: 20px !important;
+          }
+
+          .overview-stats-grid p,
+          .overview-stats-grid > button > div:last-child {
+            font-size: 9.5px !important;
+            line-height: 1.35 !important;
+          }
+
+          .overview-stats-grid > button > div:first-child > div:last-child {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 12px !important;
+          }
+
+          .overview-quick-actions {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 9px !important;
+          }
+
+          .overview-quick-actions > button {
+            min-width: 0 !important;
+            padding: 11px !important;
+            gap: 8px !important;
+            border-radius: 15px !important;
+          }
+
+          .overview-quick-actions > button > div:first-child {
+            width: 34px !important;
+            height: 34px !important;
+            border-radius: 11px !important;
+          }
+
+          .overview-quick-actions h4 {
+            font-size: 11px !important;
+            line-height: 1.2 !important;
+          }
+
+          .overview-quick-actions p {
+            margin-top: 3px !important;
+            font-size: 8.5px !important;
+            line-height: 1.35 !important;
+          }
+
+          .overview-charts {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+
+          .overview-charts > div,
+          .owner-overview > .card {
+            max-width: 100% !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+          }
+        }
+
+        @media (max-width: 380px) {
+          .overview-hero {
+            padding: 16px !important;
+          }
+
+          .overview-hero-title {
+            font-size: 23px !important;
+          }
+
+          .overview-stats-grid,
+          .overview-quick-actions {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };
@@ -940,23 +1156,23 @@ const styles = {
     justifyContent: 'center',
   },
   searchResultCard: {
-  padding: '24px',
-  borderRadius: '24px',
-},
+    padding: '24px',
+    borderRadius: '24px',
+  },
 
-resultHeading: {
-  marginTop: '20px',
-  marginBottom: '10px',
-  color: 'var(--dark-blue)',
-},
+  resultHeading: {
+    marginTop: '20px',
+    marginBottom: '10px',
+    color: 'var(--dark-blue)',
+  },
 
-resultItem: {
-  padding: '16px',
-  borderRadius: '16px',
-  border: '1px solid var(--border-light)',
-  marginBottom: '12px',
-  background: '#fff',
-},
+  resultItem: {
+    padding: '16px',
+    borderRadius: '16px',
+    border: '1px solid var(--border-light)',
+    marginBottom: '12px',
+    background: '#fff',
+  },
 
   searchInput: {
     padding: '10px 16px',

@@ -381,7 +381,7 @@ const Trucks = () => {
 
   margin: 0 0 12px !important;
 
-  font-size: 30px !important;
+  font-size: 25px !important;
   line-height: 1.02 !important;
 
   font-weight: 900 !important;

@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 import {
   MapPin,
   Phone,
-  Settings,
   AlertCircle,
   Star,
   Truck,
@@ -17,12 +16,13 @@ import {
   UserPlus,
   Package,
   Search,
+  Trash2,
 } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const TrucksAndDrivers = () => {
-  const [activeView, setActiveView] = useState('trucks');
+  const [activeView, setActiveView] = useState('drivers');
   const [trucks, setTrucks] = useState([]);
   const [drivers, setDrivers] = useState([]);
   const [bookings, setBookings] = useState([]);
@@ -236,8 +236,8 @@ const TrucksAndDrivers = () => {
   };
 
   const isTruckBusy = (truckId) => {
-  return Boolean(getAssignedBookingForTruck(truckId));
-};
+    return Boolean(getAssignedBookingForTruck(truckId));
+  };
 
   const isDriverBusy = (driverId) => {
     return bookings.some(
@@ -247,37 +247,37 @@ const TrucksAndDrivers = () => {
     );
   };
   const getAssignedBookingForTruck = (truckId) => {
-  if (!truckId) return null;
+    if (!truckId) return null;
 
-  return bookings.find((booking) => {
-    const bookingTruckId =
-      booking.truck?._id ||
-      booking.truck?.id ||
-      booking.truck ||
-      booking.assignedTruck?._id ||
-      booking.assignedTruck?.id ||
-      booking.assignedTruck;
+    return bookings.find((booking) => {
+      const bookingTruckId =
+        booking.truck?._id ||
+        booking.truck?.id ||
+        booking.truck ||
+        booking.assignedTruck?._id ||
+        booking.assignedTruck?.id ||
+        booking.assignedTruck;
 
-    if (!bookingTruckId) return false;
+      if (!bookingTruckId) return false;
 
-    return (
-      String(bookingTruckId) === String(truckId) &&
-      normalizeStatus(booking.status) !== 'Delivered'
-    );
-  });
-};
+      return (
+        String(bookingTruckId) === String(truckId) &&
+        normalizeStatus(booking.status) !== 'Delivered'
+      );
+    });
+  };
 
   const availableTrucks = useMemo(() => {
-  return trucks.filter((truck) => {
-    const assignedBooking = getAssignedBookingForTruck(truck._id || truck.id);
+    return trucks.filter((truck) => {
+      const assignedBooking = getAssignedBookingForTruck(truck._id || truck.id);
 
-    if (!assignedBooking) return true;
+      if (!assignedBooking) return true;
 
-    const status = normalizeStatus(assignedBooking.status);
+      const status = normalizeStatus(assignedBooking.status);
 
-    return status === "Delivered";
-  });
-}, [trucks, bookings]);
+      return status === "Delivered";
+    });
+  }, [trucks, bookings]);
 
   const availableDrivers = useMemo(() => {
     return drivers.filter((driver) => {
@@ -308,7 +308,7 @@ const TrucksAndDrivers = () => {
     );
   }, [pendingBookings, searchTerm]);
 
-  
+
 
   const getStatusBadge = (status) => {
     if (status === 'On Route') return 'success';
@@ -426,7 +426,7 @@ const TrucksAndDrivers = () => {
         className="card fleet-card"
         style={styles.truckCard}
       >
-        <div style={styles.truckImageWrap}>
+        <div className="td-truck-image-wrap" style={styles.truckImageWrap}>
           <img
             src={truck.image}
             alt={truck.name || getTruckName(truck)}
@@ -464,8 +464,8 @@ const TrucksAndDrivers = () => {
           </div>
         </div>
 
-        <div style={styles.truckBody}>
-          <div style={styles.infoGrid}>
+        <div className="td-truck-body" style={styles.truckBody}>
+          <div className="td-info-grid" style={styles.infoGrid}>
             <div style={styles.infoItem}>
               <p className="text-muted" style={styles.infoLabel}>Category</p>
               <p style={styles.infoText}>{truck.category || truck.truckType || 'Truck'}</p>
@@ -496,7 +496,7 @@ const TrucksAndDrivers = () => {
 
             <div style={styles.infoItem}>
               <p className="text-muted" style={styles.infoLabel}>
-                 GPS Device
+                GPS Device
               </p>
 
               <p style={styles.infoText}>
@@ -541,22 +541,18 @@ const TrucksAndDrivers = () => {
             </div>
           </div>
 
-          <div style={styles.truckActions}>
+          <div className="td-truck-actions" style={styles.truckActions}>
             <button
-                className="btn btn-outline"
-                style={styles.actionBtn}
-                onClick={() => setSelectedTruck(truck)}
-      >
-                <Eye size={17} />
-                    View Details
-                </button>
-
-            <button className="btn" style={styles.secondaryBtn}>
-              <Settings size={18} />
+              className="btn btn-outline td-view-details-btn"
+              style={styles.actionBtn}
+              onClick={() => setSelectedTruck(truck)}
+            >
+              <Eye size={17} />
+              View Details
             </button>
 
             <button
-              className="btn"
+              className="btn td-delete-btn"
               style={styles.deleteBtn}
               onClick={() => {
                 setDeleteModal({
@@ -566,6 +562,7 @@ const TrucksAndDrivers = () => {
                 });
               }}
             >
+              <Trash2 size={15} />
               Delete
             </button>
 
@@ -576,10 +573,10 @@ const TrucksAndDrivers = () => {
   };
 
   return (
-    <div style={styles.pageWrap}>
-      <div style={styles.summaryGrid}>
+    <div className="td-page-wrap" style={styles.pageWrap}>
+      <div className="td-summary-grid" style={styles.summaryGrid}>
         <div
-          className="glass-card"
+          className="glass-card td-summary-card"
           style={{ ...styles.summaryCard, cursor: 'pointer' }}
           onClick={() => scrollToSection(totalFleetRef)}
         >
@@ -593,7 +590,7 @@ const TrucksAndDrivers = () => {
         </div>
 
         <div
-          className="glass-card"
+          className="glass-card td-summary-card"
           style={{ ...styles.summaryCard, cursor: 'pointer' }}
           onClick={() => {
             setActiveView('trucks');
@@ -610,7 +607,7 @@ const TrucksAndDrivers = () => {
         </div>
 
         <div
-          className="glass-card"
+          className="glass-card td-summary-card"
           style={{ ...styles.summaryCard, cursor: 'pointer' }}
           onClick={() => {
             setActiveView('drivers');
@@ -627,7 +624,7 @@ const TrucksAndDrivers = () => {
         </div>
 
         <div
-          className="glass-card"
+          className="glass-card td-summary-card"
           style={{ ...styles.summaryCard, cursor: 'pointer' }}
           onClick={() => scrollToSection(pendingRef)}
         >
@@ -641,8 +638,8 @@ const TrucksAndDrivers = () => {
         </div>
       </div>
 
-      <div ref={pendingRef} className="card" style={styles.pendingCard}>
-        <div style={styles.pendingTop}>
+      <div ref={pendingRef} className="card td-section-card td-pending-card" style={styles.pendingCard}>
+        <div className="td-section-top" style={styles.pendingTop}>
           <div>
             <h3 style={styles.sectionTitle}>Pending Booking Assignments</h3>
             <p style={styles.sectionSub}>
@@ -650,7 +647,7 @@ const TrucksAndDrivers = () => {
             </p>
           </div>
 
-          <div style={styles.searchBox}>
+          <div className="td-search-box" style={styles.searchBox}>
             <Search size={16} color="var(--text-muted)" />
             <input
               type="text"
@@ -669,11 +666,11 @@ const TrucksAndDrivers = () => {
         )}
 
         {!loading && filteredPendingBookings.length > 0 && (
-          <div style={styles.bookingGrid}>
+          <div className="td-booking-grid" style={styles.bookingGrid}>
             {filteredPendingBookings.map((booking) => (
               <motion.div
                 key={booking._id}
-                className="glass-card"
+                className="glass-card td-booking-card"
                 style={styles.bookingCard}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -690,7 +687,7 @@ const TrucksAndDrivers = () => {
                   </span>
                 </div>
 
-                <div style={styles.bookingInfoGrid}>
+                <div className="td-booking-info-grid" style={styles.bookingInfoGrid}>
                   <div style={styles.bookingInfo}>
                     <p style={styles.infoLabel}>Route</p>
                     <p style={styles.infoText}>
@@ -721,7 +718,7 @@ const TrucksAndDrivers = () => {
                   </div>
                 </div>
 
-                <div style={styles.assignPanel}>
+                <div className="td-assign-panel" style={styles.assignPanel}>
                   <select
                     style={styles.assignSelect}
                     value={assignData[booking._id]?.truckId || ''}
@@ -767,8 +764,8 @@ const TrucksAndDrivers = () => {
         )}
       </div>
 
-      <div ref={totalFleetRef} className="card" style={styles.pendingCard}>
-        <div style={styles.pendingTop}>
+      <div ref={totalFleetRef} className="card td-section-card td-fleet-section" style={styles.pendingCard}>
+        <div className="td-section-top" style={styles.pendingTop}>
           <div>
             <h3 style={styles.sectionTitle}>Total Fleet Details</h3>
             <p style={styles.sectionSub}>
@@ -784,15 +781,15 @@ const TrucksAndDrivers = () => {
         )}
 
         {!loading && trucks.length > 0 && (
-          <div 
-            className="trucks-grid-mobile" 
+          <div
+            className="trucks-grid-mobile"
             style={styles.trucksGrid}>
             {trucks.map((truck) => renderTruckCard(truck, true))}
           </div>
         )}
       </div>
 
-      <div ref={fleetRef} style={styles.tabsWrap}>
+      <div ref={fleetRef} className="td-tabs-wrap" style={styles.tabsWrap}>
         <button
           onClick={() => setActiveView('trucks')}
           style={{
@@ -823,7 +820,7 @@ const TrucksAndDrivers = () => {
         transition={{ duration: 0.25 }}
       >
         {activeView === 'trucks' ? (
-          <div ref={trucksRef} style={styles.trucksGrid}>
+          <div ref={trucksRef} className="td-trucks-grid" style={styles.trucksGrid}>
             {availableTrucks.length === 0 ? (
               <div style={styles.emptyBox}>No available trucks now</div>
             ) : (
@@ -831,7 +828,7 @@ const TrucksAndDrivers = () => {
             )}
           </div>
         ) : (
-          <div ref={driversRef} style={styles.driversList}>
+          <div ref={driversRef} className="td-drivers-list" style={styles.driversList}>
             {availableDrivers.length === 0 ? (
               <div style={styles.emptyBox}>No available drivers now</div>
             ) : (
@@ -843,8 +840,9 @@ const TrucksAndDrivers = () => {
                   className="card driver-card"
                   style={styles.driverCard}
                 >
-                  <div style={styles.driverLeft}>
+                  <div className="td-driver-left" style={styles.driverLeft}>
                     <img
+                      className="td-driver-image"
                       src={driver.image}
                       alt={driver.name || getDriverName(driver)}
                       style={styles.driverImage}
@@ -857,7 +855,7 @@ const TrucksAndDrivers = () => {
                     </div>
                   </div>
 
-                  <div style={styles.driverCenter}>
+                  <div className="td-driver-center" style={styles.driverCenter}>
                     <div style={styles.driverInfoBox}>
                       <p className="text-muted" style={styles.infoLabel}>Assigned Truck</p>
                       <p style={styles.infoText}>Not Assigned</p>
@@ -876,8 +874,8 @@ const TrucksAndDrivers = () => {
                     </div>
                   </div>
 
-                  <div style={styles.driverRight}>
-                    <div style={styles.ratingBox}>
+                  <div className="td-driver-right" style={styles.driverRight}>
+                    <div className="td-rating-box" style={styles.ratingBox}>
                       <Star fill="var(--warning)" color="var(--warning)" size={18} />
                       <span>{driver.rating ?? "Not Rated"}</span>
 
@@ -903,8 +901,8 @@ const TrucksAndDrivers = () => {
           </div>
         )}
       </motion.div>
-            {selectedTruck && (
-        <div style={styles.modalOverlay} onClick={() => setSelectedTruck(null)}>
+      {selectedTruck && (
+        <div className="td-modal-overlay" style={styles.modalOverlay} onClick={() => setSelectedTruck(null)}>
           <div className="truck-details-modal-card" style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
             <div className="truck-details-modal-header" style={styles.modalHeader}>
               <div>
@@ -1015,14 +1013,14 @@ const TrucksAndDrivers = () => {
                         <div style={styles.modalInfoBox}>
                           <p style={styles.infoLabel}>Driver Name</p>
                           <p style={styles.infoText}>
-                          {getDriverName(assignedBooking.driver)}
+                            {getDriverName(assignedBooking.driver)}
                           </p>
                         </div>
 
                         <div style={styles.modalInfoBox}>
                           <p style={styles.infoLabel}>Driver Mobile</p>
                           <p style={styles.infoText}>
-                          {getDriverPhone(assignedBooking.driver)}
+                            {getDriverPhone(assignedBooking.driver)}
                           </p>
                         </div>
                       </div>
@@ -1041,6 +1039,7 @@ const TrucksAndDrivers = () => {
 
       {deleteModal.open && (
         <div
+          className="td-modal-overlay td-delete-overlay"
           style={styles.modalOverlay}
           onClick={() => {
             setDeleteModal({
@@ -1053,18 +1052,19 @@ const TrucksAndDrivers = () => {
           }}
         >
           <div
+            className="td-delete-modal-card"
             style={styles.deleteModalCard}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 style={styles.deleteTitle}>
+            <h2 className="td-delete-title" style={styles.deleteTitle}>
               Confirm Delete
             </h2>
 
-            <p style={styles.deleteText}>
+            <p className="td-delete-text" style={styles.deleteText}>
               You are deleting this {deleteModal.type}.
             </p>
 
-            <div style={styles.deleteInfoBox}>
+            <div className="td-delete-info" style={styles.deleteInfoBox}>
               <p>
                 <strong>Name:</strong>{" "}
                 {deleteModal.type === "truck"
@@ -1078,7 +1078,7 @@ const TrucksAndDrivers = () => {
               </p>
             </div>
 
-            <label style={styles.checkboxWrap}>
+            <label className="td-delete-check" style={styles.checkboxWrap}>
               <input
                 type="checkbox"
                 checked={confirmDelete}
@@ -1090,7 +1090,7 @@ const TrucksAndDrivers = () => {
               I confirm delete permanently
             </label>
 
-            <div style={styles.deleteActions}>
+            <div className="td-delete-actions" style={styles.deleteActions}>
               <button
                 className="btn"
                 style={styles.cancelBtn}
@@ -1332,7 +1332,7 @@ const styles = {
     gridTemplateColumns: "repeat(2, 1fr)",
     gap: "24px",
     alignItems: "start",
-    },
+  },
 
   truckCard: {
     padding: 0,
@@ -1613,7 +1613,7 @@ const styles = {
     borderRadius: '12px',
   },
 
-    modalOverlay: {
+  modalOverlay: {
     position: 'fixed',
     inset: 0,
     background: 'rgba(15, 23, 42, 0.55)',
@@ -1789,61 +1789,771 @@ const styles = {
 };
 
 const responsiveCss = `
+  /* =====================================================
+     TRUCKS & DRIVERS - PREMIUM RESPONSIVE
+     Desktop styles remain untouched.
+  ===================================================== */
+
   @media (max-width: 900px) {
     .driver-card {
       align-items: flex-start !important;
     }
   }
 
+  /* =====================================================
+     LARGE / NORMAL MOBILE
+  ===================================================== */
   @media (max-width: 768px) {
-    .fleet-card .btn,
-    .driver-card .btn {
-      width: 100%;
-      justify-content: center;
-    }
-  }
 
-  @media (max-width: 640px) {
-    .fleet-card,
-    .driver-card {
-      border-radius: 18px !important;
+    .td-page-wrap {
+      width: 100% !important;
+      min-width: 0 !important;
+      gap: 14px !important;
+      overflow-x: hidden !important;
     }
-  }
-      @media (max-width: 768px) {
-    div[style*="modalOverlay"] {
-      align-items: flex-start !important;
+
+    /* ---------- SUMMARY ---------- */
+    .td-summary-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 9px !important;
+    }
+
+    .td-summary-card {
+      min-width: 0 !important;
+      padding: 12px 11px !important;
+      gap: 9px !important;
+      border-radius: 16px !important;
+      background: linear-gradient(145deg, #ffffff 0%, #f7fbff 100%) !important;
+      border: 1px solid #e3edf7 !important;
+      box-shadow: 0 8px 22px rgba(10, 56, 102, 0.06) !important;
+    }
+
+    .td-summary-card > div:first-child {
+      width: 38px !important;
+      height: 38px !important;
+      min-width: 38px !important;
+      border-radius: 12px !important;
+    }
+
+    .td-summary-card > div:first-child svg {
+      width: 18px !important;
+      height: 18px !important;
+    }
+
+    .td-summary-card p {
+      font-size: 9.5px !important;
+      line-height: 1.25 !important;
+    }
+
+    .td-summary-card h3 {
+      margin-top: 3px !important;
+      font-size: 18px !important;
+      line-height: 1 !important;
+    }
+
+    /* ---------- SECTION CARD ---------- */
+    .td-section-card {
+      width: 100% !important;
+      min-width: 0 !important;
+      padding: 13px !important;
+      border-radius: 18px !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      border: 1px solid #e5edf6 !important;
+      box-shadow: 0 10px 26px rgba(10, 56, 102, 0.05) !important;
+    }
+
+    .td-section-top {
+      gap: 8px !important;
+      margin-bottom: 11px !important;
+    }
+
+    .td-section-top h3 {
+      margin-bottom: 4px !important;
+      font-size: 17px !important;
+      line-height: 1.18 !important;
+      letter-spacing: -0.2px !important;
+    }
+
+    .td-section-top p {
+      font-size: 10.5px !important;
+      line-height: 1.42 !important;
+    }
+
+    /* ---------- SEARCH ---------- */
+    .td-search-box {
+      width: 100% !important;
+      min-width: 0 !important;
+      min-height: 40px !important;
+      padding: 7px 10px !important;
+      border-radius: 11px !important;
+      background: #ffffff !important;
+      border: 1px solid #dce7f2 !important;
+    }
+
+    .td-search-box input {
+      font-size: 11.5px !important;
+    }
+
+    /* ---------- BOOKINGS ---------- */
+    .td-booking-grid {
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+    }
+
+    .td-booking-card {
       padding: 12px !important;
-      overflow-y: auto !important;
+      border-radius: 15px !important;
+      border: 1px solid #e6eef7 !important;
+      box-shadow: 0 7px 18px rgba(10, 56, 102, 0.04) !important;
     }
-  }
 
-  @media (max-width: 640px) {
-    .truck-details-modal-card {
-      max-height: 92vh !important;
+    .td-booking-card h4 {
+      font-size: 13.5px !important;
+    }
+
+    .td-booking-card .badge {
+      padding: 5px 7px !important;
+      font-size: 8.5px !important;
+    }
+
+    .td-booking-info-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 7px !important;
+      margin-bottom: 9px !important;
+    }
+
+    .td-booking-info-grid > div {
+      min-width: 0 !important;
+      padding: 8px !important;
+      border-radius: 10px !important;
+    }
+
+    .td-booking-info-grid p:first-child {
+      margin-bottom: 3px !important;
+      font-size: 8.5px !important;
+    }
+
+    .td-booking-info-grid p:last-child {
+      font-size: 10.5px !important;
+      line-height: 1.32 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .td-assign-panel {
+      gap: 7px !important;
+    }
+
+    .td-assign-panel select,
+    .td-assign-panel button {
+      min-height: 40px !important;
+      padding: 7px 9px !important;
+      border-radius: 10px !important;
+      font-size: 10.5px !important;
+    }
+
+    /* ---------- TABS ---------- */
+    .td-tabs-wrap {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 6px !important;
+      padding: 5px !important;
+      border-radius: 14px !important;
+      background: #f3f7fb !important;
+    }
+
+    .td-tabs-wrap button {
+      width: 100% !important;
+      min-width: 0 !important;
+      min-height: 40px !important;
+      padding: 7px 6px !important;
+      gap: 5px !important;
+      border-radius: 10px !important;
+      font-size: 9.5px !important;
+      line-height: 1.2 !important;
+      justify-content: center !important;
+      text-align: center !important;
+    }
+
+    .td-tabs-wrap button svg {
+      width: 14px !important;
+      height: 14px !important;
+      flex-shrink: 0 !important;
+    }
+
+    /* ---------- TRUCK GRID ---------- */
+    .trucks-grid-mobile,
+    .td-trucks-grid {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      gap: 11px !important;
+    }
+
+    .fleet-card {
+      width: 100% !important;
+      min-width: 0 !important;
       border-radius: 18px !important;
-      padding: 16px !important;
+      border: 1px solid #e2ebf5 !important;
+      box-shadow: 0 10px 24px rgba(10, 56, 102, 0.07) !important;
     }
 
-    .truck-details-modal-image {
+    .td-truck-image-wrap {
       height: 180px !important;
     }
 
-    .truck-details-modal-grid {
+    .fleet-card [style*="imageTopBar"] {
+      top: 10px !important;
+      left: 10px !important;
+      right: 10px !important;
+    }
+
+    .fleet-card [style*="imageBottomContent"] {
+      left: 13px !important;
+      right: 13px !important;
+      bottom: 12px !important;
+    }
+
+    .fleet-card [style*="truckTitle"] {
+      margin-bottom: 5px !important;
+      font-size: 16.5px !important;
+      line-height: 1.1 !important;
+    }
+
+    .td-truck-body {
+      padding: 12px !important;
+      gap: 12px !important;
+    }
+
+    .td-info-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 7px !important;
+    }
+
+    .td-info-grid > div {
+      min-width: 0 !important;
+      padding: 8px !important;
+      border-radius: 10px !important;
+      background: linear-gradient(145deg, #f9fbfe, #f4f8fc) !important;
+    }
+
+    .td-info-grid p {
+      overflow-wrap: anywhere !important;
+    }
+
+    .td-info-grid .text-muted {
+      margin-bottom: 3px !important;
+      font-size: 8.5px !important;
+    }
+
+    .td-info-grid p:not(.text-muted),
+    .td-info-grid span {
+      font-size: 10.5px !important;
+      line-height: 1.3 !important;
+    }
+
+    /* ---------- PREMIUM TRUCK ACTIONS ---------- */
+    .td-truck-actions {
+      width: 100% !important;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 8px !important;
+      margin-top: 2px !important;
+    }
+
+    .td-truck-actions .btn {
+      width: 100% !important;
+      min-width: 0 !important;
+      min-height: 43px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      padding: 0 10px !important;
+      border-radius: 11px !important;
+      font-size: 10.5px !important;
+      line-height: 1 !important;
+      font-weight: 800 !important;
+      white-space: nowrap !important;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease !important;
+    }
+
+    .td-view-details-btn {
+      color: #0b4f8a !important;
+      background: linear-gradient(145deg, #ffffff 0%, #edf5ff 100%) !important;
+      border: 1px solid #cfe0f3 !important;
+      box-shadow: 0 6px 15px rgba(11, 79, 138, 0.08) !important;
+    }
+
+    .td-delete-btn {
+      color: #d83846 !important;
+      background: linear-gradient(145deg, #fffafa 0%, #fff0f1 100%) !important;
+      border: 1px solid #ffd7da !important;
+      box-shadow: 0 6px 15px rgba(216, 56, 70, 0.07) !important;
+    }
+
+    .td-truck-actions .btn:active {
+      transform: scale(.97) !important;
+    }
+
+    .td-truck-actions .btn svg {
+      width: 14px !important;
+      height: 14px !important;
+    }
+
+    /* ---------- DRIVERS ---------- */
+    .td-drivers-list {
+      gap: 9px !important;
+    }
+
+    .driver-card {
+      width: 100% !important;
+      min-width: 0 !important;
+      display: grid !important;
       grid-template-columns: 1fr !important;
+      gap: 9px !important;
+      padding: 12px !important;
+      border-radius: 16px !important;
+      border: 1px solid #e4edf6 !important;
+      box-shadow: 0 8px 20px rgba(10, 56, 102, 0.05) !important;
+    }
+
+    .td-driver-left {
+      width: 100% !important;
+      min-width: 0 !important;
+      gap: 9px !important;
+    }
+
+    .td-driver-image {
+      width: 52px !important;
+      height: 52px !important;
+      border-width: 2px !important;
+    }
+
+    .td-driver-left h3 {
+      margin-bottom: 3px !important;
+      font-size: 13.5px !important;
+    }
+
+    .td-driver-left p {
+      font-size: 9.5px !important;
+    }
+
+    .td-driver-center {
+      width: 100% !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 6px !important;
+    }
+
+    .td-driver-center > div {
+      min-width: 0 !important;
+      padding: 7px !important;
+      border-radius: 9px !important;
+    }
+
+    .td-driver-center p {
+      font-size: 8.5px !important;
+      line-height: 1.25 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .td-driver-right {
+      width: 100% !important;
+      margin-left: 0 !important;
+      align-items: stretch !important;
+    }
+
+    .td-rating-box {
+      width: 100% !important;
+      display: grid !important;
+      grid-template-columns: auto 1fr auto !important;
+      gap: 6px !important;
+      padding: 7px 9px !important;
+      border-radius: 10px !important;
+      font-size: 9.5px !important;
+    }
+
+    .td-rating-box .btn {
+      width: auto !important;
+      padding: 6px 9px !important;
+      border-radius: 8px !important;
+      font-size: 9px !important;
+    }
+
+    /* =====================================================
+       VIEW DETAILS MODAL - COMPACT + SMOOTH
+    ===================================================== */
+    .td-modal-overlay {
+      padding: 12px !important;
+      align-items: center !important;
+      overflow: hidden !important;
+      backdrop-filter: blur(5px) !important;
+      -webkit-backdrop-filter: blur(5px) !important;
+      animation: tdOverlayIn .16s ease-out both;
+    }
+
+    .truck-details-modal-card {
+      width: min(100%, 390px) !important;
+      max-width: 390px !important;
+      max-height: calc(100dvh - 24px) !important;
+      padding: 12px !important;
+      overflow-y: auto !important;
+      overscroll-behavior: contain !important;
+      scrollbar-width: none !important;
+      -webkit-overflow-scrolling: touch !important;
+      border-radius: 20px !important;
+      box-sizing: border-box !important;
+      box-shadow: 0 20px 55px rgba(10, 26, 46, 0.24) !important;
+      animation: tdModalIn .18s cubic-bezier(.2,.8,.2,1) both;
+      will-change: transform, opacity;
+    }
+
+    .truck-details-modal-card::-webkit-scrollbar {
+      display: none !important;
     }
 
     .truck-details-modal-header {
+      position: sticky !important;
+      top: -12px !important;
+      z-index: 3 !important;
+      align-items: center !important;
+      gap: 8px !important;
+      margin-bottom: 9px !important;
+      padding: 4px 0 7px !important;
+      background: rgba(255,255,255,.96) !important;
+      backdrop-filter: blur(10px) !important;
+    }
+
+    .truck-details-modal-header h2 {
+      margin: 0 !important;
+      font-size: 18px !important;
+      line-height: 1.1 !important;
+      letter-spacing: -.35px !important;
+      white-space: nowrap !important;
+    }
+
+    .truck-details-modal-header p {
+      margin-top: 3px !important;
+      font-size: 10px !important;
+      line-height: 1.2 !important;
+    }
+
+    .truck-details-modal-header button {
+      width: 34px !important;
+      min-width: 34px !important;
+      height: 34px !important;
+      padding: 0 !important;
+      border-radius: 10px !important;
+    }
+
+    .truck-details-modal-card > div:nth-child(2) {
+      height: 132px !important;
+      min-height: 132px !important;
+      margin-bottom: 9px !important;
+      border-radius: 13px !important;
+    }
+
+    .truck-details-modal-image {
+      height: 100% !important;
+      object-fit: cover !important;
+    }
+
+    .truck-details-modal-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 6px !important;
+    }
+
+    .truck-details-modal-grid > div {
+      min-width: 0 !important;
+      padding: 8px !important;
+      border-radius: 10px !important;
+    }
+
+    .truck-details-modal-grid p:first-child {
+      margin-bottom: 3px !important;
+      font-size: 8px !important;
+      line-height: 1.15 !important;
+    }
+
+    .truck-details-modal-grid p:last-child {
+      font-size: 10px !important;
+      line-height: 1.22 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    /* =====================================================
+       DELETE MODAL - COMPACT PREMIUM
+    ===================================================== */
+    .td-delete-modal-card {
+      width: min(100%, 315px) !important;
+      max-width: 315px !important;
+      padding: 17px 15px !important;
+      border-radius: 19px !important;
+      box-sizing: border-box !important;
+      background: linear-gradient(145deg, #ffffff 0%, #fbfdff 100%) !important;
+      border: 1px solid rgba(255,255,255,.75) !important;
+      box-shadow: 0 20px 55px rgba(15, 23, 42, 0.22) !important;
+      animation: tdModalIn .18s cubic-bezier(.2,.8,.2,1) both;
+      will-change: transform, opacity;
+    }
+
+    .td-delete-title {
+      margin: 0 0 6px !important;
+      font-size: 21px !important;
+      line-height: 1.08 !important;
+      text-align: center !important;
+      letter-spacing: -.35px !important;
+    }
+
+    .td-delete-text {
+      margin: 0 0 11px !important;
+      font-size: 11px !important;
+      line-height: 1.35 !important;
+      text-align: center !important;
+    }
+
+    .td-delete-info {
+      margin-bottom: 11px !important;
+      padding: 10px 11px !important;
+      border-radius: 12px !important;
+      background: #f7f9fc !important;
+      border: 1px solid #e6edf5 !important;
+    }
+
+    .td-delete-info p {
+      margin: 3px 0 !important;
+      font-size: 10px !important;
+      line-height: 1.3 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .td-delete-check {
+      gap: 7px !important;
+      margin-bottom: 12px !important;
       align-items: flex-start !important;
+      font-size: 10.5px !important;
+      line-height: 1.3 !important;
+    }
+
+    .td-delete-check input {
+      width: 15px !important;
+      height: 15px !important;
+      margin-top: 0 !important;
+      flex-shrink: 0 !important;
+      accent-color: #dc2626 !important;
+    }
+
+    .td-delete-actions {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 8px !important;
+    }
+
+    .td-delete-actions button {
+      min-height: 41px !important;
+      padding: 0 9px !important;
+      border-radius: 10px !important;
+      font-size: 10.5px !important;
+      line-height: 1.15 !important;
+      font-weight: 800 !important;
+      transition: transform .15s ease !important;
+    }
+
+    .td-delete-actions button:first-child {
+      color: #173b62 !important;
+      background: #edf3f8 !important;
+    }
+
+    .td-delete-actions button:last-child {
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+      box-shadow: 0 7px 15px rgba(220,38,38,.16) !important;
+    }
+
+    .td-delete-actions button:active {
+      transform: scale(.97) !important;
+    }
+
+    @keyframes tdOverlayIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes tdModalIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(.975);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
   }
 
-  @media (max-width: 768px) {
-  .trucks-grid-mobile {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+  @media (max-width: 420px) {
+
+    .td-page-wrap {
+      gap: 11px !important;
+    }
+
+    .td-summary-grid {
+      gap: 7px !important;
+    }
+
+    .td-summary-card {
+      padding: 10px 9px !important;
+      border-radius: 14px !important;
+    }
+
+    .td-summary-card > div:first-child {
+      width: 34px !important;
+      height: 34px !important;
+      min-width: 34px !important;
+      border-radius: 10px !important;
+    }
+
+    .td-summary-card p {
+      font-size: 8.5px !important;
+    }
+
+    .td-summary-card h3 {
+      font-size: 16px !important;
+    }
+
+    .td-section-card {
+      padding: 11px !important;
+      border-radius: 15px !important;
+    }
+
+    .td-section-top h3 {
+      font-size: 15.5px !important;
+    }
+
+    .td-section-top p {
+      font-size: 9.5px !important;
+    }
+
+    .td-tabs-wrap button {
+      min-height: 38px !important;
+      padding: 6px 4px !important;
+      font-size: 8.5px !important;
+    }
+
+    .td-truck-image-wrap {
+      height: 158px !important;
+    }
+
+    .td-truck-body {
+      padding: 10px !important;
+      gap: 10px !important;
+    }
+
+    .td-info-grid {
+      gap: 6px !important;
+    }
+
+    .td-info-grid > div {
+      padding: 7px !important;
+      border-radius: 9px !important;
+    }
+
+    .td-info-grid .text-muted {
+      font-size: 7.8px !important;
+    }
+
+    .td-info-grid p:not(.text-muted),
+    .td-info-grid span {
+      font-size: 9.5px !important;
+    }
+
+    .td-truck-actions {
+      gap: 7px !important;
+    }
+
+    .td-truck-actions .btn {
+      min-height: 41px !important;
+      padding: 0 8px !important;
+      border-radius: 10px !important;
+      font-size: 9.5px !important;
+    }
+
+    .td-driver-center {
+      grid-template-columns: 1fr 1fr !important;
+    }
+
+    .td-driver-center > div:last-child {
+      grid-column: 1 / -1 !important;
+    }
+
+    .truck-details-modal-card {
+      width: 100% !important;
+      max-height: calc(100dvh - 18px) !important;
+      padding: 10px !important;
+      border-radius: 17px !important;
+    }
+
+    .truck-details-modal-header {
+      top: -10px !important;
+    }
+
+    .truck-details-modal-header h2 {
+      font-size: 16px !important;
+    }
+
+    .truck-details-modal-card > div:nth-child(2) {
+      height: 118px !important;
+      min-height: 118px !important;
+      border-radius: 12px !important;
+    }
+
+    .truck-details-modal-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 5px !important;
+    }
+
+    .truck-details-modal-grid > div {
+      padding: 7px !important;
+      border-radius: 9px !important;
+    }
+
+    .truck-details-modal-grid p:first-child {
+      font-size: 7.5px !important;
+    }
+
+    .truck-details-modal-grid p:last-child {
+      font-size: 9px !important;
+    }
+
+    .td-delete-modal-card {
+      max-width: 292px !important;
+      padding: 15px 13px !important;
+      border-radius: 17px !important;
+    }
+
+    .td-delete-title {
+      font-size: 19px !important;
+    }
+
+    .td-delete-text {
+      font-size: 10px !important;
+    }
+
+    .td-delete-info p,
+    .td-delete-check,
+    .td-delete-actions button {
+      font-size: 9.5px !important;
+    }
+
+    .td-delete-actions button {
+      min-height: 39px !important;
+    }
   }
-}
-`;
+`
+
 
 
 export default TrucksAndDrivers;

@@ -68,8 +68,13 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
-          <Link to="/owner/dashboard" style={styles.mobileLoginBtn} onClick={() => setIsOpen(false)}>
-            <User size={18} /> Owner Login
+          <Link
+            to="/owner/login"
+            style={styles.mobileLoginBtn}
+            onClick={() => setIsOpen(false)}
+          >
+            <User size={18} />
+            Owner Login
           </Link>
         </div>
       )}
@@ -236,33 +241,78 @@ const Navbar = () => {
   ========================= */
 
   .eagle-navbar .mobile-menu-panel {
-    width: calc(100% - 24px) !important;
+  position: absolute !important;
 
-    margin: 8px 12px 0 !important;
+  top: 74px !important;
+  right: 14px !important;
+  left: auto !important;
 
-    padding: 12px 16px !important;
+  width: 235px !important;
 
-    box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 9px !important;
 
-    position: absolute !important;
+  box-sizing: border-box !important;
 
-    top: 68px !important;
-    left: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
 
-    z-index: 100 !important;
+  z-index: 9999 !important;
 
-    border:
-      1px solid rgba(8, 47, 89, 0.08) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
 
-    border-radius: 16px !important;
+  border: 1px solid rgba(8, 47, 89, 0.09) !important;
+  border-radius: 16px !important;
 
-    background:
-      rgba(255, 255, 255, 0.98) !important;
+  box-shadow:
+    0 18px 45px rgba(3, 29, 55, 0.18),
+    0 3px 10px rgba(3, 29, 55, 0.06) !important;
 
-    box-shadow:
-      0 18px 45px rgba(3, 29, 55, 0.15) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+
+  animation: eagleMenuOpen 0.22s ease-out both;
+}
+
+
+/* small premium arrow */
+
+.eagle-navbar .mobile-menu-panel::before {
+  content: "";
+
+  position: absolute;
+
+  top: -6px;
+  right: 17px;
+
+  width: 12px;
+  height: 12px;
+
+  background: #ffffff;
+
+  border-left: 1px solid rgba(8, 47, 89, 0.08);
+  border-top: 1px solid rgba(8, 47, 89, 0.08);
+
+  transform: rotate(45deg);
+}
+ }
+
+
+/* menu opening animation */
+
+@keyframes eagleMenuOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
+
 
         @media (max-width: 420px) {
           .eagle-navbar .navbar-container {
@@ -360,36 +410,66 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
   },
+  
   mobileMenu: {
-    backgroundColor: '#ffffff',
-    borderTop: '1px solid var(--border-light)',
-    padding: '16px 24px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
+    backgroundColor: "rgba(255, 255, 255, 0.98)",
+    padding: "10px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "5px",
   },
+
   mobileLink: {
-    padding: '12px 0',
-    fontSize: '1.1rem',
-    fontWeight: '600',
-    color: 'var(--text-main)',
-    borderBottom: '1px solid var(--bg-soft)',
+    display: "flex",
+    alignItems: "center",
+
+    padding: "10px 12px",
+
+    fontSize: "0.88rem",
+    lineHeight: "1.2",
+    fontWeight: "700",
+
+    color: "#24364b",
+    textDecoration: "none",
+
+    borderRadius: "10px",
+    borderBottom: "none",
+
+    transition: "all 0.2s ease",
   },
+
   activeMobileLink: {
-    color: 'var(--primary-blue)',
+    color: "#0b4f8a",
+    backgroundColor: "#edf5ff",
+    boxShadow: "inset 3px 0 0 #ff7a00",
   },
+
   mobileLoginBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '8px',
-    padding: '12px',
-    backgroundColor: 'var(--primary-blue)',
-    color: 'white',
-    borderRadius: 'var(--radius-md)',
-    fontWeight: '600',
-    marginTop: '8px',
-  }
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+
+    gap: "7px",
+
+    minHeight: "42px",
+    padding: "0 12px",
+
+    marginTop: "5px",
+
+    background:
+      "linear-gradient(135deg, #0b4f8a 0%, #123f70 100%)",
+
+    color: "#ffffff",
+
+    borderRadius: "10px",
+
+    fontSize: "0.85rem",
+    fontWeight: "700",
+
+    textDecoration: "none",
+
+    boxShadow: "0 7px 16px rgba(8, 47, 89, 0.16)",
+  },
 };
 
 

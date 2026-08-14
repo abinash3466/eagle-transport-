@@ -982,8 +982,8 @@ const PaymentManagement = () => {
   ];
 
   return (
-    <div style={styles.page}>
-      <div style={styles.headerCard}>
+    <div className="payment-page" style={styles.page}>
+      <div className="payment-header-card" style={styles.headerCard}>
         <div>
           <div style={styles.badge}>
             Finance Dashboard
@@ -1002,7 +1002,7 @@ const PaymentManagement = () => {
         </div>
 
         {/* ✅ புதுசு: அனலிட்டிக்ஸ் அறிக்கையை பிரிண்ட் செய்ய புதிய மேலாண்மை பட்டன் */}
-        <div style={{ display: "flex", gap: "12px" }}>
+        <div className="payment-header-actions" style={{ display: "flex", gap: "12px" }}>
           <button
             style={styles.refreshBtn}
             onClick={downloadGSTBreakdownReport}
@@ -1020,7 +1020,7 @@ const PaymentManagement = () => {
         </div>
       </div>
 
-      <div style={styles.summaryGrid}>
+      <div className="payment-summary-grid" style={styles.summaryGrid}>
         <SummaryCard
           title="Base Revenue"
           value={formatMoney(
@@ -1089,7 +1089,7 @@ const PaymentManagement = () => {
 
       </div>
 
-      <div style={styles.expenseGrid}>
+      <div className="payment-expense-grid" style={styles.expenseGrid}>
         <ExpenseCard
           title="Fuel Expense"
           amount={summary.fuelExpense}
@@ -1123,8 +1123,8 @@ const PaymentManagement = () => {
         />
       </div>
 
-      <div style={styles.salarySection}>
-        <div style={styles.salaryCard}>
+      <div className="payment-salary-section" style={styles.salarySection}>
+        <div className="payment-salary-card" style={styles.salaryCard}>
           <h3 style={styles.sectionTitle}>
             Driver Salary Management
           </h3>
@@ -1322,7 +1322,7 @@ const PaymentManagement = () => {
             })()}
         </div>
 
-        <div style={styles.salaryCard}>
+        <div className="payment-salary-card" style={styles.salaryCard}>
           <h3 style={styles.sectionTitle}>
             Other Expenses
           </h3>
@@ -1372,8 +1372,8 @@ const PaymentManagement = () => {
         </div>
       </div>
 
-      <div style={styles.filterCard}>
-        <div style={styles.filterTabs}>
+      <div className="payment-filter-card" style={styles.filterCard}>
+        <div className="payment-filter-tabs" style={styles.filterTabs}>
           {filters.map((f) => (
             <button
               key={f}
@@ -1393,7 +1393,7 @@ const PaymentManagement = () => {
           ))}
         </div>
 
-        <div style={styles.searchBox}>
+        <div className="payment-search-box" style={styles.searchBox}>
           <Search size={16} />
 
           <input
@@ -1409,7 +1409,7 @@ const PaymentManagement = () => {
         </div>
       </div>
 
-      <div style={styles.list}>
+      <div className="payment-list" style={styles.list}>
         {loading ? (
           <div style={styles.empty}>
             Loading payments...
@@ -1451,12 +1451,13 @@ const PaymentManagement = () => {
               return (
                 <div
                   key={booking._id}
+                  className="payment-booking-card"
                   style={
                     styles.paymentCard
                   }
                 >
                   <div
-                    style={styles.cardTop}
+                    className="payment-card-top" style={styles.cardTop}
                   >
                     <div>
                       <h3
@@ -1511,7 +1512,7 @@ const PaymentManagement = () => {
                     </span>
                   </div>
 
-                  <div style={styles.moneyGrid}>
+                  <div className="payment-money-grid" style={styles.moneyGrid}>
                     <Info
                       label="Base Amount"
                       value={formatMoney(
@@ -1553,6 +1554,7 @@ const PaymentManagement = () => {
                   </div>
 
                   <div
+                    className="payment-update-grid"
                     style={
                       styles.updateGrid
                     }
@@ -1644,6 +1646,572 @@ const PaymentManagement = () => {
           )
         )}
       </div>
+
+      <style>{`
+        /* =========================================================
+           PAYMENT MANAGEMENT - MOBILE ONLY
+           Desktop / laptop inline styles are intentionally untouched.
+        ========================================================= */
+
+        @keyframes paymentMobileFadeUp {
+          from {
+            opacity: 0;
+            transform: translate3d(0, 10px, 0);
+          }
+          to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+          }
+        }
+
+        @media (max-width: 768px) {
+          .payment-page {
+            width: 100% !important;
+            min-width: 0 !important;
+            gap: 14px !important;
+            overflow-x: hidden !important;
+          }
+
+          /* ---------- HERO / HEADER ---------- */
+          .payment-header-card {
+            width: 100% !important;
+            padding: 18px !important;
+            border-radius: 20px !important;
+            gap: 14px !important;
+            box-sizing: border-box !important;
+            align-items: flex-start !important;
+            background:
+              linear-gradient(145deg, #092846 0%, #0d3d70 55%, #165995 100%) !important;
+            box-shadow: 0 14px 30px rgba(8, 42, 78, 0.16) !important;
+            animation: paymentMobileFadeUp .28s ease both;
+          }
+
+          .payment-header-card > div:first-child {
+            width: 100% !important;
+            min-width: 0 !important;
+          }
+
+          .payment-header-card [style*="badge"] {
+            margin-bottom: 9px !important;
+          }
+
+          .payment-header-card h2 {
+            font-size: 23px !important;
+            line-height: 1.08 !important;
+            letter-spacing: -0.55px !important;
+          }
+
+          .payment-header-card p {
+            max-width: 100% !important;
+            margin-top: 7px !important;
+            font-size: 11px !important;
+            line-height: 1.5 !important;
+          }
+
+          .payment-header-actions {
+            width: 100% !important;
+            display: grid !important;
+            grid-template-columns: 1.35fr .85fr !important;
+            gap: 8px !important;
+          }
+
+          .payment-header-actions button {
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: 40px !important;
+            padding: 0 10px !important;
+            border-radius: 11px !important;
+            justify-content: center !important;
+            font-size: 10px !important;
+            white-space: nowrap !important;
+            transition: transform .16s ease, background .16s ease !important;
+          }
+
+          .payment-header-actions button:active {
+            transform: scale(.97) !important;
+          }
+
+          .payment-header-actions svg {
+            width: 14px !important;
+            height: 14px !important;
+          }
+
+          /* ---------- FINANCE SUMMARY ---------- */
+          .payment-summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 9px !important;
+          }
+
+          .payment-summary-card {
+            min-width: 0 !important;
+            min-height: 84px !important;
+            padding: 11px !important;
+            gap: 9px !important;
+            border-radius: 15px !important;
+            box-sizing: border-box !important;
+            box-shadow: 0 8px 20px rgba(15, 59, 115, .055) !important;
+            animation: paymentMobileFadeUp .28s ease both;
+          }
+
+          .payment-summary-card > div:first-child {
+            width: 34px !important;
+            height: 34px !important;
+            min-width: 34px !important;
+            border-radius: 11px !important;
+          }
+
+          .payment-summary-card > div:first-child svg {
+            width: 16px !important;
+            height: 16px !important;
+          }
+
+          .payment-summary-card > div:last-child {
+            min-width: 0 !important;
+          }
+
+          .payment-summary-card p {
+            font-size: 9px !important;
+            line-height: 1.2 !important;
+            white-space: normal !important;
+          }
+
+          .payment-summary-card h3 {
+            margin-top: 4px !important;
+            font-size: 14px !important;
+            line-height: 1.12 !important;
+            overflow-wrap: anywhere !important;
+          }
+
+          /* ---------- EXPENSE CARDS ---------- */
+          .payment-expense-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 9px !important;
+          }
+
+          .payment-expense-card {
+            min-width: 0 !important;
+            padding: 11px !important;
+            gap: 9px !important;
+            border-radius: 15px !important;
+            box-sizing: border-box !important;
+            box-shadow: 0 7px 18px rgba(15, 59, 115, .04) !important;
+          }
+
+          .payment-expense-card > div:first-child {
+            width: 33px !important;
+            height: 33px !important;
+            min-width: 33px !important;
+            border-radius: 10px !important;
+          }
+
+          .payment-expense-card svg {
+            width: 15px !important;
+            height: 15px !important;
+          }
+
+          .payment-expense-card p {
+            font-size: 9px !important;
+            line-height: 1.2 !important;
+          }
+
+          .payment-expense-card h3 {
+            margin-top: 4px !important;
+            font-size: 13px !important;
+            line-height: 1.15 !important;
+            overflow-wrap: anywhere !important;
+          }
+
+          /* Last expense gets a comfortable full row on odd count */
+          .payment-expense-card:last-child:nth-child(odd) {
+            grid-column: 1 / -1 !important;
+          }
+
+          /* ---------- SALARY / OTHER EXPENSE ---------- */
+          .payment-salary-section {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+
+          .payment-salary-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            padding: 14px !important;
+            border-radius: 18px !important;
+            box-sizing: border-box !important;
+            box-shadow: 0 8px 20px rgba(15, 59, 115, .045) !important;
+          }
+
+          .payment-salary-card h3 {
+            margin-bottom: 12px !important;
+            font-size: 15px !important;
+            line-height: 1.2 !important;
+          }
+
+          .payment-salary-card h4 {
+            margin: 0 0 7px !important;
+            font-size: 13px !important;
+          }
+
+          .payment-salary-card p {
+            margin: 5px 0 !important;
+            font-size: 10px !important;
+            line-height: 1.4 !important;
+            overflow-wrap: anywhere !important;
+          }
+
+          .payment-salary-card input,
+          .payment-salary-card select {
+            min-height: 41px !important;
+            padding: 8px 10px !important;
+            border-radius: 10px !important;
+            font-size: 10.5px !important;
+          }
+
+          .payment-salary-card button {
+            min-height: 41px !important;
+            padding: 8px 11px !important;
+            border-radius: 10px !important;
+            font-size: 10.5px !important;
+          }
+
+          /* selected driver detail / trip history */
+          .payment-salary-card > div {
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+          }
+
+          .payment-salary-card > div[style*="border"] {
+            padding: 12px !important;
+            margin-top: 12px !important;
+            border-radius: 13px !important;
+          }
+
+          .payment-salary-card > div[style*="border"] > div[style*="marginTop"] {
+            margin-top: 10px !important;
+          }
+
+          /* ---------- FILTERS / SEARCH ---------- */
+          .payment-filter-card {
+            width: 100% !important;
+            padding: 10px !important;
+            border-radius: 16px !important;
+            gap: 9px !important;
+            box-sizing: border-box !important;
+          }
+
+          .payment-filter-tabs {
+            width: 100% !important;
+            display: grid !important;
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            gap: 5px !important;
+          }
+
+          .payment-filter-tabs button {
+            width: 100% !important;
+            min-width: 0 !important;
+            padding: 7px 3px !important;
+            border-radius: 9px !important;
+            font-size: 8.5px !important;
+            line-height: 1.1 !important;
+            text-align: center !important;
+          }
+
+          .payment-search-box {
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: 40px !important;
+            padding: 8px 11px !important;
+            border-radius: 11px !important;
+            box-sizing: border-box !important;
+            background: #f8fbff !important;
+          }
+
+          .payment-search-box svg {
+            width: 14px !important;
+            height: 14px !important;
+          }
+
+          .payment-search-box input {
+            min-width: 0 !important;
+            font-size: 10.5px !important;
+          }
+
+          /* ---------- PAYMENT CARDS ---------- */
+          .payment-list {
+            gap: 10px !important;
+          }
+
+          .payment-booking-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            padding: 13px !important;
+            border-radius: 18px !important;
+            box-sizing: border-box !important;
+            box-shadow: 0 9px 22px rgba(10, 35, 66, .055) !important;
+            animation: paymentMobileFadeUp .26s ease both;
+          }
+
+          .payment-card-top {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) auto !important;
+            align-items: start !important;
+            gap: 8px !important;
+            margin-bottom: 11px !important;
+          }
+
+          .payment-card-top > div {
+            min-width: 0 !important;
+          }
+
+          .payment-card-top h3 {
+            font-size: 14px !important;
+            line-height: 1.15 !important;
+          }
+
+          .payment-card-top p {
+            font-size: 9.5px !important;
+            line-height: 1.35 !important;
+            overflow-wrap: anywhere !important;
+          }
+
+          .payment-card-top > span {
+            padding: 6px 9px !important;
+            border-radius: 999px !important;
+            font-size: 8.5px !important;
+            line-height: 1 !important;
+            white-space: nowrap !important;
+          }
+
+          .payment-money-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 7px !important;
+            margin-bottom: 10px !important;
+          }
+
+          .payment-money-grid > div {
+            min-width: 0 !important;
+          }
+
+          .payment-info-box {
+            min-width: 0 !important;
+            padding: 9px !important;
+            border-radius: 11px !important;
+            gap: 3px !important;
+          }
+
+          .payment-info-box span {
+            font-size: 8px !important;
+            line-height: 1.2 !important;
+          }
+
+          .payment-info-box strong {
+            font-size: 10px !important;
+            line-height: 1.25 !important;
+            overflow-wrap: anywhere !important;
+          }
+
+          .payment-money-grid small {
+            padding-left: 4px !important;
+            margin-top: 3px !important;
+            font-size: 7.5px !important;
+            line-height: 1.25 !important;
+          }
+
+          /* Grand Total info block remains tidy inside 2-col grid */
+          .payment-money-grid > div[style*="position"] {
+            min-width: 0 !important;
+          }
+
+          .payment-update-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 7px !important;
+          }
+
+          .payment-update-grid select,
+          .payment-update-grid input,
+          .payment-update-grid button {
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: 40px !important;
+            margin: 0 !important;
+            padding: 8px 9px !important;
+            border-radius: 10px !important;
+            box-sizing: border-box !important;
+            font-size: 9.5px !important;
+          }
+
+          .payment-update-grid button {
+            gap: 5px !important;
+            line-height: 1.15 !important;
+          }
+
+          .payment-update-grid button svg {
+            width: 13px !important;
+            height: 13px !important;
+          }
+
+          .payment-update-grid button:active,
+          .payment-salary-card button:active {
+            transform: scale(.97) !important;
+          }
+
+          /* ---------- EMPTY / LOADING ---------- */
+          .payment-list > div:not(.payment-booking-card) {
+            padding: 18px 12px !important;
+            border-radius: 14px !important;
+            font-size: 10.5px !important;
+          }
+        }
+
+        /* =========================================================
+           SMALL MOBILE
+        ========================================================= */
+        @media (max-width: 420px) {
+          .payment-page {
+            gap: 11px !important;
+          }
+
+          .payment-header-card {
+            padding: 15px !important;
+            border-radius: 18px !important;
+          }
+
+          .payment-header-card h2 {
+            font-size: 21px !important;
+          }
+
+          .payment-header-card p {
+            font-size: 10px !important;
+          }
+
+          .payment-header-actions {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 6px !important;
+          }
+
+          .payment-header-actions button {
+            min-height: 38px !important;
+            padding: 0 7px !important;
+            font-size: 9px !important;
+          }
+
+          .payment-summary-grid,
+          .payment-expense-grid {
+            gap: 7px !important;
+          }
+
+          .payment-summary-card,
+          .payment-expense-card {
+            padding: 9px !important;
+            gap: 7px !important;
+            border-radius: 13px !important;
+          }
+
+          .payment-summary-card {
+            min-height: 76px !important;
+          }
+
+          .payment-summary-card > div:first-child,
+          .payment-expense-card > div:first-child {
+            width: 30px !important;
+            height: 30px !important;
+            min-width: 30px !important;
+            border-radius: 9px !important;
+          }
+
+          .payment-summary-card h3 {
+            font-size: 12.5px !important;
+          }
+
+          .payment-expense-card h3 {
+            font-size: 11.5px !important;
+          }
+
+          .payment-summary-card p,
+          .payment-expense-card p {
+            font-size: 8px !important;
+          }
+
+          .payment-salary-card {
+            padding: 12px !important;
+            border-radius: 16px !important;
+          }
+
+          .payment-filter-card {
+            padding: 8px !important;
+          }
+
+          .payment-filter-tabs {
+            gap: 4px !important;
+          }
+
+          .payment-filter-tabs button {
+            padding: 6px 2px !important;
+            font-size: 8px !important;
+          }
+
+          .payment-booking-card {
+            padding: 11px !important;
+            border-radius: 16px !important;
+          }
+
+          .payment-card-top {
+            gap: 6px !important;
+          }
+
+          .payment-card-top h3 {
+            font-size: 13px !important;
+          }
+
+          .payment-card-top p {
+            font-size: 8.8px !important;
+          }
+
+          .payment-money-grid {
+            gap: 5px !important;
+          }
+
+          .payment-info-box {
+            padding: 8px !important;
+            border-radius: 10px !important;
+          }
+
+          .payment-info-box span {
+            font-size: 7.5px !important;
+          }
+
+          .payment-info-box strong {
+            font-size: 9px !important;
+          }
+
+          .payment-update-grid {
+            gap: 6px !important;
+          }
+
+          .payment-update-grid select,
+          .payment-update-grid input,
+          .payment-update-grid button {
+            min-height: 38px !important;
+            padding: 7px 6px !important;
+            border-radius: 9px !important;
+            font-size: 8.8px !important;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .payment-header-card,
+          .payment-summary-card,
+          .payment-booking-card {
+            animation: none !important;
+          }
+
+          .payment-header-actions button,
+          .payment-update-grid button,
+          .payment-salary-card button {
+            transition: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };
@@ -1656,7 +2224,7 @@ const SummaryCard = ({
   success,
 }) => (
   <div
-    className="glass-card"
+    className="glass-card payment-summary-card"
     style={styles.summaryCard}
   >
     <div style={styles.summaryIcon}>
@@ -1690,7 +2258,7 @@ const ExpenseCard = ({
   amount,
   icon,
 }) => (
-  <div style={styles.expenseCard}>
+  <div className="payment-expense-card" style={styles.expenseCard}>
     <div style={styles.expenseIcon}>
       {icon}
     </div>
@@ -1711,7 +2279,7 @@ const ExpenseCard = ({
 );
 
 const Info = ({ label, value }) => (
-  <div style={styles.infoBox}>
+  <div className="payment-info-box" style={styles.infoBox}>
     <span>{label}</span>
     <strong>{value}</strong>
   </div>

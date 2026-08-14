@@ -160,7 +160,7 @@ const SmartDispatch = () => {
       })
 
       .map((truck, index) => {
-        
+
         const COMPANY_LOCATION = {
           lat: 8.7107,
           lng: 77.4516,
@@ -169,7 +169,7 @@ const SmartDispatch = () => {
 
         const latestTruckLocation =
           truck.lastGpsLocation?.lat &&
-          truck.lastGpsLocation?.lng
+            truck.lastGpsLocation?.lng
             ? truck.lastGpsLocation
             : truck.liveLocation;
 
@@ -212,8 +212,8 @@ const SmartDispatch = () => {
 
         const aiScore = Math.round(
           distanceScore * 0.5 +
-            fuelScore * 0.3 +
-            ratingScore * 0.2
+          fuelScore * 0.3 +
+          ratingScore * 0.2
         );
 
         return {
@@ -224,12 +224,12 @@ const SmartDispatch = () => {
           aiScore,
           eta: calculateETA(distanceKm),
           driverName:
-          truck.driver?.name ||
-          truck.driverName ||
-          "Available Driver",
+            truck.driver?.name ||
+            truck.driverName ||
+            "Available Driver",
 
-        truckLocation:
-           latestTruckLocation.place || "Unknown Location",
+          truckLocation:
+            latestTruckLocation.place || "Unknown Location",
         };
       })
       .filter(Boolean)
@@ -309,8 +309,8 @@ const SmartDispatch = () => {
   };
 
   return (
-    <div style={styles.page}>
-      <div style={styles.hero}>
+    <div className="smart-dispatch-page" style={styles.page}>
+      <div className="smart-dispatch-hero" style={styles.hero}>
         <div>
           <div style={styles.badge}>
             <Sparkles size={16} />
@@ -326,20 +326,20 @@ const SmartDispatch = () => {
           </p>
         </div>
 
-        <div style={styles.heroBox}>
+        <div className="smart-dispatch-hero-box" style={styles.heroBox}>
           <LocateFixed size={34} />
           <h2>{availableTrucks.length}</h2>
           <p>Available Trucks</p>
         </div>
       </div>
 
-      <div style={styles.grid}>
-        <div style={styles.card}>
+      <div className="smart-dispatch-grid" style={styles.grid}>
+        <div className="smart-dispatch-card smart-dispatch-form-card" style={styles.card}>
           <h3 style={styles.sectionTitle}>
             Dispatch Requirement
           </h3>
 
-          <div style={styles.formGrid}>
+          <div className="smart-dispatch-form-grid" style={styles.formGrid}>
             <input
               name="pickup"
               placeholder="Pickup Location"
@@ -444,7 +444,7 @@ const SmartDispatch = () => {
                 </option>
               </select>
             )}
-                 
+
             <select
               name="priority"
               value={job.priority}
@@ -465,7 +465,7 @@ const SmartDispatch = () => {
             />
 
             {tripDistance > 0 && (
-              <div style={{ ...styles.estimateBox, backgroundColor: '#071b34', color: '#fff', textAlign: 'left', padding: '20px', borderRadius: '20px' }}>
+              <div className="smart-dispatch-estimate" style={{ ...styles.estimateBox, backgroundColor: '#071b34', color: '#fff', textAlign: 'left', padding: '20px', borderRadius: '20px' }}>
                 <h4 style={{ margin: '0 0 12px 0', color: '#ff7a00', fontWeight: '800' }}>AI Dispatch Invoice Preview</h4>
 
                 <p style={{ margin: '6px 0', fontSize: '0.92rem', display: 'flex', justifyContent: 'space-between' }}>
@@ -492,6 +492,7 @@ const SmartDispatch = () => {
             )}
 
             <button
+              className="smart-dispatch-run"
               onClick={handleRunAI}
               style={styles.runBtn}
             >
@@ -502,60 +503,60 @@ const SmartDispatch = () => {
           </div>
         </div>
 
-        <div style={styles.card}>
+        <div className="smart-dispatch-card smart-dispatch-result-card" style={styles.card}>
           {!selectedTruck ? (
-            <div style={styles.empty}>
+            <div className="smart-dispatch-empty" style={styles.empty}>
               <Truck size={60} />
               <h3>No Truck Selected</h3>
             </div>
           ) : (
             <>
-              <div style={styles.recommend}>
+              <div className="smart-dispatch-recommend" style={styles.recommend}>
                 <CheckCircle2 size={18} />
                 Best AI Match
               </div>
 
               <h2>{selectedTruck.name}</h2>
 
-              <div style={styles.info}>
+              <div className="smart-dispatch-info" style={styles.info}>
                 <span>Truck Number</span>
                 <strong>
                   {selectedTruck.number || "TN-00-0000"}
                 </strong>
               </div>
 
-              <div style={styles.info}>
+              <div className="smart-dispatch-info" style={styles.info}>
                 <span>Distance</span>
                 <strong>
                   {selectedTruck.distanceKm} km
                 </strong>
               </div>
 
-              <div style={styles.info}>
+              <div className="smart-dispatch-info" style={styles.info}>
                 <span>ETA</span>
                 <strong>{selectedTruck.eta}</strong>
               </div>
 
-              <div style={styles.info}>
+              <div className="smart-dispatch-info" style={styles.info}>
                 <span>Truck Current Location</span>
                 <strong>
                   {selectedTruck.truckLocation}
                 </strong>
               </div>
 
-              <div style={styles.info}>
+              <div className="smart-dispatch-info" style={styles.info}>
                 <span>Fuel</span>
                 <strong>{selectedTruck.fuel}%</strong>
               </div>
 
-              <div style={styles.info}>
+              <div className="smart-dispatch-info" style={styles.info}>
                 <span>Driver</span>
                 <strong>
                   {selectedTruck.driverName}
                 </strong>
               </div>
 
-              <div style={styles.info}>
+              <div className="smart-dispatch-info" style={styles.info}>
                 <span>AI Score</span>
                 <strong>
                   {selectedTruck.aiScore}%
@@ -563,6 +564,7 @@ const SmartDispatch = () => {
               </div>
 
               <button
+                className="smart-dispatch-map-btn"
                 onClick={openGoogleMap}
                 style={styles.mapBtn}
               >
@@ -574,13 +576,14 @@ const SmartDispatch = () => {
         </div>
       </div>
 
-      <div style={styles.card}>
-        <div style={styles.fleetHeader}>
+      <div className="smart-dispatch-card smart-dispatch-fleet-card" style={styles.card}>
+        <div className="smart-dispatch-fleet-header" style={styles.fleetHeader}>
           <h3 style={styles.sectionTitle}>
             Live Fleet Ranking
           </h3>
 
           <button
+            className="smart-dispatch-refresh"
             onClick={loadData}
             style={styles.refreshBtn}
           >
@@ -589,9 +592,10 @@ const SmartDispatch = () => {
           </button>
         </div>
 
-        <div style={styles.fleetList}>
+        <div className="smart-dispatch-fleet-list" style={styles.fleetList}>
           {scoredTrucks.map((truck) => (
             <div
+              className="smart-dispatch-truck-row"
               key={truck._id}
               style={styles.truckRow}
             >
@@ -613,6 +617,252 @@ const SmartDispatch = () => {
           ))}
         </div>
       </div>
+      <style>{`
+        @media (max-width: 768px) {
+          .smart-dispatch-page {
+            width: 100% !important;
+            min-width: 0 !important;
+            gap: 14px !important;
+            overflow-x: hidden !important;
+          }
+
+          .smart-dispatch-hero {
+            padding: 18px !important;
+            border-radius: 22px !important;
+            gap: 14px !important;
+            align-items: stretch !important;
+            flex-direction: column !important;
+            box-shadow: 0 16px 34px rgba(37, 99, 235, 0.18) !important;
+          }
+
+          .smart-dispatch-hero > div:first-child > div:first-child {
+            padding: 7px 11px !important;
+            font-size: 10px !important;
+            gap: 6px !important;
+          }
+
+          .smart-dispatch-hero h1 {
+            margin: 11px 0 6px !important;
+            font-size: 25px !important;
+            line-height: 1.08 !important;
+            letter-spacing: -0.6px !important;
+          }
+
+          .smart-dispatch-hero > div:first-child > p {
+            margin: 0 !important;
+            font-size: 11px !important;
+            line-height: 1.5 !important;
+          }
+
+          .smart-dispatch-hero-box {
+            display: grid !important;
+            grid-template-columns: auto auto 1fr !important;
+            align-items: center !important;
+            gap: 8px !important;
+            padding: 11px 13px !important;
+            border-radius: 15px !important;
+            text-align: left !important;
+          }
+
+          .smart-dispatch-hero-box svg {
+            width: 22px !important;
+            height: 22px !important;
+          }
+
+          .smart-dispatch-hero-box h2 {
+            margin: 0 !important;
+            font-size: 22px !important;
+          }
+
+          .smart-dispatch-hero-box p {
+            margin: 0 !important;
+            font-size: 10px !important;
+          }
+
+          .smart-dispatch-grid {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+          }
+
+          .smart-dispatch-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            padding: 15px !important;
+            border-radius: 19px !important;
+            box-sizing: border-box !important;
+            box-shadow: 0 12px 28px rgba(15, 74, 136, 0.09) !important;
+          }
+
+          .smart-dispatch-card > h3,
+          .smart-dispatch-fleet-header h3 {
+            margin: 0 0 13px !important;
+            font-size: 16px !important;
+          }
+
+          .smart-dispatch-form-grid {
+            gap: 10px !important;
+          }
+
+          .smart-dispatch-form-grid input,
+          .smart-dispatch-form-grid select {
+            width: 100% !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+            padding: 11px 12px !important;
+            border-radius: 12px !important;
+            font-size: 11.5px !important;
+            box-shadow: 0 4px 12px rgba(15,74,136,0.04) !important;
+          }
+
+          .smart-dispatch-estimate {
+            padding: 13px !important;
+            border-radius: 14px !important;
+          }
+
+          .smart-dispatch-estimate h4 {
+            margin-bottom: 8px !important;
+            font-size: 12px !important;
+          }
+
+          .smart-dispatch-estimate p {
+            margin: 4px 0 !important;
+            font-size: 10.5px !important;
+          }
+
+          .smart-dispatch-estimate h3 {
+            font-size: 12px !important;
+          }
+
+          .smart-dispatch-estimate h3 span:last-child {
+            font-size: 19px !important;
+          }
+
+          .smart-dispatch-run,
+          .smart-dispatch-map-btn {
+            min-height: 43px !important;
+            padding: 0 13px !important;
+            border-radius: 13px !important;
+            font-size: 11.5px !important;
+            box-shadow: 0 10px 22px rgba(99,102,241,0.20) !important;
+            transition: transform .16s ease, box-shadow .16s ease !important;
+          }
+
+          .smart-dispatch-run:active,
+          .smart-dispatch-map-btn:active,
+          .smart-dispatch-refresh:active {
+            transform: scale(.98) !important;
+          }
+
+          .smart-dispatch-empty {
+            height: 150px !important;
+            gap: 6px !important;
+          }
+
+          .smart-dispatch-empty svg {
+            width: 40px !important;
+            height: 40px !important;
+          }
+
+          .smart-dispatch-empty h3 {
+            margin: 2px 0 !important;
+            font-size: 14px !important;
+          }
+
+          .smart-dispatch-recommend {
+            padding: 7px 10px !important;
+            margin-bottom: 10px !important;
+            font-size: 10px !important;
+            gap: 6px !important;
+          }
+
+          .smart-dispatch-result-card > h2 {
+            margin: 2px 0 10px !important;
+            font-size: 20px !important;
+          }
+
+          .smart-dispatch-info {
+            padding: 9px 0 !important;
+            gap: 10px !important;
+            font-size: 10.5px !important;
+            align-items: flex-start !important;
+          }
+
+          .smart-dispatch-info span {
+            color: #64748b !important;
+            flex: 0 0 44% !important;
+          }
+
+          .smart-dispatch-info strong {
+            text-align: right !important;
+            overflow-wrap: anywhere !important;
+          }
+
+          .smart-dispatch-map-btn {
+            margin-top: 12px !important;
+          }
+
+          .smart-dispatch-fleet-header {
+            margin-bottom: 12px !important;
+            gap: 8px !important;
+          }
+
+          .smart-dispatch-fleet-header h3 {
+            margin-bottom: 0 !important;
+          }
+
+          .smart-dispatch-refresh {
+            padding: 8px 10px !important;
+            border-radius: 11px !important;
+            font-size: 10px !important;
+            gap: 5px !important;
+          }
+
+          .smart-dispatch-refresh svg {
+            width: 14px !important;
+            height: 14px !important;
+          }
+
+          .smart-dispatch-fleet-list {
+            gap: 9px !important;
+          }
+
+          .smart-dispatch-truck-row {
+            padding: 11px 12px !important;
+            border-radius: 13px !important;
+            gap: 10px !important;
+            box-shadow: 0 6px 16px rgba(99,102,241,0.06) !important;
+          }
+
+          .smart-dispatch-truck-row h4 {
+            font-size: 12px !important;
+          }
+
+          .smart-dispatch-truck-row p {
+            margin: 3px 0 0 !important;
+            font-size: 9.5px !important;
+          }
+
+          .smart-dispatch-truck-row > div:last-child {
+            padding: 7px 10px !important;
+            font-size: 10px !important;
+            border-radius: 999px !important;
+            flex-shrink: 0 !important;
+          }
+        }
+
+        @media (max-width: 420px) {
+          .smart-dispatch-hero { padding: 16px !important; border-radius: 19px !important; }
+          .smart-dispatch-hero h1 { font-size: 22px !important; }
+          .smart-dispatch-card { padding: 13px !important; border-radius: 17px !important; }
+          .smart-dispatch-form-grid input, .smart-dispatch-form-grid select { padding: 10px 11px !important; font-size: 11px !important; }
+          .smart-dispatch-run, .smart-dispatch-map-btn { min-height: 41px !important; }
+          .smart-dispatch-info { font-size: 10px !important; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .smart-dispatch-run, .smart-dispatch-map-btn, .smart-dispatch-refresh { transition: none !important; }
+        }
+      `}</style>
     </div>
   );
 };

@@ -329,6 +329,7 @@ const EmergencyAlerts = () => {
   return (
     <>
       <div
+        className="ea-header"
         style={{
           display: 'flex',
           justifyContent:
@@ -341,6 +342,7 @@ const EmergencyAlerts = () => {
       >
         <div>
           <h1
+            className="ea-title"
             style={{
               margin: 0,
               fontSize: '2rem',
@@ -361,6 +363,7 @@ const EmergencyAlerts = () => {
         </div>
 
         <button
+          className="ea-download-btn"
           onClick={
             downloadMonthlyPDF
           }
@@ -384,6 +387,7 @@ const EmergencyAlerts = () => {
       </div>
 
       <div
+        className="ea-alert-list"
         style={{
           display: 'grid',
           gap: '18px',
@@ -391,6 +395,7 @@ const EmergencyAlerts = () => {
       >
         {alerts.length === 0 ? (
           <div
+            className="ea-empty"
             style={{
               background: '#fff',
               padding: '45px',
@@ -412,6 +417,7 @@ const EmergencyAlerts = () => {
 
               return (
                 <motion.div
+                  className="ea-alert-card"
                   key={
                     alert._id
                   }
@@ -437,6 +443,7 @@ const EmergencyAlerts = () => {
                   }}
                 >
                   <div
+                    className="ea-alert-row"
                     style={{
                       display:
                         'flex',
@@ -448,11 +455,13 @@ const EmergencyAlerts = () => {
                     }}
                   >
                     <div
+                      className="ea-alert-content"
                       style={{
                         flex: 1,
                       }}
                     >
                       <div
+                        className="ea-alert-heading"
                         style={{
                           display:
                             'flex',
@@ -501,13 +510,14 @@ const EmergencyAlerts = () => {
                         </span>
                       </div>
 
-                      <p>
+                      <p className="ea-description">
                         {
                           alert.description
                         }
                       </p>
 
                       <div
+                        className="ea-meta"
                         style={{
                           display:
                             'flex',
@@ -565,6 +575,7 @@ const EmergencyAlerts = () => {
                     </div>
 
                     <div
+                      className="ea-actions"
                       style={{
                         display:
                           'flex',
@@ -574,6 +585,7 @@ const EmergencyAlerts = () => {
                       }}
                     >
                       <button
+                        className="ea-resolve-action"
                         onClick={() =>
                           setResolveModal(
                             alert
@@ -599,6 +611,7 @@ const EmergencyAlerts = () => {
                       </button>
 
                       <button
+                        className="ea-details-action"
                         onClick={() =>
                           setSelectedAlert(
                             alert
@@ -631,12 +644,15 @@ const EmergencyAlerts = () => {
 
       {resolveModal && (
         <div
+          className="ea-modal-overlay"
           style={styles.overlay}
         >
           <div
+            className="ea-modal"
             style={styles.modal}
           >
             <div
+              className="ea-modal-header"
               style={
                 styles.modalHeader
               }
@@ -646,6 +662,7 @@ const EmergencyAlerts = () => {
               </h2>
 
               <button
+                className="ea-close-btn"
                 onClick={() =>
                   setResolveModal(
                     null
@@ -660,6 +677,7 @@ const EmergencyAlerts = () => {
             </div>
 
             <div
+              className="ea-form-grid"
               style={styles.formGrid}
             >
               <input
@@ -675,12 +693,14 @@ const EmergencyAlerts = () => {
                         .value,
                   })
                 }
+                className="ea-input"
                 style={
                   styles.input
                 }
               />
 
               <input
+                className="ea-input"
                 placeholder="Service Amount"
                 type="number"
                 value={
@@ -700,6 +720,7 @@ const EmergencyAlerts = () => {
               />
 
               <input
+                className="ea-input"
                 placeholder="Mechanic Name"
                 value={
                   serviceData.mechanic
@@ -731,6 +752,7 @@ const EmergencyAlerts = () => {
                         .value,
                   })
                 }
+                className="ea-input"
                 style={
                   styles.input
                 }
@@ -738,6 +760,7 @@ const EmergencyAlerts = () => {
             </div>
 
             <button
+              className="ea-complete-btn"
               onClick={() =>
                 handleResolve(
                   resolveModal._id
@@ -755,9 +778,306 @@ const EmergencyAlerts = () => {
           </div>
         </div>
       )}
+
+      <style>{mobileCss}</style>
     </>
   );
 };
+
+
+const mobileCss = `
+  @media (max-width: 768px) {
+    .ea-header {
+      align-items: flex-start !important;
+      margin-bottom: 14px !important;
+      gap: 10px !important;
+    }
+
+    .ea-title {
+      font-size: 22px !important;
+      line-height: 1.1 !important;
+      letter-spacing: -0.45px !important;
+      color: #0b315d !important;
+    }
+
+    .ea-header p {
+      margin: 5px 0 0 !important;
+      font-size: 11px !important;
+      line-height: 1.4 !important;
+      max-width: 240px !important;
+    }
+
+    .ea-download-btn {
+      min-height: 39px !important;
+      padding: 0 12px !important;
+      border-radius: 11px !important;
+      gap: 6px !important;
+      font-size: 10.5px !important;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14) !important;
+      transition: transform .16s ease, box-shadow .16s ease !important;
+    }
+
+    .ea-download-btn svg {
+      width: 15px !important;
+      height: 15px !important;
+    }
+
+    .ea-alert-list {
+      gap: 10px !important;
+    }
+
+    .ea-empty {
+      padding: 24px 14px !important;
+      border-radius: 17px !important;
+      font-size: 12px !important;
+      box-shadow: 0 8px 22px rgba(15, 59, 115, .06) !important;
+    }
+
+    .ea-alert-card {
+      padding: 14px !important;
+      border-radius: 18px !important;
+      border-left-width: 5px !important;
+      box-shadow: 0 10px 24px rgba(15, 59, 115, .07) !important;
+      overflow: hidden !important;
+    }
+
+    .ea-alert-row {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
+    }
+
+    .ea-alert-content {
+      min-width: 0 !important;
+    }
+
+    .ea-alert-heading {
+      display: grid !important;
+      grid-template-columns: auto 1fr auto !important;
+      gap: 8px !important;
+      margin-bottom: 8px !important;
+      align-items: center !important;
+    }
+
+    .ea-alert-heading > svg {
+      width: 18px !important;
+      height: 18px !important;
+    }
+
+    .ea-alert-heading h3 {
+      min-width: 0 !important;
+      font-size: 14px !important;
+      line-height: 1.25 !important;
+      color: #0b315d !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .ea-alert-heading span {
+      padding: 5px 8px !important;
+      font-size: 8.5px !important;
+      font-weight: 800 !important;
+    }
+
+    .ea-description {
+      margin: 0 0 10px !important;
+      font-size: 11px !important;
+      line-height: 1.45 !important;
+      color: #536a86 !important;
+    }
+
+    .ea-meta {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 7px !important;
+      color: #64748b !important;
+    }
+
+    .ea-meta span {
+      min-width: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 5px !important;
+      padding: 7px 8px !important;
+      border-radius: 10px !important;
+      background: #f7faff !important;
+      border: 1px solid #e7eef7 !important;
+      font-size: 9px !important;
+      line-height: 1.3 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .ea-meta svg {
+      flex-shrink: 0 !important;
+      width: 12px !important;
+      height: 12px !important;
+      color: #0f5b9e !important;
+    }
+
+    .ea-actions {
+      width: 100% !important;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 8px !important;
+    }
+
+    .ea-actions button {
+      width: 100% !important;
+      min-height: 40px !important;
+      padding: 0 10px !important;
+      border-radius: 11px !important;
+      font-size: 10.5px !important;
+      box-shadow: 0 6px 16px rgba(15, 59, 115, .08) !important;
+      transition: transform .16s ease, box-shadow .16s ease !important;
+    }
+
+    .ea-details-action {
+      color: #0b4f8a !important;
+      border-color: #d3e3f4 !important;
+      background: linear-gradient(145deg, #fff, #f2f7fd) !important;
+    }
+
+    .ea-modal-overlay {
+      padding: 14px !important;
+      background: rgba(3, 16, 31, .58) !important;
+      backdrop-filter: blur(3px) !important;
+      -webkit-backdrop-filter: blur(3px) !important;
+    }
+
+    .ea-modal {
+      width: min(100%, 340px) !important;
+      max-width: 340px !important;
+      max-height: calc(100dvh - 28px) !important;
+      overflow-y: auto !important;
+      padding: 17px !important;
+      border-radius: 20px !important;
+      box-shadow: 0 22px 55px rgba(2, 20, 40, .24) !important;
+      animation: eaModalIn .2s ease-out both !important;
+      scrollbar-width: none !important;
+    }
+
+    .ea-modal::-webkit-scrollbar { display: none !important; }
+
+    .ea-modal-header {
+      align-items: center !important;
+      margin-bottom: 13px !important;
+    }
+
+    .ea-modal-header h2 {
+      margin: 0 !important;
+      font-size: 18px !important;
+      line-height: 1.1 !important;
+      color: #0b315d !important;
+    }
+
+    .ea-close-btn {
+      width: 34px !important;
+      height: 34px !important;
+      border-radius: 10px !important;
+      display: grid !important;
+      place-items: center !important;
+      padding: 0 !important;
+    }
+
+    .ea-form-grid {
+      gap: 9px !important;
+    }
+
+    .ea-input {
+      min-height: 42px !important;
+      padding: 10px 11px !important;
+      border-radius: 11px !important;
+      font-size: 11px !important;
+      box-sizing: border-box !important;
+      background: #fbfdff !important;
+      transition: border-color .16s ease, box-shadow .16s ease !important;
+    }
+
+    textarea.ea-input {
+      min-height: 82px !important;
+      resize: vertical !important;
+    }
+
+    .ea-input:focus {
+      border-color: #4c90cf !important;
+      box-shadow: 0 0 0 3px rgba(15, 91, 158, .08) !important;
+    }
+
+    .ea-complete-btn {
+      margin-top: 12px !important;
+      min-height: 43px !important;
+      padding: 0 12px !important;
+      border-radius: 12px !important;
+      font-size: 11px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 7px !important;
+      box-shadow: 0 9px 20px rgba(21, 128, 61, .16) !important;
+    }
+
+    .ea-download-btn:active,
+    .ea-actions button:active,
+    .ea-complete-btn:active {
+      transform: scale(.97) !important;
+    }
+
+    @keyframes eaModalIn {
+      from { opacity: 0; transform: translateY(8px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  }
+
+  @media (max-width: 420px) {
+    .ea-header {
+      margin-bottom: 12px !important;
+    }
+
+    .ea-title {
+      font-size: 20px !important;
+    }
+
+    .ea-download-btn {
+      width: 100% !important;
+      justify-content: center !important;
+    }
+
+    .ea-alert-card {
+      padding: 12px !important;
+      border-radius: 16px !important;
+    }
+
+    .ea-meta {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 6px !important;
+    }
+
+    .ea-meta span {
+      padding: 6px 7px !important;
+      font-size: 8.5px !important;
+    }
+
+    .ea-actions button {
+      min-height: 38px !important;
+      font-size: 10px !important;
+    }
+
+    .ea-modal {
+      max-width: 310px !important;
+      padding: 15px !important;
+      border-radius: 18px !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ea-modal,
+    .ea-download-btn,
+    .ea-actions button,
+    .ea-complete-btn {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+`;
 
 const styles = {
   overlay: {
