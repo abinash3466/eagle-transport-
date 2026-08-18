@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { GST_PERCENTAGE } = require("../config/financeConfig");
+const { GST_PERCENTAGE, DRIVER_SALARY_PERCENTAGE } = require("../config/financeConfig");
 
 const statusHistorySchema = new mongoose.Schema(
   {
@@ -32,6 +32,7 @@ const salaryHistorySchema = new mongoose.Schema(
     amount: {
       type: Number,
       default: 0,
+      min: 0,
     },
 
     paidAt: {
@@ -43,6 +44,11 @@ const salaryHistorySchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+
+    paidBy: {
+      type: String,
+      default: "Owner",
+    },
   },
   { _id: false }
 );
@@ -52,11 +58,34 @@ const paymentHistorySchema = new mongoose.Schema(
     amount: {
       type: Number,
       default: 0,
+      min: 0,
     },
 
     paymentMode: {
       type: String,
+      enum: ["Cash", "UPI", "Bank Transfer", "Credit"],
       default: "Cash",
+    },
+
+    receiptId: {
+      type: String,
+      default: "",
+    },
+
+    collectedBy: {
+      type: String,
+      default: "Owner",
+    },
+
+    remarks: {
+      type: String,
+      default: "",
+    },
+
+    balanceAfter: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
 
     paidAt: {
@@ -141,17 +170,20 @@ const bookingSchema = new mongoose.Schema(
     payment: {
       paymentMode: {
         type: String,
+        enum: ["Cash", "UPI", "Bank Transfer", "Credit"],
         default: "Cash",
       },
 
       advanceAmount: {
         type: Number,
         default: 0,
+        min: 0,
       },
 
       balanceAmount: {
         type: Number,
         default: 0,
+        min: 0,
       },
 
       paymentStatus: {
@@ -170,16 +202,24 @@ const bookingSchema = new mongoose.Schema(
       salaryPaid: {
         type: Number,
         default: 0,
+        min: 0,
       },
 
       salaryPending: {
         type: Number,
         default: 0,
+        min: 0,
       },
 
       salaryStatus: {
         type: String,
+        enum: ["Pending", "Partial", "Paid"],
         default: "Pending",
+      },
+
+      driverSalaryPercentage: {
+        type: Number,
+        default: DRIVER_SALARY_PERCENTAGE,
       },
 
       salaryHistory: {
@@ -245,6 +285,27 @@ const bookingSchema = new mongoose.Schema(
     driver: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Driver",
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
+
+    deletedBy: {
+      type: String,
+      default: "",
+    },
+
+    deleteReason: {
+      type: String,
+      default: "",
     },
 
     notes: {

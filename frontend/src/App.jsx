@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+
 import {
   BrowserRouter,
   Routes,
@@ -7,6 +9,7 @@ import {
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import IntroSplash from "./components/IntroSplash";
 
 // Pages
 import Home from "./pages/Home";
@@ -134,10 +137,20 @@ function AppLayout() {
 }
 
 function App() {
+  const [showIntro, setShowIntro] = useState(true);
+
   return (
-    <BrowserRouter>
-      <AppLayout />
-    </BrowserRouter>
+    <>
+      {showIntro && (
+        <IntroSplash
+          onFinish={() => setShowIntro(false)}
+        />
+      )}
+
+      <BrowserRouter>
+        <AppLayout />
+      </BrowserRouter>
+    </>
   );
 }
 

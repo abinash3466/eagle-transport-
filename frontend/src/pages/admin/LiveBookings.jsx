@@ -6,21 +6,9 @@ import {
   Filter,
   MapPin,
   Truck,
-  Phone,
   Package,
   CircleDollarSign,
 } from 'lucide-react';
-
-const authHeader = () => {
-
-  const token = localStorage.getItem("token");
-
-  return {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
-
-};
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -34,57 +22,93 @@ const LiveBookings = () => {
   const [paymentData, setPaymentData] = useState({});
   const [locationData, setLocationData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [busyActions, setBusyActions] = useState({});
 
   const tabs = ['All', 'Live', 'Pending', 'Delivered'];
   const GST_PERCENTAGE = 5;
 
-  const openBookingReport = (booking) => {
-    const bookingMongoId = booking?._id || booking?.id;
+  const getMongoId = (booking) => booking?._id || booking?.id || null;
+
+  const setActionBusy = (key, value) => {
+    setBusyActions((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const isActionBusy = (key) => Boolean(busyActions[key]);
+
+  const openBookingReport = async (booking) => {
+    const bookingMongoId = getMongoId(booking);
 
     if (!bookingMongoId) {
       alert('Booking ID not found');
       return;
     }
 
-    window.open(`${API_URL}/bookings/${bookingMongoId}/invoice`, '_blank');
+    const popup = window.open('', '_blank');
+
+    try {
+      const response = await fetchWithAuth(`${API_URL}/bookings/${bookingMongoId}/invoice`);
+
+      if (!response.ok) {
+        const message = await response.text().catch(() => 'Unable to open invoice');
+        throw new Error(message || 'Unable to open invoice');
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      if (popup) {
+        popup.location.href = url;
+      } else {
+        window.open(url, '_blank');
+      }
+
+      window.setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (error) {
+      if (popup) popup.close();
+      console.error('Invoice open error:', error);
+      alert(error.message || 'Unable to open invoice');
+    }
   };
 
-  const fetchData = async () => {
+  const fetchData = async ({ silent = false } = {}) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
 
       const [bookingRes, truckRes, driverRes] = await Promise.all([
-        fetch(
-          `${API_URL}/bookings`,
-          {
-            headers: authHeader(),
-          }
-        ),
-        fetch(
-          `${API_URL}/trucks`,
-          {
-            headers: authHeader(),
-          }
-        ),
-        fetch(
-          `${API_URL}/drivers`,
-          {
-            headers: authHeader(),
-          }
-        )
+        fetchWithAuth(`${API_URL}/bookings`),
+        fetchWithAuth(`${API_URL}/trucks`),
+        fetchWithAuth(`${API_URL}/drivers`),
       ]);
 
-      const bookingData = await bookingRes.json();
-      const truckData = await truckRes.json();
-      const driverData = await driverRes.json();
+      const responses = [
+        ['bookings', bookingRes],
+        ['trucks', truckRes],
+        ['drivers', driverRes],
+      ];
 
-      setBookings(Array.isArray(bookingData) ? bookingData : []);
-      setTrucks(Array.isArray(truckData) ? truckData : []);
-      setDrivers(Array.isArray(driverData) ? driverData : []);
+      for (const [name, response] of responses) {
+        if (!response.ok) {
+          throw new Error(`${name} request failed (${response.status})`);
+        }
+      }
+
+      const [bookingData, truckData, driverData] = await Promise.all([
+        bookingRes.json(),
+        truckRes.json(),
+        driverRes.json(),
+      ]);
+
+      if (!Array.isArray(bookingData) || !Array.isArray(truckData) || !Array.isArray(driverData)) {
+        throw new Error('Unexpected dashboard response format');
+      }
+
+      setBookings(bookingData);
+      setTrucks(truckData);
+      setDrivers(driverData);
     } catch (error) {
       console.error('Live bookings fetch error:', error);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -92,7 +116,7 @@ const LiveBookings = () => {
     fetchData();
 
     const interval = setInterval(() => {
-      fetchData();
+      fetchData({ silent: true });
     }, 120000);
 
     return () => clearInterval(interval);
@@ -104,19 +128,44 @@ const LiveBookings = () => {
   const getPickup = (booking) => booking.pickup || booking.pickupLocation || 'N/A';
   const getDrop = (booking) => booking.drop || booking.dropLocation || 'N/A';
   const getGoods = (booking) => booking.goods || booking.goodsType || 'Goods';
-  const getAmount = (booking) => booking.amount ? `₹${Number(booking.amount).toLocaleString('en-IN')}` : 'Not Added';
-  const getBaseAmount = (booking) => Number(booking?.amount || 0);
+  const getAmount = (booking) => booking.amount != null
+    ? `₹${Number(booking.amount).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
+    : 'Not Added';
+
+  const roundMoney = (value) => Number(Number(value || 0).toFixed(2));
+  const getBaseAmount = (booking) => roundMoney(booking?.amount || 0);
+
+  const getGstPercentage = (booking) => {
+    const saved = Number(booking?.payment?.gstPercentage);
+    return Number.isFinite(saved) ? saved : GST_PERCENTAGE;
+  };
+
   const getGstAmount = (booking) => {
-    const saved = Number(booking?.payment?.gstAmount || 0);
-    return saved > 0 ? saved : (getBaseAmount(booking) * GST_PERCENTAGE) / 100;
+    const baseAmount = getBaseAmount(booking);
+    const percentage = getGstPercentage(booking);
+    const saved = Number(booking?.payment?.gstAmount);
+
+    if (percentage === 0) return 0;
+    if (Number.isFinite(saved) && saved > 0) return roundMoney(saved);
+    return roundMoney((baseAmount * percentage) / 100);
   };
+
   const getInvoiceTotal = (booking) => {
-    const saved = Number(booking?.payment?.totalWithGST || 0);
-    return saved > 0 ? saved : getBaseAmount(booking) + getGstAmount(booking);
+    const saved = Number(booking?.payment?.totalWithGST);
+    if (Number.isFinite(saved) && saved > 0) return roundMoney(saved);
+    return roundMoney(getBaseAmount(booking) + getGstAmount(booking));
   };
-  const getCollectedAmount = (booking) => Number(booking?.payment?.advanceAmount || 0);
-  const getOutstandingAmount = (booking) => Math.max(getInvoiceTotal(booking) - getCollectedAmount(booking), 0);
-  const formatMoney = (value) => `₹${Number(value || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+
+  const getCollectedAmount = (booking) => roundMoney(booking?.payment?.advanceAmount || 0);
+
+  const getOutstandingAmount = (booking) => {
+    const saved = Number(booking?.payment?.balanceAmount);
+    if (Number.isFinite(saved) && saved >= 0) return roundMoney(saved);
+    return roundMoney(Math.max(getInvoiceTotal(booking) - getCollectedAmount(booking), 0));
+  };
+
+  const formatMoney = (value) =>
+    `₹${roundMoney(value).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 
   const getDriverName = (driver) =>
     driver?.driverName || driver?.name || driver?.fullName || 'Driver';
@@ -185,14 +234,19 @@ const LiveBookings = () => {
   };
 
   const normalizeStatus = (status) => {
-    const s = (status || '').toLowerCase();
+    const value = String(status || '').trim().toLowerCase();
+    const map = {
+      booked: 'Booked',
+      pending: 'Booked',
+      dispatched: 'Dispatched',
+      assigned: 'Dispatched',
+      'in transit': 'In Transit',
+      transit: 'In Transit',
+      'on route': 'In Transit',
+      delivered: 'Delivered',
+    };
 
-    if (s.includes('deliver')) return 'Delivered';
-    if (s.includes('route') || s.includes('transit')) return 'In Transit';
-    if (s.includes('dispatch') || s.includes('assign')) return 'Dispatched';
-    if (s.includes('pending') || s.includes('book')) return 'Booked';
-
-    return status || 'Booked';
+    return map[value] || 'Booked';
   };
 
   const filteredBookings = useMemo(() => {
@@ -267,6 +321,8 @@ const LiveBookings = () => {
   };
 
   const handleAssign = async (bookingMongoId) => {
+    const actionKey = `assign:${bookingMongoId}`;
+    if (isActionBusy(actionKey)) return;
     const selected = assignData[bookingMongoId];
 
     if (!selected?.truckId || !selected?.driverId) {
@@ -275,6 +331,7 @@ const LiveBookings = () => {
     }
 
     try {
+      setActionBusy(actionKey, true);
       const res = await fetchWithAuth(`${API_URL}/bookings/${bookingMongoId}/assign`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -290,24 +347,31 @@ const LiveBookings = () => {
 
       alert('Truck and Driver assigned successfully');
       setAssignData((prev) => ({ ...prev, [bookingMongoId]: {} }));
-      fetchData();
+      fetchData({ silent: true });
     } catch (error) {
       console.error('Assign error:', error);
       alert('Server error while assigning');
+    } finally {
+      setActionBusy(actionKey, false);
     }
   };
 
   const handleTripAction = async (booking) => {
+    const bookingMongoId = getMongoId(booking);
+    if (!bookingMongoId) return;
     const status = normalizeStatus(booking.status);
     const endpoint = status === 'Dispatched' ? 'start-trip' : status === 'In Transit' ? 'end-trip' : null;
 
     if (!endpoint) return;
 
     const actionLabel = status === 'Dispatched' ? 'start trip' : 'complete trip';
+    const actionKey = `trip:${bookingMongoId}`;
+    if (isActionBusy(actionKey)) return;
     if (!window.confirm(`Are you sure you want to ${actionLabel}?`)) return;
 
     try {
-      const res = await fetchWithAuth(`${API_URL}/bookings/${booking._id}/${endpoint}`, {
+      setActionBusy(actionKey, true);
+      const res = await fetchWithAuth(`${API_URL}/bookings/${bookingMongoId}/${endpoint}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(status === 'In Transit' ? { remarks: 'Trip completed by owner' } : {}),
@@ -320,15 +384,19 @@ const LiveBookings = () => {
       }
 
       alert(status === 'Dispatched' ? 'Trip started successfully' : 'Trip completed successfully');
-      fetchData();
+      fetchData({ silent: true });
     } catch (error) {
       console.error('Trip action error:', error);
       alert(`Server error while trying to ${actionLabel}`);
+    } finally {
+      setActionBusy(actionKey, false);
     }
   };
 
   const handlePaymentUpdate = async (bookingMongoId) => {
-    const booking = bookings.find((item) => item._id === bookingMongoId);
+    const actionKey = `payment:${bookingMongoId}`;
+    if (isActionBusy(actionKey)) return;
+    const booking = bookings.find((item) => getMongoId(item) === bookingMongoId);
     const selected = paymentData[bookingMongoId] || {};
     const receivedAmount = Number(selected.receivedAmount || 0);
     const outstanding = getOutstandingAmount(booking);
@@ -344,6 +412,7 @@ const LiveBookings = () => {
     }
 
     try {
+      setActionBusy(actionKey, true);
       const res = await fetchWithAuth(`${API_URL}/bookings/${bookingMongoId}/payment`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -364,14 +433,18 @@ const LiveBookings = () => {
         ...prev,
         [bookingMongoId]: { paymentMode: data.booking?.payment?.paymentMode || 'Cash', receivedAmount: '' },
       }));
-      fetchData();
+      fetchData({ silent: true });
     } catch (error) {
       console.error('Payment update error:', error);
       alert('Server error while updating payment');
+    } finally {
+      setActionBusy(actionKey, false);
     }
   };
 
   const handleLocationUpdate = async (bookingMongoId) => {
+    const actionKey = `location:${bookingMongoId}`;
+    if (isActionBusy(actionKey)) return;
     const currentLocation = locationData[bookingMongoId];
 
     if (!currentLocation) {
@@ -380,6 +453,7 @@ const LiveBookings = () => {
     }
 
     try {
+      setActionBusy(actionKey, true);
       const res = await fetchWithAuth(`${API_URL}/bookings/${bookingMongoId}/location`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -394,17 +468,20 @@ const LiveBookings = () => {
       }
 
       alert('Location updated successfully');
-      fetchData();
+      fetchData({ silent: true });
     } catch (error) {
       console.error('Location update error:', error);
       alert('Server error while updating location');
+    } finally {
+      setActionBusy(actionKey, false);
     }
   };
 
   const renderActionPanel = (booking) => {
+    const bookingMongoId = getMongoId(booking);
     const status = normalizeStatus(booking.status);
-    const availableTrucks = trucks.filter((truck) => String(truck.status || 'idle').toLowerCase() === 'idle');
-    const availableDrivers = drivers.filter((driver) => String(driver.status || 'available').toLowerCase() === 'available');
+    const availableTrucks = trucks.filter((truck) => String(truck.status || '').toLowerCase() === 'idle');
+    const availableDrivers = drivers.filter((driver) => String(driver.status || '').toLowerCase() === 'available');
     const invoiceTotal = getInvoiceTotal(booking);
     const collected = getCollectedAmount(booking);
     const outstanding = getOutstandingAmount(booking);
@@ -412,73 +489,138 @@ const LiveBookings = () => {
     return (
       <div className="lb-action-panel" style={styles.actionPanel}>
         {!isBookingAssigned(booking) && status === 'Booked' && (
-          <div>
+          <div className="lb-action-section lb-assign-section">
             <p style={styles.actionTitle}>Assign Truck & Driver</p>
-            <select style={styles.assignSelect} value={assignData[booking._id]?.truckId || ''} onChange={(e) => handleAssignChange(booking._id, 'truckId', e.target.value)}>
+            <select style={styles.assignSelect} value={assignData[bookingMongoId]?.truckId || ''} onChange={(e) => handleAssignChange(bookingMongoId, 'truckId', e.target.value)}>
               <option value="">Select Available Truck</option>
               {availableTrucks.map((truck) => (
                 <option key={truck._id} value={truck._id}>{getTruckName(truck)} {truck.category ? `- ${truck.category}` : ''}</option>
               ))}
             </select>
-            <select style={styles.assignSelect} value={assignData[booking._id]?.driverId || ''} onChange={(e) => handleAssignChange(booking._id, 'driverId', e.target.value)}>
+            <select style={styles.assignSelect} value={assignData[bookingMongoId]?.driverId || ''} onChange={(e) => handleAssignChange(bookingMongoId, 'driverId', e.target.value)}>
               <option value="">Select Available Driver</option>
               {availableDrivers.map((driver) => (
                 <option key={driver._id} value={driver._id}>{getDriverName(driver)} {driver.phone ? `- ${driver.phone}` : ''}</option>
               ))}
             </select>
-            <button style={styles.assignBtn} onClick={() => handleAssign(booking._id)}>Assign</button>
+            <button style={styles.assignBtn} disabled={isActionBusy(`assign:${bookingMongoId}`)} onClick={() => handleAssign(bookingMongoId)}>{isActionBusy(`assign:${bookingMongoId}`) ? 'Assigning...' : 'Assign'}</button>
           </div>
         )}
 
-        <div>
-          <p style={styles.actionTitle}>Trip Status</p>
-          <div style={styles.statusBtnWrap}>
-            <span style={{ ...styles.statusBtn, ...styles.statusBtnActive, cursor: 'default' }}>{status}</span>
-            {status === 'Booked' && !isBookingAssigned(booking) && <span style={styles.subText}>Assign a truck and driver to continue.</span>}
-            {status === 'Dispatched' && <button style={styles.assignBtn} onClick={() => handleTripAction(booking)}>Start Trip</button>}
-            {status === 'In Transit' && <button style={styles.locationBtn} onClick={() => handleTripAction(booking)}>Complete Trip</button>}
-            {status === 'Delivered' && <span style={{ ...styles.subText, color: '#047857', fontWeight: 700 }}>Trip completed</span>}
+        <div className="lb-action-section lb-trip-section">
+          <div className="lb-section-head">
+            <p style={styles.actionTitle}>Trip Status</p>
+          </div>
+
+          <div className="lb-trip-content" style={styles.statusBtnWrap}>
+            <span className="lb-status-pill" style={{ ...styles.statusBtn, ...styles.statusBtnActive, cursor: 'default' }}>
+              {status}
+            </span>
+
+            {status === 'Booked' && !isBookingAssigned(booking) && (
+              <span className="lb-trip-note" style={styles.subText}>
+                Assign a truck and driver to continue.
+              </span>
+            )}
+
+            {status === 'Dispatched' && (
+              <button className="lb-trip-btn" style={styles.assignBtn} disabled={isActionBusy(`trip:${bookingMongoId}`)} onClick={() => handleTripAction(booking)}>
+                Start Trip
+              </button>
+            )}
+
+            {status === 'In Transit' && (
+              <button className="lb-trip-btn" style={styles.locationBtn} disabled={isActionBusy(`trip:${bookingMongoId}`)} onClick={() => handleTripAction(booking)}>
+                Complete Trip
+              </button>
+            )}
+
+            {status === 'Delivered' && (
+              <span className="lb-trip-note lb-trip-note-success" style={{ ...styles.subText, color: '#047857', fontWeight: 700 }}>
+                Trip completed
+              </span>
+            )}
           </div>
         </div>
 
-        <div>
-          <p style={styles.actionTitle}>Payment Details</p>
-          <div className="lb-payment-summary" style={styles.paymentSummaryBox}>
-            <span>Base Freight <strong>{formatMoney(getBaseAmount(booking))}</strong></span>
-            <span>GST ({GST_PERCENTAGE}%) <strong>{formatMoney(getGstAmount(booking))}</strong></span>
-            <span>Invoice Total <strong>{formatMoney(invoiceTotal)}</strong></span>
-            <span>Collected <strong>{formatMoney(collected)}</strong></span>
-            <span>Outstanding <strong>{formatMoney(outstanding)}</strong></span>
-            <span>Status <strong>{booking.payment?.paymentStatus || 'Pending'}</strong></span>
+        <div className="lb-action-section lb-payment-section">
+          <div className="lb-section-head">
+            <p style={styles.actionTitle}>Payment Details</p>
+            <span className={`lb-mini-payment-badge ${String(booking.payment?.paymentStatus || 'Pending').toLowerCase() === 'paid' ? 'is-paid' : 'is-pending'}`}>
+              {booking.payment?.paymentStatus || 'Pending'}
+            </span>
+          </div>
+
+          <div className="lb-payment-summary lb-payment-calculation" style={styles.paymentSummaryBox}>
+            <div className="lb-calc-flow">
+              <div className="lb-calc-box">
+                <span>Base Freight</span>
+                <strong>{formatMoney(getBaseAmount(booking))}</strong>
+              </div>
+
+              <span className="lb-calc-symbol" aria-hidden="true">+</span>
+
+              <div className="lb-calc-box">
+                <span>GST ({getGstPercentage(booking)}%)</span>
+                <strong>{formatMoney(getGstAmount(booking))}</strong>
+              </div>
+
+              <span className="lb-calc-symbol lb-calc-equals" aria-hidden="true">=</span>
+
+              <div className="lb-calc-box lb-calc-total">
+                <span>Invoice Total</span>
+                <strong>{formatMoney(invoiceTotal)}</strong>
+              </div>
+            </div>
+
+            <div className="lb-collection-line">
+              <div className="lb-collection-item">
+                <span>Collected</span>
+                <strong>{formatMoney(collected)}</strong>
+              </div>
+
+              <div className="lb-collection-divider" aria-hidden="true" />
+
+              <div className="lb-collection-item lb-balance-item">
+                <span>Balance Due</span>
+                <strong className={outstanding <= 0.01 ? 'is-clear' : 'is-due'}>
+                  {formatMoney(outstanding)}
+                </strong>
+              </div>
+            </div>
           </div>
 
           {outstanding > 0.01 ? (
-            <>
-              <select style={styles.assignSelect} value={paymentData[booking._id]?.paymentMode || booking.payment?.paymentMode || 'Cash'} onChange={(e) => handlePaymentChange(booking._id, 'paymentMode', e.target.value)}>
+            <div className="lb-payment-form">
+              <select style={styles.assignSelect} value={paymentData[bookingMongoId]?.paymentMode || booking.payment?.paymentMode || 'Cash'} onChange={(e) => handlePaymentChange(bookingMongoId, 'paymentMode', e.target.value)}>
                 <option>Cash</option><option>UPI</option><option>Bank Transfer</option><option>Credit</option>
               </select>
-              <input style={styles.assignSelect} type="number" min="0" max={outstanding} step="0.01" placeholder="Amount Received Now" value={paymentData[booking._id]?.receivedAmount || ''} onChange={(e) => handlePaymentChange(booking._id, 'receivedAmount', e.target.value)} />
-              <button style={styles.paymentBtn} onClick={() => handlePaymentUpdate(booking._id)}>Record Payment</button>
-            </>
+              <input style={styles.assignSelect} type="number" min="0" max={outstanding} step="0.01" placeholder="Amount Received Now" value={paymentData[bookingMongoId]?.receivedAmount || ''} onChange={(e) => handlePaymentChange(bookingMongoId, 'receivedAmount', e.target.value)} />
+              <button className="lb-payment-btn" style={styles.paymentBtn} disabled={isActionBusy(`payment:${bookingMongoId}`)} onClick={() => handlePaymentUpdate(bookingMongoId)}>{isActionBusy(`payment:${bookingMongoId}`) ? 'Recording...' : 'Record Payment'}</button>
+            </div>
           ) : (
-            <div style={{ ...styles.subText, color: '#047857', fontWeight: 800 }}>Payment fully collected</div>
+            <div className="lb-payment-success" style={{ ...styles.subText, color: '#047857', fontWeight: 800 }}>
+              ✓ Payment fully collected
+            </div>
           )}
         </div>
 
         {status !== 'Delivered' && (
-          <div>
+          <div className="lb-action-section lb-location-section">
             <p style={styles.actionTitle}>Current Location</p>
-            <input style={styles.assignSelect} placeholder="Eg: Madurai Bypass" value={locationData[booking._id] ?? booking.currentLocation ?? ''} onChange={(e) => setLocationData((prev) => ({ ...prev, [booking._id]: e.target.value }))} />
-            <button style={styles.locationBtn} onClick={() => handleLocationUpdate(booking._id)}>Update Location</button>
+            <input style={styles.assignSelect} placeholder="Eg: Madurai Bypass" value={locationData[bookingMongoId] ?? booking.currentLocation ?? ''} onChange={(e) => setLocationData((prev) => ({ ...prev, [bookingMongoId]: e.target.value }))} />
+            <button style={styles.locationBtn} disabled={isActionBusy(`location:${bookingMongoId}`)} onClick={() => handleLocationUpdate(bookingMongoId)}>{isActionBusy(`location:${bookingMongoId}`) ? 'Updating...' : 'Update Location'}</button>
           </div>
         )}
 
-        <div>
-          <p style={styles.actionTitle}>Status History</p>
+        <div className="lb-action-section lb-history-section">
+          <div className="lb-section-head">
+            <p style={styles.actionTitle}>Status History</p>
+          </div>
           <div className="lb-history-box" style={styles.historyBox}>
             {(booking.statusHistory || []).length === 0 ? <p style={styles.subText}>No history yet</p> : (
               booking.statusHistory.map((item, index) => (
-                <div key={index} style={styles.historyItem}>
+                <div key={index} className="lb-history-item" style={styles.historyItem}>
                   <strong>{item.status}</strong><span>{item.note || '-'}</span>
                   <small>{item.updatedAt ? new Date(item.updatedAt).toLocaleString() : 'No date'}</small>
                 </div>
@@ -501,7 +643,7 @@ const LiveBookings = () => {
           </p>
         </div>
 
-        <button className="lb-refresh-btn" style={styles.topRefreshBtn} onClick={fetchData}>
+        <button className="lb-refresh-btn" style={styles.topRefreshBtn} onClick={() => fetchData()}>
           🔄 Refresh
         </button>
       </div>
@@ -719,7 +861,7 @@ const LiveBookings = () => {
                 </div>
 
                 <div className="lb-info-grid" style={styles.infoGrid}>
-                  <div style={styles.infoItem}>
+                  <div className="lb-info-item" style={styles.infoItem}>
                     <p style={styles.infoLabel}>Route</p>
                     <p style={styles.infoValue}>
                       <MapPin size={14} style={styles.inlineIcon} />
@@ -727,34 +869,34 @@ const LiveBookings = () => {
                     </p>
                   </div>
 
-                  <div style={styles.infoItem}>
+                  <div className="lb-info-item" style={styles.infoItem}>
                     <p style={styles.infoLabel}>Goods</p>
                     <p style={styles.infoValue}>{getGoods(booking)}</p>
                   </div>
 
-                  <div style={styles.infoItem}>
+                  <div className="lb-info-item" style={styles.infoItem}>
                     <p style={styles.infoLabel}>Truck</p>
                     <p style={styles.infoValue}>{getTruckText(booking)}</p>
                   </div>
 
-                  <div style={styles.infoItem}>
+                  <div className="lb-info-item" style={styles.infoItem}>
                     <p style={styles.infoLabel}>Driver</p>
                     <p style={styles.infoValue}>{getDriverText(booking)}</p>
                   </div>
 
-                  <div style={styles.infoItem}>
+                  <div className="lb-info-item" style={styles.infoItem}>
                     <p style={styles.infoLabel}>Amount</p>
                     <p style={styles.infoValue}>{getAmount(booking)}</p>
                   </div>
 
-                  <div style={styles.infoItem}>
+                  <div className="lb-info-item" style={styles.infoItem}>
                     <p style={styles.infoLabel}>Payment</p>
                     <p style={styles.infoValue}>
                       {booking.payment?.paymentStatus || 'Pending'} | {booking.payment?.paymentMode || 'Cash'}
                     </p>
                   </div>
 
-                  <div style={{ ...styles.infoItem, gridColumn: '1 / -1' }}>
+                  <div className="lb-info-item lb-info-item--full" style={{ ...styles.infoItem, gridColumn: '1 / -1' }}>
                     <p style={styles.infoLabel}>Current Location</p>
                     <p style={styles.infoValue}>{booking.currentLocation || 'Not updated yet'}</p>
                   </div>
@@ -775,588 +917,655 @@ const LiveBookings = () => {
 
 const liveBookingsMobileCss = `
   /* =========================================================
-     LIVE BOOKINGS - PREMIUM MOBILE RESPONSIVE
-     Desktop/laptop styles remain untouched.
+     LIVE BOOKINGS - CLEAN RESPONSIVE THEME
+     Single source of truth. No duplicate override blocks.
   ========================================================= */
 
-  @media (max-width: 768px) {
-    .lb-page {
-      width: 100% !important;
-      min-width: 0 !important;
-      gap: 14px !important;
-      overflow-x: hidden !important;
-    }
+  .lb-page,
+  .lb-booking-card,
+  .lb-bookings-shell,
+  .lb-action-panel,
+  .lb-action-section,
+  .lb-info-item,
+  .lb-summary-card,
+  .lb-map-card {
+    box-sizing: border-box;
+  }
 
-    /* ---------- PAGE HEADER ---------- */
-    .lb-header-row {
-      width: 100% !important;
-      display: grid !important;
-      grid-template-columns: 1fr auto !important;
+  .lb-action-panel button:disabled,
+  .lb-action-panel input:disabled,
+  .lb-action-panel select:disabled {
+    opacity: .58 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+  }
+
+  /* ---------- DARK MODE ---------- */
+  body[data-theme="dark"] .lb-booking-card,
+  body[data-theme="dark"] .lb-bookings-shell,
+  body[data-theme="dark"] .lb-map-card,
+  body[data-theme="dark"] .lb-summary-card {
+    background: #0d2238 !important;
+    border-color: rgba(132,174,214,.14) !important;
+    color: #eaf3fc !important;
+  }
+
+  body[data-theme="dark"] .lb-topbar {
+    background: #0d2238 !important;
+    border-bottom-color: rgba(132,174,214,.12) !important;
+  }
+
+  body[data-theme="dark"] .lb-page-title,
+  body[data-theme="dark"] .lb-booking-top h3,
+  body[data-theme="dark"] .lb-map-header h3 {
+    color: #f4f8fd !important;
+  }
+
+  body[data-theme="dark"] .lb-page-sub,
+  body[data-theme="dark"] .lb-booking-top p,
+  body[data-theme="dark"] .lb-map-header p {
+    color: #91a8bf !important;
+  }
+
+  body[data-theme="dark"] .lb-info-item {
+    background: #102840 !important;
+    border-color: rgba(132,174,214,.13) !important;
+  }
+
+  body[data-theme="dark"] .lb-info-item p:first-child { color: #829bb3 !important; }
+  body[data-theme="dark"] .lb-info-item p:last-child { color: #eef6ff !important; }
+
+  body[data-theme="dark"] .lb-search-box {
+    background: #102840 !important;
+    border-color: rgba(132,174,214,.14) !important;
+  }
+
+  body[data-theme="dark"] .lb-search-box input {
+    color: #eef6ff !important;
+    background: transparent !important;
+  }
+
+  body[data-theme="dark"] .lb-search-box input::placeholder { color: #7d94aa !important; }
+
+  /* ---------- COMPACT OPERATIONS PANEL ---------- */
+  .lb-action-panel {
+    display: grid !important;
+    grid-template-columns: .78fr 1.08fr 1fr !important;
+    align-items: start !important;
+    gap: 10px !important;
+    padding: 10px !important;
+    border-radius: 18px !important;
+  }
+
+  .lb-action-panel > .lb-action-section {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 12px !important;
+    border-radius: 15px !important;
+  }
+
+  body[data-theme="dark"] .lb-action-panel {
+    background: linear-gradient(145deg,#081d31,#0a2238) !important;
+    border: 1px solid rgba(123,169,212,.10) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.018),0 10px 24px rgba(0,0,0,.12) !important;
+  }
+
+  body[data-theme="dark"] .lb-action-panel > .lb-action-section {
+    background: linear-gradient(180deg,rgba(16,45,73,.88),rgba(11,35,58,.88)) !important;
+    border: 1px solid rgba(127,174,217,.085) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.018) !important;
+    color: #dce9f6 !important;
+  }
+
+  .lb-section-head {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+    margin-bottom: 9px !important;
+  }
+
+  .lb-section-head > p,
+  .lb-action-section > p:first-child {
+    margin: 0 !important;
+    font-size: .90rem !important;
+    line-height: 1.15 !important;
+    font-weight: 800 !important;
+  }
+
+  body[data-theme="dark"] .lb-section-head > p,
+  body[data-theme="dark"] .lb-action-section > p:first-child { color: #f4f8fd !important; }
+
+  .lb-trip-content {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  body[data-theme="dark"] .lb-status-pill {
+    padding: 7px 11px !important;
+    border-radius: 999px !important;
+    background: rgba(255,122,0,.10) !important;
+    border: 1px solid rgba(255,142,42,.24) !important;
+    color: #ff9b42 !important;
+    font-size: .74rem !important;
+    font-weight: 800 !important;
+  }
+
+  body[data-theme="dark"] .lb-trip-note {
+    margin: 0 !important;
+    color: #90a7bd !important;
+    font-size: .75rem !important;
+    line-height: 1.35 !important;
+  }
+
+  body[data-theme="dark"] .lb-trip-note-success { color: #1fc98d !important; }
+
+  .lb-mini-payment-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 25px !important;
+    padding: 0 8px !important;
+    border-radius: 999px !important;
+    font-size: .65rem !important;
+    font-weight: 800 !important;
+  }
+
+  body[data-theme="dark"] .lb-mini-payment-badge.is-paid {
+    color: #2bd49b !important;
+    background: rgba(16,185,129,.10) !important;
+    border: 1px solid rgba(16,185,129,.15) !important;
+  }
+
+  body[data-theme="dark"] .lb-mini-payment-badge.is-pending {
+    color: #ffc071 !important;
+    background: rgba(245,158,11,.10) !important;
+    border: 1px solid rgba(245,158,11,.15) !important;
+  }
+
+  .lb-payment-summary {
+    display: grid !important;
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+    gap: 7px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .lb-pay-item {
+    min-width: 0 !important;
+    min-height: 48px !important;
+    padding: 8px 9px !important;
+    border-radius: 11px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 3px !important;
+  }
+
+  body[data-theme="dark"] .lb-pay-item {
+    background: rgba(7,27,45,.48) !important;
+    border: 1px solid rgba(127,170,211,.05) !important;
+  }
+
+  .lb-pay-item span { font-size: .63rem !important; font-weight: 700 !important; line-height: 1.1 !important; }
+  .lb-pay-item strong { font-size: .78rem !important; font-weight: 800 !important; line-height: 1.2 !important; white-space: nowrap !important; }
+  body[data-theme="dark"] .lb-pay-item span { color: #829ab1 !important; }
+  body[data-theme="dark"] .lb-pay-item strong { color: #f3f8fd !important; }
+
+  body[data-theme="dark"] .lb-pay-item-total {
+    background: linear-gradient(135deg,rgba(22,78,133,.26),rgba(7,27,45,.52)) !important;
+    border-color: rgba(80,154,220,.12) !important;
+  }
+  body[data-theme="dark"] .lb-pay-item-total strong { color: #84c9ff !important; }
+
+  .lb-pay-item-wide {
+    grid-column: 1 / -1 !important;
+    min-height: 42px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+  body[data-theme="dark"] .lb-pay-outstanding { color: #ffbd70 !important; }
+
+  /* =========================================================
+     PAYMENT CALCULATION - OWNER FRIENDLY
+     Base + GST = Invoice Total / Collected / Balance Due
+     Light + Dark / Desktop + Mobile
+  ========================================================= */
+
+  .lb-payment-calculation {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .lb-calc-flow {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) 24px minmax(0,1fr) 24px minmax(0,1.08fr) !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+  }
+
+  .lb-calc-box {
+    min-width: 0 !important;
+    min-height: 58px !important;
+    padding: 9px 10px !important;
+    border-radius: 12px !important;
+    border: 1px solid #e1e9f3 !important;
+    background: #ffffff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 4px !important;
+  }
+
+  .lb-calc-box span,
+  .lb-collection-item span {
+    color: #64748b !important;
+    font-size: .64rem !important;
+    font-weight: 700 !important;
+    line-height: 1.15 !important;
+  }
+
+  .lb-calc-box strong,
+  .lb-collection-item strong {
+    color: #0b315d !important;
+    font-size: .82rem !important;
+    font-weight: 900 !important;
+    line-height: 1.15 !important;
+    white-space: nowrap !important;
+  }
+
+  .lb-calc-total {
+    background: linear-gradient(145deg,#eff7ff,#f8fbff) !important;
+    border-color: #cfe3f7 !important;
+  }
+
+  .lb-calc-total strong {
+    color: #0f5ea8 !important;
+  }
+
+  .lb-calc-symbol {
+    display: grid !important;
+    place-items: center !important;
+    color: #7890a8 !important;
+    font-size: 1.02rem !important;
+    font-weight: 900 !important;
+  }
+
+  .lb-calc-equals {
+    color: #0f5ea8 !important;
+  }
+
+  .lb-collection-line {
+    margin-top: 8px !important;
+    padding: 9px 10px !important;
+    border-radius: 12px !important;
+    border: 1px solid #e1e9f3 !important;
+    background: #f8fbff !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1px 1fr !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  .lb-collection-item {
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+  }
+
+  .lb-collection-divider {
+    width: 1px !important;
+    height: 28px !important;
+    background: #dce6f1 !important;
+  }
+
+  .lb-balance-item strong.is-clear {
+    color: #059669 !important;
+  }
+
+  .lb-balance-item strong.is-due {
+    color: #d97706 !important;
+  }
+
+  body[data-theme="dark"] .lb-calc-box {
+    background: rgba(7,27,45,.55) !important;
+    border-color: rgba(127,170,211,.08) !important;
+  }
+
+  body[data-theme="dark"] .lb-calc-box span,
+  body[data-theme="dark"] .lb-collection-item span {
+    color: #8199b0 !important;
+  }
+
+  body[data-theme="dark"] .lb-calc-box strong,
+  body[data-theme="dark"] .lb-collection-item strong {
+    color: #f3f8fd !important;
+  }
+
+  body[data-theme="dark"] .lb-calc-total {
+    background: linear-gradient(145deg,rgba(20,76,128,.28),rgba(7,27,45,.58)) !important;
+    border-color: rgba(79,153,220,.16) !important;
+  }
+
+  body[data-theme="dark"] .lb-calc-total strong,
+  body[data-theme="dark"] .lb-calc-equals {
+    color: #84c9ff !important;
+  }
+
+  body[data-theme="dark"] .lb-calc-symbol {
+    color: #718aa2 !important;
+  }
+
+  body[data-theme="dark"] .lb-collection-line {
+    background: rgba(7,27,45,.38) !important;
+    border-color: rgba(127,170,211,.07) !important;
+  }
+
+  body[data-theme="dark"] .lb-collection-divider {
+    background: rgba(127,170,211,.10) !important;
+  }
+
+  body[data-theme="dark"] .lb-balance-item strong.is-clear {
+    color: #27d49b !important;
+  }
+
+  body[data-theme="dark"] .lb-balance-item strong.is-due {
+    color: #ffbd70 !important;
+  }
+
+  @media (max-width: 1100px) {
+    .lb-calc-flow {
+      grid-template-columns: minmax(0,1fr) 18px minmax(0,1fr) !important;
+    }
+    .lb-calc-equals {
+      display: none !important;
+    }
+    .lb-calc-total {
+      grid-column: 1 / -1 !important;
+      min-height: 48px !important;
+      flex-direction: row !important;
       align-items: center !important;
-      gap: 10px !important;
-      padding: 2px 2px 0 !important;
+      justify-content: space-between !important;
     }
+  }
 
-    .lb-page-title {
-      font-size: 22px !important;
-      line-height: 1.08 !important;
-      letter-spacing: -0.45px !important;
+  @media (max-width: 768px) {
+    .lb-calc-flow {
+      grid-template-columns: minmax(0,1fr) 18px minmax(0,1fr) !important;
+      gap: 5px !important;
     }
-
-    .lb-page-sub {
-      margin-top: 4px !important;
-      max-width: 245px !important;
-      font-size: 10.5px !important;
-      line-height: 1.35 !important;
+    .lb-calc-box {
+      min-height: 50px !important;
+      padding: 8px !important;
+      border-radius: 10px !important;
     }
-
-    .lb-refresh-btn {
-      min-width: 42px !important;
-      min-height: 42px !important;
-      padding: 0 11px !important;
-      border-radius: 12px !important;
-      font-size: 0 !important;
-      box-shadow: 0 8px 18px rgba(255, 122, 0, 0.18) !important;
-      transition: transform .16s ease, box-shadow .16s ease !important;
+    .lb-calc-box span,
+    .lb-collection-item span {
+      font-size: .58rem !important;
     }
-
-    .lb-refresh-btn::after {
-      content: "↻";
-      font-size: 20px;
-      line-height: 1;
-      font-weight: 900;
+    .lb-calc-box strong,
+    .lb-collection-item strong {
+      font-size: .72rem !important;
     }
-
-    .lb-refresh-btn:active {
-      transform: scale(.94) !important;
+    .lb-calc-symbol {
+      font-size: .88rem !important;
     }
+    .lb-collection-line {
+      margin-top: 6px !important;
+      padding: 8px !important;
+      border-radius: 10px !important;
+      gap: 8px !important;
+    }
+  }
 
-    /* ---------- LIVE MAP ---------- */
+  @media (max-width: 420px) {
     .lb-map-card {
+      padding:10px !important;
+      border-radius:15px !important;
+    }
+
+    .lb-map-header h3 {
+      font-size:15px !important;
+    }
+
+    .lb-map-header p {
+      max-width:205px !important;
+      font-size:9px !important;
+    }
+
+    .lb-map-card > div[style*="padding: 34px"],
+    .lb-map-card > div[style*="padding:34px"] {
+      padding:18px 12px !important;
+      border-radius:13px !important;
+      font-size:11px !important;
+    }
+
+    .lb-map-box {
+      height:132px !important;
+    }
+    .lb-calc-flow {
+      grid-template-columns: 1fr !important;
+    }
+    .lb-calc-symbol {
+      display: none !important;
+    }
+    .lb-calc-box,
+    .lb-calc-total {
+      min-height: 42px !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+    }
+    .lb-calc-total {
+      grid-column: auto !important;
+    }
+    .lb-collection-line {
+      grid-template-columns: 1fr !important;
+      gap: 6px !important;
+    }
+    .lb-collection-divider {
       width: 100% !important;
-      min-width: 0 !important;
-      padding: 14px !important;
-      border-radius: 19px !important;
-      box-sizing: border-box !important;
-      overflow: hidden !important;
-      border: 1px solid rgba(15, 74, 136, .08) !important;
-      box-shadow: 0 10px 26px rgba(15, 59, 115, .07) !important;
+      height: 1px !important;
+    }
+  }
+
+  body[data-theme="dark"] .lb-payment-success {
+    width: fit-content !important;
+    margin: 8px 0 0 !important;
+    padding: 6px 9px !important;
+    border-radius: 999px !important;
+    background: rgba(16,185,129,.08) !important;
+    border: 1px solid rgba(16,185,129,.12) !important;
+    color: #23ca90 !important;
+    font-size: .66rem !important;
+    line-height: 1 !important;
+  }
+
+  .lb-payment-form { margin-top: 8px !important; }
+
+  body[data-theme="dark"] .lb-action-panel select,
+  body[data-theme="dark"] .lb-action-panel input {
+    background: #0d2741 !important;
+    color: #edf6ff !important;
+    border-color: rgba(132,174,214,.16) !important;
+  }
+  body[data-theme="dark"] .lb-action-panel select option { background: #0d2741 !important; color: #edf6ff !important; }
+
+  /* Status history deliberately expands: no nested scrollbar. */
+  .lb-history-section,
+  .lb-history-box {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .lb-history-box {
+    display: grid !important;
+    gap: 6px !important;
+    padding-right: 0 !important;
+    scrollbar-width: none !important;
+  }
+  .lb-history-box::-webkit-scrollbar { display: none !important; }
+
+  .lb-history-item {
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 8px 9px !important;
+    border-radius: 11px !important;
+    gap: 3px !important;
+  }
+
+  body[data-theme="dark"] .lb-history-item {
+    background: rgba(7,27,45,.46) !important;
+    border: 1px solid rgba(127,170,211,.055) !important;
+    box-shadow: none !important;
+  }
+  body[data-theme="dark"] .lb-history-item strong { color:#f4f8fd !important; font-size:.75rem !important; }
+  body[data-theme="dark"] .lb-history-item span { color:#8da5bb !important; font-size:.68rem !important; line-height:1.25 !important; }
+  body[data-theme="dark"] .lb-history-item small { color:#6f879e !important; font-size:.60rem !important; line-height:1.2 !important; }
+
+  /* ---------- TABLET ---------- */
+  @media (max-width: 1100px) {
+    .lb-action-panel { grid-template-columns: 1fr 1fr !important; }
+    .lb-history-section { grid-column: 1 / -1 !important; }
+  }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 768px) {
+    .lb-page { width:100% !important; min-width:0 !important; gap:14px !important; overflow-x:hidden !important; }
+    .lb-header-row { display:grid !important; grid-template-columns:1fr auto !important; gap:10px !important; align-items:center !important; }
+    .lb-page-title { font-size:22px !important; line-height:1.08 !important; }
+    .lb-page-sub { margin-top:4px !important; max-width:245px !important; font-size:10.5px !important; line-height:1.35 !important; }
+    .lb-refresh-btn { min-width:42px !important; min-height:42px !important; padding:0 11px !important; border-radius:12px !important; font-size:0 !important; }
+    .lb-refresh-btn::after { content:"↻"; font-size:20px; font-weight:900; }
+
+    .lb-map-card {
+      width:100% !important;
+      min-width:0 !important;
+      padding:11px !important;
+      border-radius:16px !important;
+      overflow:hidden !important;
     }
 
     .lb-map-header {
-      display: grid !important;
-      grid-template-columns: 1fr auto !important;
-      align-items: start !important;
-      gap: 9px !important;
-      margin-bottom: 12px !important;
+      display:grid !important;
+      grid-template-columns:minmax(0,1fr) auto !important;
+      align-items:start !important;
+      gap:8px !important;
+      margin-bottom:10px !important;
     }
 
     .lb-map-header h3 {
-      font-size: 16px !important;
-      line-height: 1.2 !important;
+      margin:0 !important;
+      font-size:16px !important;
+      line-height:1.15 !important;
+      letter-spacing:-0.2px !important;
     }
 
     .lb-map-header p {
-      margin-top: 4px !important;
-      font-size: 9.5px !important;
-      line-height: 1.35 !important;
-      max-width: 240px !important;
+      margin:4px 0 0 !important;
+      max-width:230px !important;
+      font-size:9.5px !important;
+      line-height:1.35 !important;
     }
 
     .lb-map-header .badge {
-      padding: 5px 8px !important;
-      border-radius: 999px !important;
-      font-size: 9px !important;
-      white-space: nowrap !important;
+      align-self:start !important;
+      padding:6px 9px !important;
+      border-radius:999px !important;
+      font-size:9px !important;
+      line-height:1 !important;
+      white-space:nowrap !important;
+    }
+
+    .lb-map-card > div[style*="padding: 34px"],
+    .lb-map-card > div[style*="padding:34px"] {
+      min-height:0 !important;
+      padding:22px 14px !important;
+      border-radius:14px !important;
+      font-size:12px !important;
+      line-height:1.45 !important;
+    }
+
+    body[data-theme="dark"] .lb-map-card > div[style*="padding: 34px"],
+    body[data-theme="dark"] .lb-map-card > div[style*="padding:34px"] {
+      color:#d7e5f2 !important;
+      background:#102840 !important;
+      border-color:rgba(132,174,214,.13) !important;
     }
 
     .lb-map-grid {
-      grid-template-columns: 1fr !important;
-      gap: 10px !important;
-    }
-
-    .lb-map-item {
-      width: 100% !important;
-      min-width: 0 !important;
-      border-radius: 15px !important;
-      box-shadow: 0 8px 20px rgba(15, 59, 115, .06) !important;
-      animation: lbCardEnter .28s ease both;
+      grid-template-columns:1fr !important;
+      gap:8px !important;
     }
 
     .lb-map-box {
-      height: 170px !important;
+      height:145px !important;
     }
 
-    .lb-route-panel {
-      padding: 12px !important;
-    }
+    .lb-summary-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:9px !important; }
+    .lb-summary-card { padding:12px 10px !important; gap:9px !important; border-radius:15px !important; }
+    .lb-summary-card > div:first-child { width:36px !important; height:36px !important; min-width:36px !important; border-radius:11px !important; }
+    .lb-summary-card p { font-size:9px !important; }
+    .lb-summary-card h4 { margin-top:3px !important; font-size:17px !important; }
 
-    .lb-route-panel > div:first-child {
-      gap: 8px !important;
-      margin-bottom: 11px !important;
-    }
+    .lb-topbar { display:grid !important; grid-template-columns:1fr !important; gap:9px !important; padding:12px !important; }
+    .lb-tabs { width:100% !important; display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:5px !important; }
+    .lb-tabs button { width:100% !important; min-height:36px !important; padding:6px 3px !important; border-radius:9px !important; font-size:9px !important; }
+    .lb-search-box { width:100% !important; min-height:39px !important; padding:7px 10px !important; border-radius:11px !important; }
+    .lb-search-box input { min-width:0 !important; font-size:11px !important; }
 
-    .lb-route-panel h4 {
-      font-size: 12.5px !important;
-    }
+    .lb-card-list { padding:10px !important; gap:10px !important; }
+    .lb-booking-card { width:100% !important; min-width:0 !important; padding:13px !important; border-radius:16px !important; }
+    .lb-booking-top { display:grid !important; grid-template-columns:minmax(0,1fr) auto !important; gap:8px !important; align-items:start !important; margin-bottom:11px !important; }
+    .lb-booking-top h3 { font-size:14px !important; }
+    .lb-booking-top p { font-size:9.5px !important; line-height:1.35 !important; overflow-wrap:anywhere !important; }
+    .lb-pdf-btn { grid-column:1 / -1 !important; justify-self:start !important; margin-top:0 !important; min-height:34px !important; padding:0 11px !important; border-radius:9px !important; font-size:9.5px !important; }
 
-    .lb-route-panel p {
-      font-size: 9.5px !important;
-      line-height: 1.35 !important;
-      overflow-wrap: anywhere !important;
-    }
+    .lb-info-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:7px !important; margin-bottom:10px !important; }
+    .lb-info-grid > div { min-width:0 !important; padding:9px !important; border-radius:11px !important; }
+    .lb-info-grid p:first-child { margin-bottom:3px !important; font-size:8.5px !important; }
+    .lb-info-grid p:last-child { font-size:10px !important; line-height:1.35 !important; overflow-wrap:anywhere !important; }
 
-    .lb-route-panel .badge {
-      font-size: 8.5px !important;
-      padding: 5px 7px !important;
-      white-space: nowrap !important;
-    }
-
-    /* ---------- SUMMARY ---------- */
-    .lb-summary-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 9px !important;
-    }
-
-    .lb-summary-card {
-      min-width: 0 !important;
-      padding: 12px 10px !important;
-      gap: 9px !important;
-      border-radius: 15px !important;
-      border: 1px solid rgba(15, 74, 136, .07) !important;
-      box-shadow: 0 7px 18px rgba(15, 59, 115, .055) !important;
-      animation: lbCardEnter .30s ease both;
-    }
-
-    .lb-summary-card > div:first-child {
-      width: 36px !important;
-      height: 36px !important;
-      min-width: 36px !important;
-      border-radius: 11px !important;
-    }
-
-    .lb-summary-card > div:first-child svg {
-      width: 17px !important;
-      height: 17px !important;
-    }
-
-    .lb-summary-card p {
-      font-size: 9px !important;
-      line-height: 1.2 !important;
-    }
-
-    .lb-summary-card h4 {
-      margin-top: 3px !important;
-      font-size: 17px !important;
-      line-height: 1 !important;
-    }
-
-    /* ---------- FILTER / SEARCH ---------- */
-    .lb-bookings-shell {
-      width: 100% !important;
-      min-width: 0 !important;
-      border-radius: 18px !important;
-      box-shadow: 0 10px 26px rgba(15, 59, 115, .06) !important;
-    }
-
-    .lb-topbar {
-      width: 100% !important;
-      display: grid !important;
-      grid-template-columns: 1fr !important;
-      gap: 9px !important;
-      padding: 12px !important;
-      box-sizing: border-box !important;
-    }
-
-    .lb-tabs {
-      width: 100% !important;
-      display: grid !important;
-      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-      gap: 5px !important;
-    }
-
-    .lb-tabs button {
-      width: 100% !important;
-      min-width: 0 !important;
-      min-height: 36px !important;
-      padding: 6px 3px !important;
-      border-radius: 9px !important;
-      font-size: 9px !important;
-      line-height: 1 !important;
-      white-space: nowrap !important;
-      transition: transform .16s ease, box-shadow .16s ease, background .16s ease !important;
-    }
-
-    .lb-tabs button:active {
-      transform: scale(.96) !important;
-    }
-
-    .lb-top-actions,
-    .lb-search-box {
-      width: 100% !important;
-      min-width: 0 !important;
-    }
-
-    .lb-search-box {
-      min-height: 39px !important;
-      padding: 7px 10px !important;
-      border-radius: 11px !important;
-      background: #f9fbfe !important;
-    }
-
-    .lb-search-box input {
-      min-width: 0 !important;
-      font-size: 11px !important;
-    }
-
-    /* ---------- BOOKING CARDS ---------- */
-    .lb-card-list {
-      padding: 10px !important;
-      gap: 10px !important;
-    }
-
-    .lb-booking-card {
-      width: 100% !important;
-      min-width: 0 !important;
-      padding: 13px !important;
-      border-radius: 16px !important;
-      box-sizing: border-box !important;
-      border: 1px solid #e7eef7 !important;
-      box-shadow: 0 8px 20px rgba(15, 59, 115, .055) !important;
-      animation: lbCardEnter .30s ease both;
-    }
-
-    .lb-booking-top {
-      display: grid !important;
-      grid-template-columns: minmax(0, 1fr) auto !important;
-      gap: 8px !important;
-      align-items: start !important;
-      margin-bottom: 11px !important;
-    }
-
-    .lb-booking-top > div {
-      min-width: 0 !important;
-    }
-
-    .lb-booking-top h3 {
-      font-size: 14px !important;
-      line-height: 1.15 !important;
-    }
-
-    .lb-booking-top p {
-      font-size: 9.5px !important;
-      line-height: 1.35 !important;
-      overflow-wrap: anywhere !important;
-    }
-
-    .lb-booking-top > .badge {
-      padding: 5px 7px !important;
-      font-size: 8.5px !important;
-      white-space: nowrap !important;
-    }
-
-    .lb-pdf-btn {
-      grid-column: 1 / -1 !important;
-      justify-self: start !important;
-      margin-top: 0 !important;
-      min-height: 34px !important;
-      padding: 0 11px !important;
-      border-radius: 9px !important;
-      font-size: 9.5px !important;
-      box-shadow: 0 6px 14px rgba(255, 122, 0, .14) !important;
-      transition: transform .16s ease, box-shadow .16s ease !important;
-    }
-
-    .lb-pdf-btn:active {
-      transform: scale(.96) !important;
-    }
-
-    /* ---------- INFO GRID ---------- */
-    .lb-info-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 7px !important;
-      margin-bottom: 10px !important;
-    }
-
-    .lb-info-grid > div {
-      min-width: 0 !important;
-      padding: 9px !important;
-      border-radius: 11px !important;
-      background: linear-gradient(145deg, #f9fbfe, #f4f8fd) !important;
-    }
-
-    .lb-info-grid p:first-child {
-      margin-bottom: 3px !important;
-      font-size: 8.5px !important;
-    }
-
-    .lb-info-grid p:last-child {
-      font-size: 10px !important;
-      line-height: 1.35 !important;
-      overflow-wrap: anywhere !important;
-    }
-
-    /* ---------- OPERATIONS PANEL ---------- */
-    .lb-action-panel {
-      width: 100% !important;
-      grid-template-columns: 1fr !important;
-      gap: 8px !important;
-      padding: 9px !important;
-      border-radius: 13px !important;
-      box-sizing: border-box !important;
-      background: linear-gradient(145deg, #f8fbff 0%, #f3f7fc 100%) !important;
-    }
-
-    .lb-action-panel > div {
-      width: 100% !important;
-      min-width: 0 !important;
-      padding: 10px !important;
-      border-radius: 11px !important;
-      background: rgba(255,255,255,.82) !important;
-      border: 1px solid #e6edf6 !important;
-      box-sizing: border-box !important;
-    }
-
-    .lb-action-panel > div > p:first-child {
-      margin-bottom: 7px !important;
-      font-size: 10px !important;
-      letter-spacing: .05px !important;
-    }
-
-    .lb-action-panel select,
-    .lb-action-panel input {
-      min-height: 39px !important;
-      padding: 7px 9px !important;
-      margin-bottom: 6px !important;
-      border-radius: 9px !important;
-      font-size: 10px !important;
-      box-sizing: border-box !important;
-    }
-
-    .lb-action-panel button {
-      min-height: 39px !important;
-      padding: 7px 10px !important;
-      border-radius: 9px !important;
-      font-size: 10px !important;
-      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease !important;
-    }
-
-    .lb-action-panel button:active {
-      transform: scale(.975) !important;
-    }
-
-    .lb-payment-summary {
-      gap: 5px !important;
-      padding: 9px !important;
-      margin-bottom: 7px !important;
-      border-radius: 9px !important;
-      font-size: 9.5px !important;
-    }
-
-    .lb-payment-summary span {
-      display: flex !important;
-      justify-content: space-between !important;
-      gap: 8px !important;
-    }
-
-    .lb-history-box {
-      max-height: 135px !important;
-      gap: 6px !important;
-    }
-
-    .lb-history-box > div {
-      padding: 8px !important;
-      border-radius: 9px !important;
-      font-size: 9px !important;
-    }
-
-    /* ---------- EMPTY STATES ---------- */
-    .lb-bookings-shell > div[style*="textAlign"] {
-      padding: 20px 12px !important;
-      font-size: 11px !important;
-    }
-
-    /* ---------- MOTION ---------- */
-    @keyframes lbCardEnter {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .lb-map-item,
-      .lb-summary-card,
-      .lb-booking-card {
-        animation: none !important;
-      }
-
-      .lb-tabs button,
-      .lb-refresh-btn,
-      .lb-pdf-btn,
-      .lb-action-panel button {
-        transition: none !important;
-      }
-    }
+    .lb-action-panel { grid-template-columns:1fr !important; gap:8px !important; padding:8px !important; border-radius:15px !important; }
+    .lb-action-panel > .lb-action-section { padding:10px !important; border-radius:13px !important; }
+    .lb-section-head { margin-bottom:7px !important; }
+    .lb-section-head > p,.lb-action-section > p:first-child { font-size:.82rem !important; }
+    .lb-pay-item { min-height:43px !important; padding:7px 8px !important; }
+    .lb-pay-item span { font-size:.58rem !important; }
+    .lb-pay-item strong { font-size:.72rem !important; }
+    .lb-history-item { padding:8px !important; border-radius:9px !important; }
+    .lb-action-panel select,.lb-action-panel input,.lb-action-panel button { min-height:39px !important; border-radius:9px !important; font-size:10px !important; }
   }
 
-  /* =========================================================
-     SMALL MOBILE - 420px AND BELOW
-  ========================================================= */
   @media (max-width: 420px) {
-    .lb-page {
-      gap: 11px !important;
-    }
+    .lb-page { gap:11px !important; }
+    .lb-payment-summary { grid-template-columns:1fr 1fr !important; }
+    .lb-pay-item-wide { grid-column:1 / -1 !important; }
+    .lb-status-pill { padding:6px 9px !important; font-size:.68rem !important; }
+    .lb-trip-note { font-size:.68rem !important; }
+  }
 
-    .lb-header-row {
-      gap: 7px !important;
-    }
-
-    .lb-page-title {
-      font-size: 20px !important;
-    }
-
-    .lb-page-sub {
-      max-width: 215px !important;
-      font-size: 9.5px !important;
-    }
-
-    .lb-refresh-btn {
-      min-width: 38px !important;
-      min-height: 38px !important;
-      padding: 0 9px !important;
-      border-radius: 11px !important;
-    }
-
-    .lb-map-card {
-      padding: 11px !important;
-      border-radius: 17px !important;
-    }
-
-    .lb-map-header h3 {
-      font-size: 14.5px !important;
-    }
-
-    .lb-map-header p {
-      max-width: 205px !important;
-      font-size: 8.8px !important;
-    }
-
-    .lb-map-box {
-      height: 145px !important;
-    }
-
-    .lb-route-panel {
-      padding: 10px !important;
-    }
-
-    .lb-summary-grid {
-      gap: 7px !important;
-    }
-
-    .lb-summary-card {
-      padding: 10px 8px !important;
-      gap: 7px !important;
-      border-radius: 13px !important;
-    }
-
-    .lb-summary-card > div:first-child {
-      width: 32px !important;
-      height: 32px !important;
-      min-width: 32px !important;
-      border-radius: 10px !important;
-    }
-
-    .lb-summary-card p {
-      font-size: 8.3px !important;
-    }
-
-    .lb-summary-card h4 {
-      font-size: 15px !important;
-    }
-
-    .lb-topbar {
-      padding: 9px !important;
-      gap: 7px !important;
-    }
-
-    .lb-tabs {
-      gap: 4px !important;
-    }
-
-    .lb-tabs button {
-      min-height: 33px !important;
-      padding: 5px 2px !important;
-      border-radius: 8px !important;
-      font-size: 8.2px !important;
-    }
-
-    .lb-search-box {
-      min-height: 37px !important;
-    }
-
-    .lb-card-list {
-      padding: 8px !important;
-      gap: 8px !important;
-    }
-
-    .lb-booking-card {
-      padding: 11px !important;
-      border-radius: 14px !important;
-    }
-
-    .lb-booking-top h3 {
-      font-size: 13px !important;
-    }
-
-    .lb-booking-top p {
-      font-size: 8.8px !important;
-    }
-
-    .lb-info-grid {
-      gap: 5px !important;
-    }
-
-    .lb-info-grid > div {
-      padding: 8px !important;
-      border-radius: 10px !important;
-    }
-
-    .lb-info-grid p:first-child {
-      font-size: 8px !important;
-    }
-
-    .lb-info-grid p:last-child {
-      font-size: 9.3px !important;
-    }
-
-    .lb-action-panel {
-      padding: 7px !important;
-      gap: 7px !important;
-    }
-
-    .lb-action-panel > div {
-      padding: 8px !important;
-      border-radius: 10px !important;
-    }
-
-    .lb-action-panel select,
-    .lb-action-panel input,
-    .lb-action-panel button {
-      min-height: 37px !important;
-      font-size: 9.5px !important;
-    }
-
-    .lb-payment-summary {
-      font-size: 8.8px !important;
-    }
+  @media (prefers-reduced-motion: reduce) {
+    .lb-booking-card,.lb-summary-card,.lb-map-item { animation:none !important; }
+    .lb-action-panel button,.lb-tabs button,.lb-refresh-btn,.lb-pdf-btn { transition:none !important; }
   }
 `;
-
 
 const styles = {
   summaryGrid: {

@@ -21,316 +21,306 @@ const {
 
 const { createBooking, getBookings, deleteBooking, updatePayment } = require("../controllers/bookingController");
 
+const PAYMENT_MODES = new Set(["Cash", "UPI", "Bank Transfer", "Credit"]);
+const roundMoney = (value) => Number(Number(value || 0).toFixed(2));
+const auditActor = (req) =>
+  String(req.user?.name || req.user?.fullName || req.user?.email || req.user?.role || "Owner");
+
+const getFinanceSnapshot = (booking) => {
+  const baseAmount = roundMoney(booking?.amount || 0);
+  const storedPercentage = Number(booking?.payment?.gstPercentage);
+  const gstPercentage = Number.isFinite(storedPercentage) ? storedPercentage : GST_PERCENTAGE;
+  const storedGst = Number(booking?.payment?.gstAmount);
+  const gstAmount = gstPercentage === 0
+    ? 0
+    : (Number.isFinite(storedGst) && storedGst > 0
+        ? roundMoney(storedGst)
+        : roundMoney((baseAmount * gstPercentage) / 100));
+  const storedTotal = Number(booking?.payment?.totalWithGST);
+  const totalWithGST = Number.isFinite(storedTotal) && storedTotal > 0
+    ? roundMoney(storedTotal)
+    : roundMoney(baseAmount + gstAmount);
+  return { baseAmount, gstPercentage, gstAmount, totalWithGST };
+};
+
+const publicTrackingView = (booking) => ({
+  bookingId: booking.bookingId,
+  customerName: booking.customerName,
+  pickup: booking.pickup,
+  drop: booking.drop,
+  goods: booking.goods,
+  status: booking.status,
+  currentLocation: booking.currentLocation,
+  liveLocation: booking.liveLocation,
+  statusHistory: (booking.statusHistory || []).map(({ status, note, updatedAt }) => ({ status, note, updatedAt })),
+  truck: booking.truck ? {
+    _id: booking.truck._id,
+    name: booking.truck.name,
+    number: booking.truck.number || booking.truck.truckNumber || booking.truck.vehicleNumber,
+    category: booking.truck.category || booking.truck.truckType || booking.truck.type,
+  } : null,
+  driver: booking.driver ? {
+    _id: booking.driver._id,
+    name: booking.driver.name || booking.driver.driverName || booking.driver.fullName,
+    phone: booking.driver.phone || booking.driver.mobile || booking.driver.mobileNumber,
+  } : null,
+  payment: {
+    paymentStatus: booking.payment?.paymentStatus || "Pending",
+    paymentMode: booking.payment?.paymentMode || "Cash",
+    totalWithGST: booking.payment?.totalWithGST || 0,
+    balanceAmount: booking.payment?.balanceAmount || 0,
+  },
+});
+
 router.post("/", auth, createBooking);
 router.get("/", auth, getBookings);
 router.delete("/:id", auth, deleteBooking);
 
 
 router.put("/:id/assign", auth, async (req, res) => {
+  let reservedTruck = false;
+  let reservedDriver = false;
+  let truckId;
+  let driverId;
+
   try {
-    const { truckId, driverId } = req.body;
+    ({ truckId, driverId } = req.body);
 
     if (!truckId || !driverId) {
       return res.status(400).json({ success: false, message: "Truck ID and Driver ID are required" });
     }
 
-    const currentBooking = await Booking.findById(req.params.id);
+    const currentBooking = await Booking.findOne({
+      _id: req.params.id,
+      isDeleted: { $ne: true },
+    });
+
     if (!currentBooking) return res.status(404).json({ success: false, message: "Booking not found" });
     if (currentBooking.status !== "Booked") return res.status(400).json({ success: false, message: "Only booked trips can be assigned" });
 
     const [truck, driver] = await Promise.all([Truck.findById(truckId), Driver.findById(driverId)]);
     if (!truck || !driver) return res.status(404).json({ success: false, message: "Truck or driver not found" });
-    if (String(truck.status || "idle").toLowerCase() !== "idle") return res.status(400).json({ success: false, message: "Selected truck is not available" });
-    if (String(driver.status || "available").toLowerCase() !== "available") return res.status(400).json({ success: false, message: "Selected driver is not available" });
 
     const [activeTruckBooking, activeDriverBooking] = await Promise.all([
-      Booking.findOne({ _id: { $ne: currentBooking._id }, truck: truckId, status: { $ne: "Delivered" } }),
-      Booking.findOne({ _id: { $ne: currentBooking._id }, driver: driverId, status: { $ne: "Delivered" } }),
+      Booking.findOne({ _id: { $ne: currentBooking._id }, isDeleted: { $ne: true }, truck: truckId, status: { $ne: "Delivered" } }),
+      Booking.findOne({ _id: { $ne: currentBooking._id }, isDeleted: { $ne: true }, driver: driverId, status: { $ne: "Delivered" } }),
     ]);
+
     if (activeTruckBooking || activeDriverBooking) {
       return res.status(400).json({ success: false, message: "Selected truck or driver is already assigned to an active trip" });
     }
 
-    const booking = await Booking.findByIdAndUpdate(
-      req.params.id,
+    const reservedTruckDoc = await Truck.findOneAndUpdate(
       {
-        truck: truckId,
-        driver: driverId,
-        status: "Dispatched",
+        _id: truckId,
+        $or: [{ status: "idle" }, { status: { $exists: false } }, { status: null }],
+      },
+      { $set: { status: "assigned" } },
+      { returnDocument: "after" }
+    );
+
+    if (!reservedTruckDoc) {
+      return res.status(409).json({ success: false, message: "Selected truck is no longer available" });
+    }
+    reservedTruck = true;
+
+    const reservedDriverDoc = await Driver.findOneAndUpdate(
+      {
+        _id: driverId,
+        $or: [{ status: "available" }, { status: { $exists: false } }, { status: null }],
+      },
+      { $set: { status: "assigned", assignedTruck: truckId } },
+      { returnDocument: "after" }
+    );
+
+    if (!reservedDriverDoc) {
+      await Truck.findByIdAndUpdate(truckId, { status: "idle" });
+      reservedTruck = false;
+      return res.status(409).json({ success: false, message: "Selected driver is no longer available" });
+    }
+    reservedDriver = true;
+
+    const booking = await Booking.findOneAndUpdate(
+      { _id: req.params.id, status: "Booked", isDeleted: { $ne: true } },
+      {
+        $set: { truck: truckId, driver: driverId, status: "Dispatched" },
         $push: {
           statusHistory: {
             status: "Dispatched",
             note: "Truck and driver assigned",
-            updatedBy: "Owner",
+            updatedBy: auditActor(req),
             updatedAt: new Date(),
           },
         },
       },
-      { returnDocument: 'after' }
+      { returnDocument: "after" }
     ).populate("truck").populate("driver");
 
-    if (!booking) return res.status(404).json({ success: false, message: "Booking not found" });
+    if (!booking) {
+      await Promise.all([
+        Truck.findByIdAndUpdate(truckId, { status: "idle" }),
+        Driver.findByIdAndUpdate(driverId, { status: "available", assignedTruck: null }),
+      ]);
+      reservedTruck = false;
+      reservedDriver = false;
+      return res.status(409).json({ success: false, message: "Booking changed before assignment. Refresh and try again." });
+    }
 
-    await Truck.findByIdAndUpdate(truckId, { status: "assigned" });
-    await Driver.findByIdAndUpdate(driverId, { status: "assigned", assignedTruck: truckId });
-
-    res.json({
+    return res.json({
       success: true,
       message: "Truck and driver assigned successfully",
       booking,
-      whatsappLink: makeWhatsAppLink(
-        booking.phone,
-        statusMessage(booking, "✅ Driver and truck assigned successfully.")
-  ),
-});
+      whatsappLink: makeWhatsAppLink(booking.phone, statusMessage(booking, "✅ Driver and truck assigned successfully.")),
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Assign failed", error: error.message });
+    if (reservedTruck && truckId) await Truck.findByIdAndUpdate(truckId, { status: "idle" }).catch(() => {});
+    if (reservedDriver && driverId) await Driver.findByIdAndUpdate(driverId, { status: "available", assignedTruck: null }).catch(() => {});
+    return res.status(500).json({ success: false, message: "Assign failed", error: error.message });
   }
 });
 
 router.put("/:id/start-trip", auth, async (req, res) => {
   try {
-    const currentBooking = await Booking.findById(req.params.id);
-    if (!currentBooking) return res.status(404).json({ success: false, message: "Booking not found" });
-    if (currentBooking.status !== "Dispatched") return res.status(400).json({ success: false, message: "Only dispatched trips can be started" });
-
-    const booking = await Booking.findByIdAndUpdate(
-      req.params.id,
+    const booking = await Booking.findOneAndUpdate(
+      { _id: req.params.id, status: "Dispatched", isDeleted: { $ne: true } },
       {
-        status: "In Transit",
+        $set: { status: "In Transit" },
         $push: {
           statusHistory: {
             status: "In Transit",
-            note: "Trip started by driver",
-            updatedBy: "Driver",
+            note: "Trip started",
+            updatedBy: auditActor(req),
             updatedAt: new Date(),
           },
         },
       },
-      { returnDocument: 'after' }
+      { returnDocument: "after" }
     ).populate("truck").populate("driver");
 
-    if (!booking) return res.status(404).json({ success: false, message: "Booking not found" });
+    if (!booking) {
+      return res.status(409).json({ success: false, message: "Booking is not in a dispatchable state. Refresh and try again." });
+    }
 
     if (booking.truck) await Truck.findByIdAndUpdate(booking.truck._id || booking.truck, { status: "on-route" });
     if (booking.driver) await Driver.findByIdAndUpdate(booking.driver._id || booking.driver, { status: "on-trip" });
 
-    await Notification.create({
-      type: "trip_started",
-      message: `Trip started - ${booking.bookingId}`,
-    });
+    await Notification.create({ type: "trip_started", message: `Trip started - ${booking.bookingId}` });
 
-    res.json({
+    return res.json({
       success: true,
       message: "Trip started",
       booking,
-      whatsappLink: makeWhatsAppLink(
-        booking.phone,
-        statusMessage(booking, "🚚 Your trip has started.")
-      ),
+      whatsappLink: makeWhatsAppLink(booking.phone, statusMessage(booking, "🚚 Your trip has started.")),
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Start trip failed", error: error.message });
+    return res.status(500).json({ success: false, message: "Start trip failed", error: error.message });
   }
 });
 
-router.put("/:id/end-trip",auth, async (req, res) => {
+router.put("/:id/end-trip", auth, async (req, res) => {
   try {
-
     const { remarks } = req.body;
-
-    const booking =
-      await Booking.findById(
-        req.params.id
-      )
-        .populate("truck")
-        .populate("driver");
-
-    if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message:
-          "Booking not found",
-      });
-    }
-
-    if (booking.status !== "In Transit") {
-      return res.status(400).json({ success: false, message: "Only trips that are in transit can be completed" });
-    }
-
-    // SAFE ARRAYS
-
-    if (!booking.statusHistory) {
-      booking.statusHistory = [];
-    }
-
-    if (!booking.payment) {
-      booking.payment = {};
-    }
-
-    // =====================
-    // SALARY CALCULATION
-    // =====================
-
-    // Booking.amount is the base transport charge before GST.
-    const baseAmount = Number(booking.amount || 0);
-    const gstAmount = (baseAmount * GST_PERCENTAGE) / 100;
-    const totalWithGST = baseAmount + gstAmount;
-    const driverSalary =
-      (baseAmount * DRIVER_SALARY_PERCENTAGE) / 100;
-
-    booking.payment.gstPercentage = GST_PERCENTAGE;
-    booking.payment.gstAmount = Number(gstAmount.toFixed(2));
-    booking.payment.totalWithGST = Number(totalWithGST.toFixed(2));
-
-    booking.payment.driverSalary = Number(driverSalary.toFixed(2));
-    booking.payment.salaryPaid = Number(booking.payment.salaryPaid || 0);
-    booking.payment.salaryPending = Math.max(
-      booking.payment.driverSalary - booking.payment.salaryPaid,
-      0
-    );
-    booking.payment.salaryStatus =
-      booking.payment.salaryPending <= 0 ? "Paid" :
-      booking.payment.salaryPaid > 0 ? "Partial" : "Pending";
-
-    // =====================
-    // BOOKING UPDATE
-    // =====================
-
-    booking.status = "Delivered";
-
-    booking.currentLocation =
-      "Destination reached";
-
-    booking.notes =
-      remarks || "";
-
-    booking.statusHistory.push({
-      status: "Delivered",
-
-      note:
-        remarks ||
-        "Trip ended by driver",
-
-      updatedBy: "Driver",
-
-      updatedAt: new Date(),
+    const existingBooking = await Booking.findOne({
+      _id: req.params.id,
+      status: "In Transit",
+      isDeleted: { $ne: true },
     });
 
-    await booking.save();
-
-    // =====================
-    // TRUCK UPDATE
-    // =====================
-
-    if (booking.truck) {
-
-      await Truck.findByIdAndUpdate(
-        booking.truck._id ||
-        booking.truck,
-
-        {
-          status: "idle",
-        }
-      );
+    if (!existingBooking) {
+      return res.status(409).json({ success: false, message: "Booking is not in transit or has already been completed" });
     }
 
-    // =====================
-    // DRIVER UPDATE
-    // =====================
+    const { baseAmount, gstPercentage, gstAmount, totalWithGST } = getFinanceSnapshot(existingBooking);
+    const storedSalaryPercentage = Number(existingBooking.payment?.driverSalaryPercentage);
+    const driverSalaryPercentage = Number.isFinite(storedSalaryPercentage)
+      ? storedSalaryPercentage
+      : DRIVER_SALARY_PERCENTAGE;
+    const driverSalary = roundMoney((baseAmount * driverSalaryPercentage) / 100);
+    const salaryPaid = roundMoney(existingBooking.payment?.salaryPaid || 0);
+    const salaryPending = roundMoney(Math.max(driverSalary - salaryPaid, 0));
+    const salaryStatus = salaryPending <= 0.01 ? "Paid" : salaryPaid > 0 ? "Partial" : "Pending";
 
-    if (booking.driver) {
-
-      await Driver.findByIdAndUpdate(
-        booking.driver._id ||
-        booking.driver,
-
-        {
-          status: "available",
-        }
-      );
-    }
-
-    // =====================
-    // NOTIFICATION
-    // =====================
-
-    await Notification.create({
-      type: "trip_completed",
-
-      message:
-        `Trip completed - ${booking.bookingId}`,
-    });
-
-    res.json({
-      success: true,
-
-      message:
-        "Trip completed successfully",
-
-      booking,
-
-      whatsappLink:
-        makeWhatsAppLink(
-          booking.phone,
-
-          statusMessage(
-            booking,
-            "✅ Your shipment has been delivered."
-          )
-        ),
-    });
-
-  } catch (error) {
-
-    console.log(error);
-
-    res.status(500).json({
-      success: false,
-
-      message:
-        "End trip failed",
-
-      error: error.message,
-    });
-  }
-});
-
-router.put("/:id/location",auth,  async (req, res) => {
-  try {
-    const { currentLocation, liveLocation } = req.body;
-
-    const booking = await Booking.findByIdAndUpdate(
-      req.params.id,
+    const booking = await Booking.findOneAndUpdate(
+      { _id: req.params.id, status: "In Transit", isDeleted: { $ne: true } },
       {
-        currentLocation,
-        liveLocation,
+        $set: {
+          status: "Delivered",
+          currentLocation: "Destination reached",
+          notes: remarks || "",
+          "payment.gstPercentage": gstPercentage,
+          "payment.gstAmount": gstAmount,
+          "payment.totalWithGST": totalWithGST,
+          "payment.driverSalaryPercentage": driverSalaryPercentage,
+          "payment.driverSalary": driverSalary,
+          "payment.salaryPaid": salaryPaid,
+          "payment.salaryPending": salaryPending,
+          "payment.salaryStatus": salaryStatus,
+        },
+        $push: {
+          statusHistory: {
+            status: "Delivered",
+            note: remarks || "Trip completed",
+            updatedBy: auditActor(req),
+            updatedAt: new Date(),
+          },
+        },
       },
-      { returnDocument: 'after' }
+      { returnDocument: "after" }
     ).populate("truck").populate("driver");
 
     if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
+      return res.status(409).json({ success: false, message: "Trip was completed by another request. Refresh the page." });
     }
 
-    res.json({
+    if (booking.truck) await Truck.findByIdAndUpdate(booking.truck._id || booking.truck, { status: "idle" });
+    if (booking.driver) await Driver.findByIdAndUpdate(booking.driver._id || booking.driver, { status: "available", assignedTruck: null });
+
+    await Notification.create({ type: "trip_completed", message: `Trip completed - ${booking.bookingId}` });
+
+    return res.json({
+      success: true,
+      message: "Trip completed successfully",
+      booking,
+      whatsappLink: makeWhatsAppLink(booking.phone, statusMessage(booking, "✅ Your shipment has been delivered.")),
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, message: "End trip failed", error: error.message });
+  }
+});
+
+router.put("/:id/location", auth, async (req, res) => {
+  try {
+    const { currentLocation, liveLocation } = req.body;
+    const update = {};
+
+    if (typeof currentLocation === "string") {
+      const value = currentLocation.trim();
+      if (!value) return res.status(400).json({ success: false, message: "Current location is required" });
+      update.currentLocation = value;
+    }
+    if (liveLocation && typeof liveLocation === "object") update.liveLocation = liveLocation;
+
+    if (!Object.keys(update).length) {
+      return res.status(400).json({ success: false, message: "No location data supplied" });
+    }
+
+    const booking = await Booking.findOneAndUpdate(
+      { _id: req.params.id, isDeleted: { $ne: true } },
+      { $set: update },
+      { returnDocument: "after" }
+    ).populate("truck").populate("driver");
+
+    if (!booking) return res.status(404).json({ success: false, message: "Booking not found" });
+
+    return res.json({
       success: true,
       message: "Location updated successfully",
       booking,
-      whatsappLink: makeWhatsAppLink(
-        booking.phone,
-        statusMessage(booking, "📍 Live location updated.")
-      ),
+      whatsappLink: makeWhatsAppLink(booking.phone, statusMessage(booking, "📍 Live location updated.")),
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Location update failed",
-      error: error.message,
-    });
+    return res.status(500).json({ success: false, message: "Location update failed", error: error.message });
   }
 });
 
@@ -344,7 +334,7 @@ router.put("/:id/status",auth, async (req, res) => {
     }
     if (!allowedStatus.includes(status)) return res.status(400).json({ success: false, message: "Invalid status" });
 
-    const existingBooking = await Booking.findById(req.params.id);
+    const existingBooking = await Booking.findOne({ _id: req.params.id, isDeleted: { $ne: true } });
     if (!existingBooking) return res.status(404).json({ success: false, message: "Booking not found" });
     const validTransitions = { Booked: ["Booked", "Dispatched"], Dispatched: ["Dispatched", "In Transit"], "In Transit": ["In Transit"], Delivered: [] };
     if (!validTransitions[existingBooking.status]?.includes(status)) {
@@ -359,7 +349,7 @@ router.put("/:id/status",auth, async (req, res) => {
           statusHistory: {
             status,
             note: note || `Status updated to ${status}`,
-            updatedBy: "Owner",
+            updatedBy: auditActor(req),
             updatedAt: new Date(),
           },
         },
@@ -385,23 +375,32 @@ router.put("/:id/payment", auth, updatePayment);
 
 router.post("/track", async (req, res) => {
   try {
-    const { bookingId, otp } = req.body;
+    const bookingId = String(req.body.bookingId || "").trim();
+    const otp = String(req.body.otp || "").trim();
 
-    const booking = await Booking.findOne({ bookingId, otp }).populate("truck").populate("driver");
+    if (!bookingId || !otp) {
+      return res.status(400).json({ success: false, message: "Booking ID and OTP are required" });
+    }
+
+    const booking = await Booking.findOne({
+      bookingId,
+      otp,
+      isDeleted: { $ne: true },
+    }).populate("truck").populate("driver");
 
     if (!booking) {
       return res.status(404).json({ success: false, message: "Invalid Booking ID or OTP" });
     }
 
-    res.json({ success: true, booking });
+    return res.json({ success: true, booking: publicTrackingView(booking) });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Tracking failed", error: error.message });
+    return res.status(500).json({ success: false, message: "Tracking failed", error: error.message });
   }
 });
 
-router.get("/:id/invoice", async (req, res) => {
+router.get("/:id/invoice", auth, async (req, res) => {
   try {
-    const booking = await Booking.findById(req.params.id)
+    const booking = await Booking.findOne({ _id: req.params.id, isDeleted: { $ne: true } })
       .populate("truck")
       .populate("driver");
 
@@ -466,11 +465,9 @@ router.get("/:id/invoice", async (req, res) => {
 
     const paymentMode = booking.payment?.paymentMode || "Cash";
     const paymentStatus = booking.payment?.paymentStatus || "Pending";
-    const advanceAmount = Number(booking.payment?.advanceAmount || 0);
-    const baseAmount = Number(booking.amount || 0);
-    const gstAmount = Number(booking.payment?.gstAmount || ((baseAmount * GST_PERCENTAGE) / 100));
-    const totalAmount = Number(booking.payment?.totalWithGST || (baseAmount + gstAmount));
-    const balanceAmount = Math.max(totalAmount - advanceAmount, 0);
+    const advanceAmount = roundMoney(booking.payment?.advanceAmount || 0);
+    const { baseAmount, gstPercentage, gstAmount, totalWithGST: totalAmount } = getFinanceSnapshot(booking);
+    const balanceAmount = roundMoney(Math.max(totalAmount - advanceAmount, 0));
 
     // HEADER
     doc.rect(0, 0, pageWidth, 112).fill(primary);
@@ -580,7 +577,7 @@ router.get("/:id/invoice", async (req, res) => {
       .fontSize(8.5)
       .font("Helvetica")
       .text(`Invoice No: INV-${booking.bookingId || "-"}`, right - 240, 174)
-      .text(`Tracking OTP: ${booking.otp || "-"}`, right - 240, 190);
+      .text(`Payment Status: ${paymentStatus}`, right - 240, 190);
 
     // ROUTE
     doc
@@ -726,7 +723,7 @@ router.get("/:id/invoice", async (req, res) => {
     };
 
     row("Freight Charges", formatMoney(baseAmount), payTop + 20);
-    row(`GST (${GST_PERCENTAGE}%)`, formatMoney(gstAmount), payTop + 44);
+    row(`GST (${gstPercentage}%)`, formatMoney(gstAmount), payTop + 44);
     row("Amount Paid", formatMoney(advanceAmount), payTop + 68);
     row("Balance Payable", formatMoney(balanceAmount), payTop + 92);
     row("Payment", `${paymentMode} • ${paymentStatus}`, payTop + 116);
@@ -824,7 +821,8 @@ router.get("/:id/internal-expense", auth, async (req, res) => {
     const fuelLiters = fuelLogs.reduce((sum, log) => sum + Number(log.liters || 0), 0);
     const fuelKm = fuelLogs.reduce((sum, log) => sum + Number(log.km || 0), 0);
     const tollTotal = tollLogs.reduce((sum, log) => sum + Number(log.amount || 0), 0);
-    const totalExpense = fuelTotal + tollTotal;
+    const driverSalary = Number(booking.payment?.driverSalary || 0);
+    const totalExpense = fuelTotal + tollTotal + driverSalary;
     const profit = revenue - totalExpense;
     const mileage = fuelLiters > 0 ? (fuelKm / fuelLiters).toFixed(2) : "0";
 
@@ -865,7 +863,7 @@ router.get("/:id/internal-expense", auth, async (req, res) => {
       ["Revenue", formatMoney(revenue), primary],
       ["Fuel Expense", formatMoney(fuelTotal), orange],
       ["Toll Expense", formatMoney(tollTotal), red],
-      ["Net Profit", formatMoney(profit), profit >= 0 ? green : red],
+      ["Trip Margin*", formatMoney(profit), profit >= 0 ? green : red],
     ];
 
     cards.forEach((c, i) => {
@@ -885,7 +883,8 @@ router.get("/:id/internal-expense", auth, async (req, res) => {
       .text(`Fuel Liters: ${fuelLiters} L`, 330, 268)
       .text(`Distance KM: ${fuelKm} km`, 330, 284)
       .text(`Mileage: ${mileage} km/L`, 330, 300)
-      .text(`Total Expense: ${formatMoney(totalExpense)}`, 330, 316);
+      .text(`Total Expense*: ${formatMoney(totalExpense)}`, 330, 316)
+      .text(`Driver Salary: ${formatMoney(driverSalary)}`, 330, 332);
 
     let y = 380;
 
@@ -917,7 +916,7 @@ router.get("/:id/internal-expense", auth, async (req, res) => {
       doc.fillColor(grey).fontSize(8).text("No toll logs found", 46, y);
     }
 
-    doc.fillColor(grey).fontSize(7).text("Internal use only. Do not share with customer.", 36, 795, {
+    doc.fillColor(grey).fontSize(7).text("*Trip Margin includes fuel, toll and driver salary only. Internal use only.", 36, 795, {
       width: 520,
       align: "center",
     });
@@ -1140,86 +1139,90 @@ router.put("/notifications/:id/read",auth , async (req, res) => {
 
 router.put(
   "/:id/pay-driver-salary",
-  auth, async (req, res) => {
+  auth,
+  async (req, res) => {
     try {
-      const booking = await Booking.findById(req.params.id);
+      const booking = await Booking.findOne({
+        _id: req.params.id,
+        isDeleted: { $ne: true },
+      });
 
       if (!booking) {
-        return res.status(404).json({
+        return res.status(404).json({ success: false, message: "Booking not found" });
+      }
+
+      const payAmount = roundMoney(req.body.amount);
+      const totalSalary = roundMoney(booking.payment?.driverSalary || 0);
+      const alreadyPaid = roundMoney(booking.payment?.salaryPaid || 0);
+      const pendingBefore = roundMoney(Math.max(totalSalary - alreadyPaid, 0));
+
+      if (!Number.isFinite(payAmount) || payAmount <= 0) {
+        return res.status(400).json({ success: false, message: "Salary payment must be greater than 0" });
+      }
+
+      if (totalSalary <= 0) {
+        return res.status(400).json({ success: false, message: "Driver salary is not calculated for this booking yet" });
+      }
+
+      if (payAmount > pendingBefore + 0.01) {
+        return res.status(400).json({
           success: false,
-          message: "Booking not found",
+          message: `Maximum salary payable is ₹${pendingBefore.toFixed(2)}`,
         });
       }
 
-      // SAFE PAYMENT OBJECT
-      if (!booking.payment) {
-        booking.payment = {};
-      }
+      const updatedPaid = roundMoney(alreadyPaid + payAmount);
+      const pending = roundMoney(Math.max(totalSalary - updatedPaid, 0));
+      const status = pending <= 0.01 ? "Paid" : updatedPaid > 0 ? "Partial" : "Pending";
+      const receiptId = `SAL-${Date.now()}`;
 
-      // SAFE SALARY HISTORY ARRAY
-      if (!booking.payment.salaryHistory) {
-        booking.payment.salaryHistory = [];
-      }
+      const salaryFilter = {
+        _id: booking._id,
+        isDeleted: { $ne: true },
+        ...(booking.payment?.salaryPaid == null
+          ? { $or: [
+              { "payment.salaryPaid": { $exists: false } },
+              { "payment.salaryPaid": 0 },
+            ] }
+          : { "payment.salaryPaid": alreadyPaid }),
+      };
 
-      const payAmount = Number(req.body.amount || 0);
-
-      const totalSalary = Number(
-        booking.payment.driverSalary || 0
+      const updatedBooking = await Booking.findOneAndUpdate(
+        salaryFilter,
+        {
+          $set: {
+            "payment.salaryPaid": updatedPaid,
+            "payment.salaryPending": pending,
+            "payment.salaryStatus": status,
+          },
+          $push: {
+            "payment.salaryHistory": {
+              amount: payAmount,
+              receiptId,
+              paidBy: auditActor(req),
+              paidAt: new Date(),
+            },
+          },
+        },
+        { returnDocument: "after" }
       );
 
-      const alreadyPaid = Number(
-        booking.payment.salaryPaid || 0
-      );
-
-      let updatedPaid = alreadyPaid + payAmount;
-
-      // Prevent overpayment
-      if (updatedPaid > totalSalary) {
-        updatedPaid = totalSalary;
+      if (!updatedBooking) {
+        return res.status(409).json({
+          success: false,
+          message: "Salary payment changed in another request. Refresh and try again.",
+        });
       }
 
-      const pending = totalSalary - updatedPaid;
-
-      let status = "Pending";
-
-      if (updatedPaid <= 0) {
-        status = "Pending";
-      } else if (updatedPaid < totalSalary) {
-        status = "Partial";
-      } else {
-        status = "Paid";
-      }
-
-      // UPDATE PAYMENT DETAILS
-      booking.payment.salaryPaid = updatedPaid;
-
-      booking.payment.salaryPending = pending;
-
-      booking.payment.salaryStatus = status;
-
-      // PUSH PAYMENT HISTORY
-      booking.payment.salaryHistory.push({
-        amount: payAmount,
-        receiptId: `SAL-${Date.now()}`,
-        paidAt: new Date(),
-      });
-
-      await booking.save();
-
-      res.json({
+      return res.json({
         success: true,
         message: "Driver salary updated successfully",
-        booking,
+        receiptId,
+        booking: updatedBooking,
       });
-
     } catch (error) {
-
       console.log(error);
-
-      res.status(500).json({
-        success: false,
-        message: error.message,
-      });
+      return res.status(500).json({ success: false, message: error.message });
     }
   }
 );

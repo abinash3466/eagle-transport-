@@ -7,12 +7,10 @@ import {
   Gauge,
   LayoutDashboard,
   Mail,
-  Moon,
   Phone,
   Save,
   ShieldCheck,
   Sparkles,
-  Sun,
   Zap,
 } from "lucide-react";
 
@@ -25,131 +23,35 @@ const DEFAULT_SETTINGS = {
   emailReports: true,
   smsAlerts: true,
 
-  darkMode: false,
   compactMode: false,
   reduceMotion: false,
   showQuickStats: true,
 };
 
-const PREFERENCE_STYLE_ID = "eagle-dashboard-preference-styles";
-
-const ensureDashboardPreferenceStyles = () => {
-  if (typeof document === "undefined") return;
-
-  let styleTag = document.getElementById(PREFERENCE_STYLE_ID);
-
-  if (!styleTag) {
-    styleTag = document.createElement("style");
-    styleTag.id = PREFERENCE_STYLE_ID;
-    document.head.appendChild(styleTag);
-  }
-
-  styleTag.textContent = `
-    /* =============================================
-       EAGLE OWNER DASHBOARD - SAVED PREFERENCES
-       Injected once and kept while navigating.
-    ============================================= */
-
-    body[data-theme="dark"] .owner-dashboard-main {
-      --card-bg: #0d1d31;
-      --bg-secondary: #11263f;
-      --bg-soft: #10233a;
-      --text-primary: #eef5fc;
-      --text-muted: #9fb1c5;
-      --dark-blue: #f4f8fc;
-      --border-light: rgba(148, 163, 184, 0.16);
-      background: #071728 !important;
-      color: #eef5fc !important;
-    }
-
-    body[data-theme="dark"] .owner-dashboard-content,
-    body[data-theme="dark"] .owner-dashboard-content-outer {
-      background: #071728 !important;
-    }
-
-    body[data-theme="dark"] .owner-dashboard-main .card,
-    body[data-theme="dark"] .owner-dashboard-main .glass-card {
-      background: #0d1d31 !important;
-      border-color: rgba(148, 163, 184, 0.15) !important;
-      color: #eef5fc !important;
-    }
-
-    body[data-theme="dark"] .owner-dashboard-main input,
-    body[data-theme="dark"] .owner-dashboard-main select,
-    body[data-theme="dark"] .owner-dashboard-main textarea {
-      background: #10243b !important;
-      color: #eef5fc !important;
-      border-color: rgba(148, 163, 184, 0.18) !important;
-    }
-
-    body[data-theme="dark"] .owner-dashboard-main input::placeholder,
-    body[data-theme="dark"] .owner-dashboard-main textarea::placeholder {
-      color: #7f93aa !important;
-    }
-
-    body[data-dashboard-density="compact"] .owner-dashboard-content-outer {
-      padding: 8px !important;
-    }
-
-    body[data-dashboard-density="compact"] .owner-dashboard-content {
-      padding: 10px !important;
-      border-radius: 18px !important;
-    }
-
-    body[data-dashboard-density="compact"] .owner-overview {
-      gap: 14px !important;
-    }
-
-    body[data-show-quickstats="false"] .owner-dashboard-quickstats {
-      display: none !important;
-    }
-
-    body[data-reduced-motion="true"] *,
-    body[data-reduced-motion="true"] *::before,
-    body[data-reduced-motion="true"] *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-  `;
-};
-
-const Settings = ({ theme, setTheme }) => {
+const Settings = () => {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [saved, setSaved] = useState(false);
 
   const applyPreferences = (nextSettings) => {
     if (typeof document === "undefined") return;
 
-    ensureDashboardPreferenceStyles();
-
-    const themeName = nextSettings.darkMode ? "dark" : "light";
-
-    document.body.setAttribute("data-theme", themeName);
     document.body.setAttribute(
       "data-dashboard-density",
       nextSettings.compactMode ? "compact" : "comfortable"
     );
+
     document.body.setAttribute(
       "data-reduced-motion",
       nextSettings.reduceMotion ? "true" : "false"
     );
+
     document.body.setAttribute(
       "data-show-quickstats",
       nextSettings.showQuickStats ? "true" : "false"
     );
-
-    localStorage.setItem("theme", themeName);
-
-    if (setTheme) {
-      setTheme(themeName);
-    }
   };
 
   useEffect(() => {
-    ensureDashboardPreferenceStyles();
-
     const savedSettings = localStorage.getItem("eagle_settings");
     let mergedSettings = { ...DEFAULT_SETTINGS };
 
@@ -162,11 +64,6 @@ const Settings = ({ theme, setTheme }) => {
         };
       } catch (error) {
         console.error("Unable to read saved settings:", error);
-      }
-    } else {
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme === "dark") {
-        mergedSettings.darkMode = true;
       }
     }
 
@@ -182,7 +79,6 @@ const Settings = ({ theme, setTheme }) => {
       };
 
       if (
-        field === "darkMode" ||
         field === "compactMode" ||
         field === "reduceMotion" ||
         field === "showQuickStats"
@@ -196,9 +92,6 @@ const Settings = ({ theme, setTheme }) => {
     setSaved(false);
   };
 
-  const setThemeMode = (mode) => {
-    handleChange("darkMode", mode === "dark");
-  };
 
   const handleSave = () => {
     localStorage.setItem("eagle_settings", JSON.stringify(settings));
@@ -439,66 +332,6 @@ const Settings = ({ theme, setTheme }) => {
           color: var(--text-primary, #16324f);
         }
 
-        .eagle-theme-selector {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 10px;
-        }
-
-        .eagle-theme-option {
-          min-height: 74px;
-          padding: 12px;
-          border-radius: 15px;
-          border: 1px solid var(--border-light, #dce4ee);
-          background: var(--bg-secondary, #f8fbff);
-          color: var(--text-primary, #16324f);
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          justify-content: center;
-          gap: 7px;
-          cursor: pointer;
-          position: relative;
-          transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-        }
-
-        .eagle-theme-option:hover {
-          transform: translateY(-2px);
-        }
-
-        .eagle-theme-option.active {
-          border-color: #5fa0db;
-          box-shadow: 0 8px 20px rgba(15,79,138,.11);
-          background: linear-gradient(135deg, #edf6ff, #f8fbff);
-          color: #0d4e88;
-        }
-
-        body[data-theme="dark"] .eagle-theme-option.active {
-          background: linear-gradient(135deg, #14385d, #102942);
-          color: #eef6ff;
-        }
-
-        .eagle-theme-option strong {
-          font-size: 11px;
-        }
-
-        .eagle-theme-option small {
-          color: var(--text-muted, #64748b);
-          font-size: 9px;
-        }
-
-        .eagle-theme-check {
-          position: absolute;
-          right: 10px;
-          top: 10px;
-          width: 19px;
-          height: 19px;
-          border-radius: 50%;
-          display: grid;
-          place-items: center;
-          background: #0f5b9f;
-          color: #fff;
-        }
 
         .eagle-setting-list {
           display: grid;
@@ -733,40 +566,6 @@ const Settings = ({ theme, setTheme }) => {
             font-size: 9px;
           }
 
-          .eagle-theme-selector {
-            gap: 8px;
-          }
-
-          .eagle-theme-option {
-            min-height: 62px;
-            padding: 10px;
-            border-radius: 12px;
-          }
-
-          .eagle-theme-option svg {
-            width: 17px;
-            height: 17px;
-          }
-
-          .eagle-theme-option strong {
-            font-size: 10px;
-          }
-
-          .eagle-theme-option small {
-            display: none;
-          }
-
-          .eagle-theme-check {
-            width: 17px;
-            height: 17px;
-            right: 8px;
-            top: 8px;
-          }
-
-          .eagle-theme-check svg {
-            width: 10px;
-            height: 10px;
-          }
 
           .eagle-setting-list {
             gap: 7px;
@@ -865,9 +664,6 @@ const Settings = ({ theme, setTheme }) => {
             font-size: 10.5px;
           }
 
-          .eagle-theme-option {
-            min-height: 58px;
-          }
 
           .eagle-setting-row {
             min-height: 44px;
@@ -1003,50 +799,6 @@ const Settings = ({ theme, setTheme }) => {
           </div>
 
           <div className="eagle-settings-column">
-            <motion.section
-              className="eagle-settings-card"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, delay: 0.05 }}
-            >
-              <div className="eagle-settings-card-head">
-                <div className="eagle-settings-card-icon">
-                  <Sun size={18} />
-                </div>
-                <div>
-                  <h2>Appearance</h2>
-                  <p>Switch Owner Dashboard between Light and Dark mode.</p>
-                </div>
-              </div>
-
-              <div className="eagle-theme-selector">
-                <button
-                  type="button"
-                  className={`eagle-theme-option ${!settings.darkMode ? "active" : ""}`}
-                  onClick={() => setThemeMode("light")}
-                >
-                  {!settings.darkMode && (
-                    <span className="eagle-theme-check"><Check size={11} /></span>
-                  )}
-                  <Sun size={19} />
-                  <strong>Light Mode</strong>
-                  <small>Bright professional workspace</small>
-                </button>
-
-                <button
-                  type="button"
-                  className={`eagle-theme-option ${settings.darkMode ? "active" : ""}`}
-                  onClick={() => setThemeMode("dark")}
-                >
-                  {settings.darkMode && (
-                    <span className="eagle-theme-check"><Check size={11} /></span>
-                  )}
-                  <Moon size={19} />
-                  <strong>Dark Mode</strong>
-                  <small>Comfortable low-light dashboard</small>
-                </button>
-              </div>
-            </motion.section>
 
             <motion.section
               className="eagle-settings-card"

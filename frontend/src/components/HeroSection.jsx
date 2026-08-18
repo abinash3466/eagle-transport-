@@ -570,6 +570,90 @@ const HeroSection = () => {
           }
         }
 
+
+        /* =================================================
+           MOBILE DARK MODE — REMOVE WHITE STRIP / CROP EFFECT
+           Hero wrapper only.
+           No booking logic, API, calculation or content changed.
+        ================================================= */
+
+        @media (max-width: 768px) {
+
+          html[data-eagle-theme="dark"] .eagle-premium-hero,
+          body[data-eagle-theme="dark"] .eagle-premium-hero {
+            background: #081827 !important;
+            background-color: #081827 !important;
+          }
+
+          html[data-eagle-theme="dark"] .eagle-premium-content,
+          body[data-eagle-theme="dark"] .eagle-premium-content {
+            background: #081827 !important;
+            background-color: #081827 !important;
+            padding-bottom: 0 !important;
+          }
+
+          html[data-eagle-theme="dark"] .eagle-premium-form,
+          body[data-eagle-theme="dark"] .eagle-premium-form {
+            width: 100% !important;
+            max-width: 100% !important;
+
+            margin: 0 !important;
+            padding: 8px 10px 12px !important;
+
+            background: #081827 !important;
+            background-color: #081827 !important;
+
+            overflow: visible !important;
+            border: 0 !important;
+
+            box-sizing: border-box !important;
+          }
+
+          html[data-eagle-theme="dark"] .eagle-premium-form .booking-form-wrapper,
+          body[data-eagle-theme="dark"] .eagle-premium-form .booking-form-wrapper {
+            width: 100% !important;
+            max-width: 100% !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            background: transparent !important;
+
+            overflow: visible !important;
+            box-sizing: border-box !important;
+          }
+
+          html[data-eagle-theme="dark"] .eagle-premium-form .booking-form-card,
+          body[data-eagle-theme="dark"] .eagle-premium-form .booking-form-card {
+            width: 100% !important;
+            max-width: 100% !important;
+
+            margin: 0 !important;
+
+            border-radius: 18px !important;
+
+            overflow: visible !important;
+            box-sizing: border-box !important;
+          }
+
+        }
+
+
+        @media (max-width: 430px) {
+
+          html[data-eagle-theme="dark"] .eagle-premium-form,
+          body[data-eagle-theme="dark"] .eagle-premium-form {
+            padding: 8px 8px 10px !important;
+          }
+
+          html[data-eagle-theme="dark"] .eagle-premium-form .booking-form-card,
+          body[data-eagle-theme="dark"] .eagle-premium-form .booking-form-card {
+            border-radius: 16px !important;
+          }
+
+        }
+
+
       `}</style>
 
     </section>

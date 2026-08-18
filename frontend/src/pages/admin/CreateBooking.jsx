@@ -679,6 +679,176 @@ const CreateBooking = () => {
         @media (prefers-reduced-motion: reduce) {
           .create-booking-submit { transition: none !important; }
         }
+
+        /* =========================================================
+           CREATE BOOKING — DARK MODE VISIBILITY FIX
+           UI ONLY.
+           No functions, calculations, API calls or content changed.
+        ========================================================= */
+
+        body[data-theme="dark"] .create-booking-form-card,
+        html[data-theme="dark"] .create-booking-form-card {
+          color: #dce9f6 !important;
+          background:
+            linear-gradient(
+              145deg,
+              #0d2238 0%,
+              #091c2f 100%
+            ) !important;
+          border:
+            1px solid rgba(132, 174, 214, 0.14) !important;
+          box-shadow:
+            0 18px 38px rgba(0, 0, 0, 0.18) !important;
+        }
+
+
+        body[data-theme="dark"] .create-booking-form-card > h3,
+        html[data-theme="dark"] .create-booking-form-card > h3 {
+          color: #f4f8fd !important;
+        }
+
+
+        /* FIELD LABELS + ICONS */
+
+        body[data-theme="dark"] .create-booking-label,
+        html[data-theme="dark"] .create-booking-label {
+          color: #d8e7f5 !important;
+        }
+
+
+        body[data-theme="dark"] .create-booking-label svg,
+        html[data-theme="dark"] .create-booking-label svg {
+          color: #68b4f5 !important;
+          stroke: #68b4f5 !important;
+        }
+
+
+        /* EXTRA NOTES LABEL */
+
+        body[data-theme="dark"] .create-booking-form-grid > div[style*="grid-column"] > label,
+        html[data-theme="dark"] .create-booking-form-grid > div[style*="grid-column"] > label {
+          color: #d8e7f5 !important;
+        }
+
+
+        /* INPUT / SELECT / TEXTAREA */
+
+        body[data-theme="dark"] .create-booking-form-grid input,
+        body[data-theme="dark"] .create-booking-form-grid select,
+        body[data-theme="dark"] .create-booking-form-grid textarea,
+        html[data-theme="dark"] .create-booking-form-grid input,
+        html[data-theme="dark"] .create-booking-form-grid select,
+        html[data-theme="dark"] .create-booking-form-grid textarea {
+          color: #eef6ff !important;
+
+          background:
+            linear-gradient(
+              145deg,
+              #102b46 0%,
+              #0c243b 100%
+            ) !important;
+
+          border:
+            1px solid rgba(132, 177, 218, 0.20) !important;
+
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+        }
+
+
+        body[data-theme="dark"] .create-booking-form-grid input::placeholder,
+        body[data-theme="dark"] .create-booking-form-grid textarea::placeholder,
+        html[data-theme="dark"] .create-booking-form-grid input::placeholder,
+        html[data-theme="dark"] .create-booking-form-grid textarea::placeholder {
+          color: #849bb2 !important;
+          opacity: 1 !important;
+        }
+
+
+        body[data-theme="dark"] .create-booking-form-grid select option,
+        html[data-theme="dark"] .create-booking-form-grid select option {
+          color: #eef6ff !important;
+          background: #0c243b !important;
+        }
+
+
+        body[data-theme="dark"] .create-booking-form-grid input:focus,
+        body[data-theme="dark"] .create-booking-form-grid select:focus,
+        body[data-theme="dark"] .create-booking-form-grid textarea:focus,
+        html[data-theme="dark"] .create-booking-form-grid input:focus,
+        html[data-theme="dark"] .create-booking-form-grid select:focus,
+        html[data-theme="dark"] .create-booking-form-grid textarea:focus {
+          border-color: #3b92df !important;
+          box-shadow:
+            0 0 0 3px rgba(59, 146, 223, 0.11) !important;
+        }
+
+
+        /* PREVIEW CARD DARK MODE */
+
+        body[data-theme="dark"] .create-booking-preview-card,
+        html[data-theme="dark"] .create-booking-preview-card {
+          color: #dce9f6 !important;
+          background:
+            linear-gradient(
+              145deg,
+              #0d2238 0%,
+              #091c2f 100%
+            ) !important;
+          border:
+            1px solid rgba(132, 174, 214, 0.14) !important;
+          box-shadow:
+            0 18px 38px rgba(0, 0, 0, 0.18) !important;
+        }
+
+
+        body[data-theme="dark"] .create-booking-preview-card > h3,
+        html[data-theme="dark"] .create-booking-preview-card > h3 {
+          color: #f4f8fd !important;
+        }
+
+
+        body[data-theme="dark"] .create-booking-empty,
+        html[data-theme="dark"] .create-booking-empty {
+          color: #8fa7bf !important;
+        }
+
+
+        body[data-theme="dark"] .create-booking-empty h4,
+        html[data-theme="dark"] .create-booking-empty h4 {
+          color: #e9f2fb !important;
+        }
+
+
+        body[data-theme="dark"] .create-booking-empty p,
+        html[data-theme="dark"] .create-booking-empty p {
+          color: #8fa7bf !important;
+        }
+
+
+        /* MOBILE — ONLY VISIBILITY/POLISH */
+
+        @media (max-width: 768px) {
+
+          body[data-theme="dark"] .create-booking-label,
+          html[data-theme="dark"] .create-booking-label {
+            color: #d8e7f5 !important;
+            font-weight: 750 !important;
+          }
+
+
+          body[data-theme="dark"] .create-booking-form-grid input,
+          body[data-theme="dark"] .create-booking-form-grid select,
+          body[data-theme="dark"] .create-booking-form-grid textarea,
+          html[data-theme="dark"] .create-booking-form-grid input,
+          html[data-theme="dark"] .create-booking-form-grid select,
+          html[data-theme="dark"] .create-booking-form-grid textarea {
+            background: #102b46 !important;
+          }
+
+        }
+
+
       `}</style>
     </div>
   );

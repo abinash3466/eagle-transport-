@@ -520,13 +520,7 @@ const Home = () => {
 
           right: 17px;
 
-          color:
-            rgba(
-              15,
-              49,
-              88,
-              0.12
-            );
+          color: #244870;
 
           font-size:
             1.9rem;

@@ -21,7 +21,15 @@ import {
 
 import { getDistance } from "geolib";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const RAW_API_URL = String(import.meta.env.VITE_API_URL || "").trim();
+
+const API_URL = RAW_API_URL
+  ? `${RAW_API_URL.replace(/\/+$/, "")}${/\/api$/i.test(
+    RAW_API_URL.replace(/\/+$/, "")
+  )
+    ? ""
+    : "/api"}`
+  : "/api";
 
 const SmartDispatch = () => {
   const [job, setJob] = useState({
@@ -862,6 +870,253 @@ const SmartDispatch = () => {
         @media (prefers-reduced-motion: reduce) {
           .smart-dispatch-run, .smart-dispatch-map-btn, .smart-dispatch-refresh { transition: none !important; }
         }
+
+        /* =========================================================
+           SMART DISPATCH — DARK MODE FINAL VISUAL FIX
+           UI ONLY.
+           No functions, calculations, AI scoring, pricing,
+           API calls, location logic or content changed.
+        ========================================================= */
+
+        body[data-theme="dark"] .smart-dispatch-card,
+        html[data-theme="dark"] .smart-dispatch-card {
+          color: #dce9f6 !important;
+
+          background:
+            linear-gradient(
+              145deg,
+              #0d2238 0%,
+              #091c2f 100%
+            ) !important;
+
+          border:
+            1px solid rgba(132, 174, 214, 0.14) !important;
+
+          box-shadow:
+            0 16px 36px rgba(0, 0, 0, 0.18) !important;
+        }
+
+
+        /* FORM CARD */
+
+        body[data-theme="dark"] .smart-dispatch-form-card,
+        html[data-theme="dark"] .smart-dispatch-form-card {
+          background:
+            linear-gradient(
+              145deg,
+              #0e263f 0%,
+              #0a1e32 100%
+            ) !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-form-card > h3,
+        html[data-theme="dark"] .smart-dispatch-form-card > h3,
+        body[data-theme="dark"] .smart-dispatch-fleet-header h3,
+        html[data-theme="dark"] .smart-dispatch-fleet-header h3 {
+          color: #f4f8fd !important;
+        }
+
+
+        /* INPUTS + SELECT */
+
+        body[data-theme="dark"] .smart-dispatch-form-grid input,
+        body[data-theme="dark"] .smart-dispatch-form-grid select,
+        html[data-theme="dark"] .smart-dispatch-form-grid input,
+        html[data-theme="dark"] .smart-dispatch-form-grid select {
+          color: #eef6ff !important;
+
+          background:
+            #102b46 !important;
+
+          border:
+            1px solid rgba(132, 177, 218, 0.20) !important;
+
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-form-grid input::placeholder,
+        html[data-theme="dark"] .smart-dispatch-form-grid input::placeholder {
+          color: #849bb2 !important;
+          opacity: 1 !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-form-grid select option,
+        html[data-theme="dark"] .smart-dispatch-form-grid select option {
+          color: #eef6ff !important;
+          background: #0c243b !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-form-grid input:focus,
+        body[data-theme="dark"] .smart-dispatch-form-grid select:focus,
+        html[data-theme="dark"] .smart-dispatch-form-grid input:focus,
+        html[data-theme="dark"] .smart-dispatch-form-grid select:focus {
+          border-color: #3b92df !important;
+
+          box-shadow:
+            0 0 0 3px rgba(59, 146, 223, 0.11) !important;
+        }
+
+
+        /* RESULT CARD */
+
+        body[data-theme="dark"] .smart-dispatch-result-card,
+        html[data-theme="dark"] .smart-dispatch-result-card {
+          background:
+            radial-gradient(
+              circle at 50% 38%,
+              rgba(50, 125, 195, 0.07),
+              transparent 38%
+            ),
+            linear-gradient(
+              145deg,
+              #0d2238 0%,
+              #091c2f 100%
+            ) !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-empty,
+        html[data-theme="dark"] .smart-dispatch-empty {
+          color: #8198ae !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-empty svg,
+        html[data-theme="dark"] .smart-dispatch-empty svg {
+          color: #6f91b1 !important;
+          stroke: #6f91b1 !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-empty h3,
+        html[data-theme="dark"] .smart-dispatch-empty h3 {
+          color: #b9ccde !important;
+        }
+
+
+        /* SELECTED RESULT DETAILS */
+
+        body[data-theme="dark"] .smart-dispatch-result-card > h2,
+        html[data-theme="dark"] .smart-dispatch-result-card > h2 {
+          color: #f2f7fd !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-info,
+        html[data-theme="dark"] .smart-dispatch-info {
+          border-bottom-color:
+            rgba(132, 174, 214, 0.10) !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-info span,
+        html[data-theme="dark"] .smart-dispatch-info span {
+          color: #8fa7bf !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-info strong,
+        html[data-theme="dark"] .smart-dispatch-info strong {
+          color: #eef6ff !important;
+        }
+
+
+        /* RECOMMEND CHIP */
+
+        body[data-theme="dark"] .smart-dispatch-recommend,
+        html[data-theme="dark"] .smart-dispatch-recommend {
+          color: #3cd8a5 !important;
+
+          background:
+            rgba(16, 185, 129, 0.10) !important;
+
+          border:
+            1px solid rgba(16, 185, 129, 0.16) !important;
+        }
+
+
+        /* FLEET CARD */
+
+        body[data-theme="dark"] .smart-dispatch-fleet-card,
+        html[data-theme="dark"] .smart-dispatch-fleet-card {
+          background:
+            linear-gradient(
+              145deg,
+              #0d2238 0%,
+              #091c2f 100%
+            ) !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-truck-row,
+        html[data-theme="dark"] .smart-dispatch-truck-row {
+          color: #e9f3fd !important;
+
+          background:
+            linear-gradient(
+              145deg,
+              #102a44 0%,
+              #0b2137 100%
+            ) !important;
+
+          border:
+            1px solid rgba(132, 174, 214, 0.13) !important;
+
+          box-shadow:
+            0 8px 18px rgba(0, 0, 0, 0.12) !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-truck-row h4,
+        html[data-theme="dark"] .smart-dispatch-truck-row h4 {
+          color: #eef6ff !important;
+        }
+
+
+        body[data-theme="dark"] .smart-dispatch-truck-row p,
+        html[data-theme="dark"] .smart-dispatch-truck-row p {
+          color: #8fa7bf !important;
+        }
+
+
+        /* MOBILE COMPACT DARK MODE */
+
+        @media (max-width: 768px) {
+
+          body[data-theme="dark"] .smart-dispatch-card,
+          html[data-theme="dark"] .smart-dispatch-card {
+            padding: 14px !important;
+            border-radius: 18px !important;
+          }
+
+
+          body[data-theme="dark"] .smart-dispatch-form-grid input,
+          body[data-theme="dark"] .smart-dispatch-form-grid select,
+          html[data-theme="dark"] .smart-dispatch-form-grid input,
+          html[data-theme="dark"] .smart-dispatch-form-grid select {
+            background: #102b46 !important;
+          }
+
+
+          body[data-theme="dark"] .smart-dispatch-empty,
+          html[data-theme="dark"] .smart-dispatch-empty {
+            height: 135px !important;
+          }
+
+
+          body[data-theme="dark"] .smart-dispatch-fleet-card,
+          html[data-theme="dark"] .smart-dispatch-fleet-card {
+            padding: 13px !important;
+          }
+
+        }
+
+
       `}</style>
     </div>
   );

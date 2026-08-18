@@ -696,6 +696,146 @@ const OwnerLogin = () => {
           }
         }
 
+        /* =========================================================
+   MOBILE OWNER LOGIN
+   BACKGROUND CLEAN FIX
+========================================================= */
+
+@media (max-width: 768px) {
+
+  /* =========================================
+     REMOVE ORANGE / WHITE BACKGROUND PATCHES
+  ========================================= */
+
+  .owner-login-bg-glow-one,
+  .owner-login-bg-glow-two {
+    display: none !important;
+  }
+
+
+  /* =========================================
+     OWNER LOGIN FULL MOBILE BACKGROUND
+  ========================================= */
+
+  .owner-login-page {
+    width: 100% !important;
+
+    min-height: 100vh !important;
+
+    height: auto !important;
+
+    margin: 0 !important;
+
+    padding:
+      22px
+      16px
+      28px !important;
+
+    position: relative !important;
+
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+
+    background:
+      linear-gradient(
+        155deg,
+        #061727 0%,
+        #08253f 48%,
+        #071d31 100%
+      ) !important;
+  }
+
+
+  /* =========================================
+     REMOVE WHITE AREA BELOW PAGE
+  ========================================= */
+
+  .main-content:has(.owner-login-page) {
+    min-height: 100vh !important;
+
+    background:
+      linear-gradient(
+        155deg,
+        #061727 0%,
+        #08253f 48%,
+        #071d31 100%
+      ) !important;
+  }
+
+
+  .page-wrapper:has(.owner-login-page) {
+    background:
+      #061727 !important;
+  }
+
+
+  /* =========================================
+     CARD
+  ========================================= */
+
+  .owner-login-card {
+    position: relative !important;
+
+    z-index: 2 !important;
+
+    width: 100% !important;
+
+    max-width: 350px !important;
+
+    margin:
+      4px
+      auto
+      0 !important;
+
+    border-radius:
+      24px !important;
+
+    background:
+      linear-gradient(
+        150deg,
+        #0a263f 0%,
+        #071f34 100%
+      ) !important;
+
+    border:
+      1px solid
+      rgba(
+        116,
+        172,
+        225,
+        0.14
+      ) !important;
+
+    box-shadow:
+      0 22px 48px
+      rgba(
+        0,
+        0,
+        0,
+        0.25
+      ) !important;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+
+  .owner-login-page {
+    min-height: 100vh !important;
+
+    padding:
+      16px
+      12px
+      24px !important;
+  }
+
+}
+
       `}</style>
 
 
@@ -707,9 +847,15 @@ const OwnerLogin = () => {
         className="owner-login-page"
         style={styles.page}
       >
-        <div style={styles.bgGlowOne}></div>
+        <div 
+          className="owner-login-bg-glow-one" 
+          style={styles.bgGlowOne}>
+        </div>
 
-        <div style={styles.bgGlowTwo}></div>
+        <div 
+          style={styles.bgGlowTwo}
+          className="owner-login-bg-glow-two">           
+        </div>
 
 
         {/* =================================================

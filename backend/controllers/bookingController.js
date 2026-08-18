@@ -1,12 +1,51 @@
 const Booking = require("../models/Booking");
 const Notification = require("../models/Notification");
 const axios = require("axios");
-const { GST_PERCENTAGE } = require("../config/financeConfig");
+const crypto = require("crypto");
+const { GST_PERCENTAGE, DRIVER_SALARY_PERCENTAGE } = require("../config/financeConfig");
 
 const {
   makeWhatsAppLink,
   bookingConfirmedMessage,
 } = require("../utils/whatsappHelper");
+
+const PAYMENT_MODES = new Set(["Cash", "UPI", "Bank Transfer", "Credit"]);
+
+const roundMoney = (value) => Number(Number(value || 0).toFixed(2));
+
+const auditActor = (req) =>
+  String(
+    req.user?.name ||
+    req.user?.fullName ||
+    req.user?.email ||
+    req.user?.role ||
+    "Owner"
+  );
+
+const getFinanceSnapshot = (booking) => {
+  const baseAmount = roundMoney(booking?.amount || 0);
+  const storedPercentage = Number(booking?.payment?.gstPercentage);
+  const gstPercentage = Number.isFinite(storedPercentage)
+    ? storedPercentage
+    : GST_PERCENTAGE;
+
+  const storedGst = Number(booking?.payment?.gstAmount);
+  const gstAmount = gstPercentage === 0
+    ? 0
+    : (Number.isFinite(storedGst) && storedGst > 0
+        ? roundMoney(storedGst)
+        : roundMoney((baseAmount * gstPercentage) / 100));
+
+  const storedTotal = Number(booking?.payment?.totalWithGST);
+  const totalWithGST = Number.isFinite(storedTotal) && storedTotal > 0
+    ? roundMoney(storedTotal)
+    : roundMoney(baseAmount + gstAmount);
+
+  return { baseAmount, gstPercentage, gstAmount, totalWithGST };
+};
+
+const makeReceiptId = (prefix = "PAY") =>
+  `${prefix}-${Date.now()}-${crypto.randomBytes(2).toString("hex").toUpperCase()}`;
 
 const sendCompanyWhatsApp = async (phone, text) => {
   try {
@@ -30,18 +69,18 @@ const sendCompanyWhatsApp = async (phone, text) => {
 };
 
 const generateBookingId = () => {
-  return "ET" + Date.now().toString().slice(-6);
+  const timePart = Date.now().toString(36).toUpperCase().slice(-6);
+  const randomPart = crypto.randomBytes(3).toString("hex").toUpperCase();
+  return `ET-${timePart}-${randomPart}`;
 };
 
-const generateOtp = () => {
-  return Math.floor(1000 + Math.random() * 9000).toString();
-};
+const generateOtp = () => crypto.randomInt(1000, 10000).toString();
 
 
 
 exports.getBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find()
+    const bookings = await Booking.find({ isDeleted: { $ne: true } })
       .populate("truck")
       .populate("driver")
       .sort({ createdAt: -1 });
@@ -63,32 +102,35 @@ NEW AI SMART DISPATCH UPDATE
 
 exports.updatePayment = async (req, res) => {
   try {
-    const booking = await Booking.findById(req.params.id);
+    const booking = await Booking.findOne({
+      _id: req.params.id,
+      isDeleted: { $ne: true },
+    });
 
     if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
+      return res.status(404).json({ success: false, message: "Booking not found" });
     }
 
     const paymentMode = String(
       req.body.paymentMode || booking.payment?.paymentMode || "Cash"
     );
-    const receivedAmount = Number(req.body.receivedAmount || 0);
 
-    if (!Number.isFinite(receivedAmount) || receivedAmount < 0) {
+    if (!PAYMENT_MODES.has(paymentMode)) {
+      return res.status(400).json({ success: false, message: "Invalid payment mode" });
+    }
+
+    const receivedAmount = roundMoney(req.body.receivedAmount);
+
+    if (!Number.isFinite(receivedAmount) || receivedAmount <= 0) {
       return res.status(400).json({
         success: false,
-        message: "Received amount must be 0 or greater",
+        message: "Received amount must be greater than 0",
       });
     }
 
-    const baseAmount = Number(booking.amount || 0);
-    const gstAmount = (baseAmount * GST_PERCENTAGE) / 100;
-    const totalWithGST = baseAmount + gstAmount;
-    const alreadyPaid = Number(booking.payment?.advanceAmount || 0);
-    const pendingBeforePayment = Math.max(totalWithGST - alreadyPaid, 0);
+    const { gstPercentage, gstAmount, totalWithGST } = getFinanceSnapshot(booking);
+    const alreadyPaid = roundMoney(booking.payment?.advanceAmount || 0);
+    const pendingBeforePayment = roundMoney(Math.max(totalWithGST - alreadyPaid, 0));
 
     if (receivedAmount > pendingBeforePayment + 0.01) {
       return res.status(400).json({
@@ -97,43 +139,71 @@ exports.updatePayment = async (req, res) => {
       });
     }
 
-    const totalPaid = Math.min(alreadyPaid + receivedAmount, totalWithGST);
-    const balanceAmount = Math.max(totalWithGST - totalPaid, 0);
+    const totalPaid = roundMoney(alreadyPaid + receivedAmount);
+    const balanceAmount = roundMoney(Math.max(totalWithGST - totalPaid, 0));
     const paymentStatus =
-      totalPaid <= 0 ? "Pending" :
-      balanceAmount > 0.01 ? "Partial" : "Paid";
+      totalPaid <= 0 ? "Pending" : balanceAmount > 0.01 ? "Partial" : "Paid";
 
-    if (!booking.payment) booking.payment = {};
-    if (!Array.isArray(booking.payment.paymentHistory)) booking.payment.paymentHistory = [];
+    const receiptId = makeReceiptId("PAY");
+    const collectedBy = auditActor(req);
+    const remarks = String(req.body.remarks || "").trim();
 
-    booking.payment.paymentMode = paymentMode;
-    booking.payment.advanceAmount = Number(totalPaid.toFixed(2));
-    booking.payment.balanceAmount = Number(balanceAmount.toFixed(2));
-    booking.payment.paymentStatus = paymentStatus;
-    booking.payment.gstPercentage = GST_PERCENTAGE;
-    booking.payment.gstAmount = Number(gstAmount.toFixed(2));
-    booking.payment.totalWithGST = Number(totalWithGST.toFixed(2));
+    const concurrencyFilter = {
+      _id: booking._id,
+      isDeleted: { $ne: true },
+      ...(booking.payment?.advanceAmount == null
+        ? { $or: [
+            { "payment.advanceAmount": { $exists: false } },
+            { "payment.advanceAmount": 0 },
+          ] }
+        : { "payment.advanceAmount": alreadyPaid }),
+    };
 
-    if (receivedAmount > 0) {
-      booking.payment.paymentHistory.push({
-        amount: Number(receivedAmount.toFixed(2)),
-        paymentMode,
-        paidAt: new Date(),
+    const updatedBooking = await Booking.findOneAndUpdate(
+      concurrencyFilter,
+      {
+        $set: {
+          "payment.paymentMode": paymentMode,
+          "payment.advanceAmount": totalPaid,
+          "payment.balanceAmount": balanceAmount,
+          "payment.paymentStatus": paymentStatus,
+          "payment.gstPercentage": gstPercentage,
+          "payment.gstAmount": gstAmount,
+          "payment.totalWithGST": totalWithGST,
+        },
+        $push: {
+          "payment.paymentHistory": {
+            amount: receivedAmount,
+            paymentMode,
+            receiptId,
+            collectedBy,
+            remarks,
+            balanceAfter: balanceAmount,
+            paidAt: new Date(),
+          },
+        },
+      },
+      { returnDocument: "after" }
+    );
+
+    if (!updatedBooking) {
+      return res.status(409).json({
+        success: false,
+        message: "Payment changed in another request. Refresh and try again.",
       });
     }
 
-    await booking.save();
-    await booking.populate("truck");
-    await booking.populate("driver");
+    await updatedBooking.populate("truck");
+    await updatedBooking.populate("driver");
 
     return res.json({
       success: true,
       message: "Payment updated successfully",
-      booking,
+      receiptId,
+      booking: updatedBooking,
     });
   } catch (error) {
     console.error("Payment update error:", error);
-
     return res.status(500).json({
       success: false,
       message: "Payment update failed",
@@ -145,20 +215,39 @@ exports.updatePayment = async (req, res) => {
 // DELETE BOOKING
 exports.deleteBooking = async (req, res) => {
   try {
-    const booking = await Booking.findById(req.params.id);
+    const booking = await Booking.findOne({
+      _id: req.params.id,
+      isDeleted: { $ne: true },
+    });
 
     if (!booking) {
       return res.status(404).json({ success: false, message: "Booking not found" });
     }
 
-    if (booking.status === "In Transit") {
+    if (booking.status !== "Booked") {
       return res.status(400).json({
         success: false,
-        message: "An in-transit booking cannot be deleted",
+        message: "Only an unstarted booked trip can be cancelled",
       });
     }
 
-    await booking.deleteOne();
+    const collected = roundMoney(booking.payment?.advanceAmount || 0);
+    const hasPaymentHistory = Array.isArray(booking.payment?.paymentHistory) &&
+      booking.payment.paymentHistory.length > 0;
+
+    if (collected > 0 || hasPaymentHistory) {
+      return res.status(400).json({
+        success: false,
+        message: "A booking with payment activity cannot be deleted. Keep it for audit history.",
+      });
+    }
+
+    booking.isDeleted = true;
+    booking.deletedAt = new Date();
+    booking.deletedBy = auditActor(req);
+    booking.deleteReason = String(req.body?.reason || "Cancelled before dispatch").trim();
+    await booking.save();
+
     return res.json({ success: true, message: "Booking cancelled successfully" });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -170,7 +259,8 @@ exports.createBooking = async (req, res) => {
     const getCoordinates = async (place) => {
       try {
         const response = await axios.get("https://nominatim.openstreetmap.org/search", {
-          params: { q: place, format: "json", limit: 1 }
+          params: { q: place, format: "json", limit: 1 },
+          headers: { "User-Agent": "EagleTransport/1.0" },
         });
         if (!response.data.length) return null;
         return { lat: parseFloat(response.data[0].lat), lng: parseFloat(response.data[0].lon) };
@@ -226,6 +316,7 @@ exports.createBooking = async (req, res) => {
         gstPercentage: GST_PERCENTAGE,
         gstAmount: Number(gstAmount.toFixed(2)),
         totalWithGST: Number(totalWithGST.toFixed(2)),
+        driverSalaryPercentage: DRIVER_SALARY_PERCENTAGE,
       },
     });
 

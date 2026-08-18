@@ -450,7 +450,7 @@ const TrucksAndDrivers = () => {
               {busy ? 'Assigned' : 'Available'}
             </span>
 
-            <span style={styles.healthBadge}>
+            <span className="td-health-badge" style={styles.healthBadge}>
               {truck.health === 'Good' ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
               {truck.health}
             </span>
@@ -458,7 +458,7 @@ const TrucksAndDrivers = () => {
 
           <div style={styles.imageBottomContent}>
             <h3 style={styles.truckTitle}>{truck.name || getTruckName(truck)}</h3>
-            <span style={styles.truckNumber}>
+            <span className="td-truck-number-badge" style={styles.truckNumber}>
               {truck.number || truck.vehicleNumber || truck.truckNumber || 'No Number'}
             </span>
           </div>
@@ -2552,6 +2552,89 @@ const responsiveCss = `
       min-height: 39px !important;
     }
   }
+
+  /* =========================================================
+     DARK MODE - TRUCK IMAGE BADGES
+     Fixes the last white patches on mobile/desktop.
+  ========================================================= */
+
+  body[data-theme="dark"] .td-health-badge {
+    background:
+      rgba(7, 27, 46, 0.88) !important;
+
+    color:
+      #dff7ee !important;
+
+    border:
+      1px solid rgba(92, 212, 168, 0.20) !important;
+
+    box-shadow:
+      0 8px 20px rgba(0, 0, 0, 0.24) !important;
+
+    backdrop-filter:
+      blur(10px) !important;
+
+    -webkit-backdrop-filter:
+      blur(10px) !important;
+  }
+
+
+  body[data-theme="dark"] .td-health-badge svg {
+    color:
+      #22d3a0 !important;
+
+    stroke:
+      #22d3a0 !important;
+  }
+
+
+  body[data-theme="dark"] .td-truck-number-badge {
+    background:
+      rgba(7, 27, 46, 0.90) !important;
+
+    color:
+      #eef6ff !important;
+
+    border:
+      1px solid rgba(126, 178, 228, 0.18) !important;
+
+    box-shadow:
+      0 8px 20px rgba(0, 0, 0, 0.25) !important;
+
+    backdrop-filter:
+      blur(10px) !important;
+
+    -webkit-backdrop-filter:
+      blur(10px) !important;
+  }
+
+
+  /* Mobile compact polish */
+
+  @media (max-width: 768px) {
+
+    body[data-theme="dark"] .td-health-badge {
+      padding:
+        6px 9px !important;
+
+      font-size:
+        10px !important;
+    }
+
+
+    body[data-theme="dark"] .td-truck-number-badge {
+      padding:
+        6px 9px !important;
+
+      font-size:
+        10px !important;
+
+      border-radius:
+        10px !important;
+    }
+
+  }
+
 `
 
 

@@ -327,7 +327,7 @@ const EmergencyAlerts = () => {
     };
 
   return (
-    <>
+    <div className="ea-page">
       <div
         className="ea-header"
         style={{
@@ -780,7 +780,7 @@ const EmergencyAlerts = () => {
       )}
 
       <style>{mobileCss}</style>
-    </>
+    </div>
   );
 };
 
@@ -1077,6 +1077,181 @@ const mobileCss = `
       transition: none !important;
     }
   }
+
+  /* =========================================================
+     EMERGENCY ALERTS - PREMIUM COMPACT THEME
+     Light + Dark / Desktop + Mobile
+  ========================================================= */
+
+  .ea-page {
+    width: 100%;
+    min-width: 0;
+    min-height: calc(100dvh - 118px);
+    box-sizing: border-box;
+  }
+
+  .ea-empty {
+    border: 1px solid rgba(15, 74, 136, .08);
+    box-shadow: 0 10px 28px rgba(15, 59, 115, .06);
+  }
+
+  .ea-alert-card {
+    box-shadow: 0 12px 30px rgba(15, 59, 115, .07);
+  }
+
+  /* DARK MODE */
+  body[data-theme="dark"] .ea-page,
+  html[data-theme="dark"] .ea-page {
+    color: #dce9f6;
+  }
+
+  body[data-theme="dark"] .ea-title,
+  html[data-theme="dark"] .ea-title {
+    color: #f3f8ff !important;
+  }
+
+  body[data-theme="dark"] .ea-header p,
+  html[data-theme="dark"] .ea-header p,
+  body[data-theme="dark"] .ea-description,
+  html[data-theme="dark"] .ea-description {
+    color: #91a8bf !important;
+  }
+
+  body[data-theme="dark"] .ea-empty,
+  html[data-theme="dark"] .ea-empty {
+    background: #0d2238 !important;
+    color: #b8cbe0 !important;
+    border-color: rgba(132, 174, 214, .16) !important;
+    box-shadow: 0 12px 28px rgba(0,0,0,.18) !important;
+  }
+
+  body[data-theme="dark"] .ea-alert-card,
+  html[data-theme="dark"] .ea-alert-card {
+    background: #0d2238 !important;
+    color: #eaf3fc !important;
+    border-top: 1px solid rgba(132,174,214,.13) !important;
+    border-right: 1px solid rgba(132,174,214,.13) !important;
+    border-bottom: 1px solid rgba(132,174,214,.13) !important;
+    box-shadow: 0 14px 32px rgba(0,0,0,.20) !important;
+  }
+
+  body[data-theme="dark"] .ea-alert-heading h3,
+  html[data-theme="dark"] .ea-alert-heading h3 {
+    color: #f1f7fd !important;
+  }
+
+  body[data-theme="dark"] .ea-meta,
+  html[data-theme="dark"] .ea-meta {
+    color: #91a8bf !important;
+  }
+
+  body[data-theme="dark"] .ea-meta span,
+  html[data-theme="dark"] .ea-meta span {
+    background: #102840 !important;
+    color: #b9cbe0 !important;
+    border-color: rgba(132,174,214,.15) !important;
+  }
+
+  body[data-theme="dark"] .ea-meta svg,
+  html[data-theme="dark"] .ea-meta svg {
+    color: #74baff !important;
+  }
+
+  body[data-theme="dark"] .ea-details-action,
+  html[data-theme="dark"] .ea-details-action {
+    background: #102840 !important;
+    color: #a8d3fb !important;
+    border-color: rgba(111,177,239,.20) !important;
+  }
+
+  body[data-theme="dark"] .ea-download-btn,
+  html[data-theme="dark"] .ea-download-btn {
+    background: #102840 !important;
+    color: #eef6ff !important;
+    border: 1px solid rgba(132,174,214,.16) !important;
+  }
+
+  body[data-theme="dark"] .ea-modal,
+  html[data-theme="dark"] .ea-modal {
+    background: #0d2238 !important;
+    color: #eef6ff !important;
+    border: 1px solid rgba(132,174,214,.16) !important;
+  }
+
+  body[data-theme="dark"] .ea-modal h2,
+  html[data-theme="dark"] .ea-modal h2 {
+    color: #f3f8ff !important;
+  }
+
+  body[data-theme="dark"] .ea-close-btn,
+  html[data-theme="dark"] .ea-close-btn {
+    background: #102840 !important;
+    color: #dce9f6 !important;
+  }
+
+  body[data-theme="dark"] .ea-input,
+  html[data-theme="dark"] .ea-input {
+    background: #0c243b !important;
+    color: #eef6ff !important;
+    border-color: rgba(132,174,214,.18) !important;
+  }
+
+  body[data-theme="dark"] .ea-input::placeholder,
+  html[data-theme="dark"] .ea-input::placeholder {
+    color: #7891aa !important;
+  }
+
+  @media (min-width: 769px) {
+    .ea-header {
+      margin-bottom: 16px !important;
+    }
+
+    .ea-title {
+      font-size: clamp(1.7rem, 2.4vw, 2rem) !important;
+    }
+
+    .ea-download-btn {
+      min-height: 44px !important;
+      padding: 0 16px !important;
+      border-radius: 13px !important;
+    }
+
+    .ea-alert-list {
+      gap: 14px !important;
+    }
+
+    .ea-alert-card {
+      padding: 20px !important;
+      border-radius: 20px !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .ea-page {
+      min-height: calc(100dvh - 88px) !important;
+      padding-bottom: 16px !important;
+    }
+
+    /* MUST override the component's earlier light mobile rules */
+    body[data-theme="dark"] .ea-title,
+    html[data-theme="dark"] .ea-title {
+      color: #f3f8ff !important;
+    }
+
+    body[data-theme="dark"] .ea-meta span,
+    html[data-theme="dark"] .ea-meta span {
+      background: #102840 !important;
+      border-color: rgba(132,174,214,.15) !important;
+    }
+
+    body[data-theme="dark"] .ea-details-action,
+    html[data-theme="dark"] .ea-details-action {
+      background: #102840 !important;
+      color: #a8d3fb !important;
+      border-color: rgba(111,177,239,.20) !important;
+    }
+  }
+
 `;
 
 const styles = {

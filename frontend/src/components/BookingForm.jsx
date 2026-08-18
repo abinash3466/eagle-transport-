@@ -1022,6 +1022,118 @@ const BookingForm = () => {
             }
           }
 
+
+          /* =========================================================
+             BOOKING FORM — DARK MODE WHITE SURFACE FIX
+             UI ONLY.
+             No calculations, APIs, GST, distance or form logic changed.
+          ========================================================= */
+
+          html[data-eagle-theme="dark"] .booking-form-wrapper,
+          body[data-eagle-theme="dark"] .booking-form-wrapper {
+            background: #081827 !important;
+            background-color: #081827 !important;
+          }
+
+          html[data-eagle-theme="dark"] .booking-form-card,
+          body[data-eagle-theme="dark"] .booking-form-card {
+            background:
+              linear-gradient(
+                145deg,
+                #0a1d30 0%,
+                #071725 100%
+              ) !important;
+
+            border:
+              1px solid rgba(125, 171, 214, 0.16) !important;
+
+            box-shadow:
+              0 18px 40px rgba(0, 0, 0, 0.24),
+              inset 0 1px 0 rgba(255,255,255,0.025) !important;
+          }
+
+          html[data-eagle-theme="dark"] .booking-form-title,
+          body[data-eagle-theme="dark"] .booking-form-title {
+            color: #f4f8fd !important;
+          }
+
+          html[data-eagle-theme="dark"] .booking-form-subtitle,
+          body[data-eagle-theme="dark"] .booking-form-subtitle {
+            color: #94a9bd !important;
+          }
+
+          html[data-eagle-theme="dark"] .booking-label,
+          body[data-eagle-theme="dark"] .booking-label {
+            color: #dce9f5 !important;
+          }
+
+          html[data-eagle-theme="dark"] .booking-label svg,
+          body[data-eagle-theme="dark"] .booking-label svg {
+            color: #8ebce6 !important;
+            stroke: #8ebce6 !important;
+          }
+
+          html[data-eagle-theme="dark"] .booking-form-card input,
+          html[data-eagle-theme="dark"] .booking-form-card select,
+          body[data-eagle-theme="dark"] .booking-form-card input,
+          body[data-eagle-theme="dark"] .booking-form-card select {
+            color: #eef6ff !important;
+            background: #0b2034 !important;
+            border-color: rgba(125, 171, 214, 0.18) !important;
+          }
+
+          html[data-eagle-theme="dark"] .booking-form-card input::placeholder,
+          body[data-eagle-theme="dark"] .booking-form-card input::placeholder {
+            color: #7f95aa !important;
+            opacity: 1 !important;
+          }
+
+          html[data-eagle-theme="dark"] .booking-form-card select option,
+          body[data-eagle-theme="dark"] .booking-form-card select option {
+            color: #eef6ff !important;
+            background: #0b2034 !important;
+          }
+
+          html[data-eagle-theme="dark"] .booking-form-grid > div:last-child,
+          body[data-eagle-theme="dark"] .booking-form-grid > div:last-child {
+            color: #8fa7bd !important;
+            background: rgba(37, 99, 235, 0.08) !important;
+          }
+
+          /* Mobile: override the existing white mobile card rule */
+          @media (max-width: 768px) {
+            html[data-eagle-theme="dark"] .booking-form-wrapper,
+            body[data-eagle-theme="dark"] .booking-form-wrapper {
+              background: #081827 !important;
+              padding: 0 !important;
+            }
+
+            html[data-eagle-theme="dark"] .booking-form-card,
+            body[data-eagle-theme="dark"] .booking-form-card {
+              background:
+                linear-gradient(
+                  145deg,
+                  #0a1d30 0%,
+                  #071725 100%
+                ) !important;
+
+              border:
+                1px solid rgba(125, 171, 214, 0.16) !important;
+
+              box-shadow:
+                0 14px 30px rgba(0,0,0,0.22) !important;
+            }
+
+            html[data-eagle-theme="dark"] .booking-form-card input,
+            html[data-eagle-theme="dark"] .booking-form-card select,
+            body[data-eagle-theme="dark"] .booking-form-card input,
+            body[data-eagle-theme="dark"] .booking-form-card select {
+              background: #0b2034 !important;
+              border-color: rgba(125, 171, 214, 0.18) !important;
+            }
+          }
+
+
         `}</style>
       </div>
     </div>

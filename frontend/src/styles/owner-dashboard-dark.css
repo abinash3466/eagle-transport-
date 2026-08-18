@@ -1,0 +1,3083 @@
+body[data-theme="dark"] .owner-dashboard-main {
+
+    --owner-dark-page: #061524;
+
+    --owner-dark-section: #091c2f;
+
+    --owner-dark-card: #0d2238;
+
+    --owner-dark-card-soft: #102842;
+
+    --owner-dark-input: #0c243b;
+
+    --owner-dark-border:
+        rgba(137, 177, 218, 0.14);
+
+    --owner-dark-border-strong:
+        rgba(137, 177, 218, 0.22);
+
+    --owner-dark-title: #f3f8ff;
+
+    --owner-dark-text: #d5e3f1;
+
+    --owner-dark-muted: #91a7bc;
+
+    --owner-dark-blue: #62adf3;
+
+    --owner-dark-orange: #ff861d;
+
+    --owner-dark-green: #20d49b;
+
+
+    color:
+        var(--owner-dark-text) !important;
+
+    background:
+        var(--owner-dark-page) !important;
+}
+
+
+/* =========================================================
+   MAIN CONTENT BACKGROUND
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-content,
+
+body[data-theme="dark"] .owner-dashboard-content-outer {
+
+    background:
+        var(--owner-dark-page) !important;
+}
+
+
+/* =========================================================
+   GENERAL CARD
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main .card,
+
+body[data-theme="dark"] .owner-dashboard-main .glass-card {
+
+    color:
+        var(--owner-dark-text) !important;
+
+    background:
+        linear-gradient(145deg,
+            #0e243a 0%,
+            #0a1c2f 100%) !important;
+
+    border:
+        1px solid var(--owner-dark-border) !important;
+
+    box-shadow:
+        0 14px 32px rgba(0,
+            0,
+            0,
+            .18) !important;
+}
+
+
+/* =========================================================
+   GLOBAL HEADINGS
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main h1,
+
+body[data-theme="dark"] .owner-dashboard-main h2,
+
+body[data-theme="dark"] .owner-dashboard-main h3,
+
+body[data-theme="dark"] .owner-dashboard-main h4 {
+
+    color:
+        var(--owner-dark-title) !important;
+}
+
+
+/* =========================================================
+   GLOBAL NORMAL TEXT
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main p {
+
+    color:
+        var(--owner-dark-muted);
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main input,
+
+body[data-theme="dark"] .owner-dashboard-main select,
+
+body[data-theme="dark"] .owner-dashboard-main textarea {
+
+    color:
+        #edf6ff !important;
+
+    background:
+        var(--owner-dark-input) !important;
+
+    border-color:
+        var(--owner-dark-border-strong) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,
+            255,
+            255,
+            .02) !important;
+}
+
+
+body[data-theme="dark"] .owner-dashboard-main input::placeholder,
+
+body[data-theme="dark"] .owner-dashboard-main textarea::placeholder {
+
+    color:
+        #7890a8 !important;
+}
+
+
+/* focus */
+
+body[data-theme="dark"] .owner-dashboard-main input:focus,
+
+body[data-theme="dark"] .owner-dashboard-main select:focus,
+
+body[data-theme="dark"] .owner-dashboard-main textarea:focus {
+
+    border-color:
+        #287fc9 !important;
+
+    outline:
+        none !important;
+
+    box-shadow:
+        0 0 0 3px rgba(40,
+            127,
+            201,
+            .12) !important;
+}
+
+
+/* options */
+
+body[data-theme="dark"] .owner-dashboard-main option {
+
+    color:
+        #edf6ff;
+
+    background:
+        #0c243b;
+}
+
+
+/* =========================================================
+   AUTOFILL
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main input:-webkit-autofill,
+
+body[data-theme="dark"] .owner-dashboard-main input:-webkit-autofill:hover,
+
+body[data-theme="dark"] .owner-dashboard-main input:-webkit-autofill:focus {
+
+    -webkit-text-fill-color:
+        #edf6ff !important;
+
+    -webkit-box-shadow:
+        0 0 0 1000px #0c243b inset !important;
+
+    caret-color:
+        #ffffff;
+}
+
+
+/* =========================================================
+   ADD TRUCK + ADD DRIVER
+========================================================= */
+
+body[data-theme="dark"] .owner-add-form-wrap {
+
+    background:
+        transparent !important;
+}
+
+
+/* main form card */
+
+body[data-theme="dark"] .owner-add-form-card {
+
+    color:
+        var(--owner-dark-text) !important;
+
+    background:
+        linear-gradient(145deg,
+            #0c2136,
+            #081a2c) !important;
+
+    border:
+        1px solid var(--owner-dark-border) !important;
+
+    box-shadow:
+        0 20px 44px rgba(0,
+            0,
+            0,
+            .22) !important;
+}
+
+
+/* headings */
+
+body[data-theme="dark"] .owner-add-form-title {
+
+    color:
+        #f3f8ff !important;
+}
+
+
+body[data-theme="dark"] .owner-add-form-subtitle {
+
+    color:
+        #91a7bc !important;
+}
+
+
+/* form controls */
+
+body[data-theme="dark"] .owner-add-form-grid input,
+
+body[data-theme="dark"] .owner-add-form-grid select,
+
+body[data-theme="dark"] .owner-add-form-grid textarea {
+
+    color:
+        #edf6ff !important;
+
+    background:
+        #0d2944 !important;
+
+    border:
+        1px solid rgba(129,
+            174,
+            218,
+            .18) !important;
+
+    border-radius:
+        14px !important;
+}
+
+
+body[data-theme="dark"] .owner-add-form-grid input::placeholder,
+
+body[data-theme="dark"] .owner-add-form-grid textarea::placeholder {
+
+    color:
+        #8198ae !important;
+}
+
+
+/* =========================================================
+   OVERVIEW QUICK ACTIONS
+========================================================= */
+
+body[data-theme="dark"] .owner-overview button {
+
+    border-color:
+        var(--owner-dark-border) !important;
+}
+
+
+/*
+  Overview quick cards use inline white backgrounds,
+  so target buttons inside quick actions with !important.
+*/
+
+body[data-theme="dark"] .owner-overview .overview-quick-actions button {
+
+    color:
+        var(--owner-dark-text) !important;
+
+    background:
+        linear-gradient(145deg,
+            #102943,
+            #0b2035) !important;
+
+    border:
+        1px solid var(--owner-dark-border) !important;
+
+    box-shadow:
+        0 10px 24px rgba(0,
+            0,
+            0,
+            .16) !important;
+}
+
+
+body[data-theme="dark"] .owner-overview .overview-quick-actions button:hover {
+
+    background:
+        linear-gradient(145deg,
+            #14324f,
+            #0c253c) !important;
+}
+
+
+/* =========================================================
+   OVERVIEW CHARTS
+========================================================= */
+
+body[data-theme="dark"] .owner-overview .overview-charts .card {
+
+    background:
+        #0d2238 !important;
+
+    border:
+        1px solid var(--owner-dark-border) !important;
+}
+
+
+/* Recharts labels */
+
+body[data-theme="dark"] .owner-overview .recharts-text {
+
+    fill:
+        #8fa4ba !important;
+}
+
+
+body[data-theme="dark"] .owner-overview .recharts-cartesian-grid line {
+
+    stroke:
+        rgba(142,
+            173,
+            205,
+            .12) !important;
+}
+
+
+/* tooltip */
+
+body[data-theme="dark"] .owner-overview .recharts-default-tooltip {
+
+    color:
+        #edf6ff !important;
+
+    background:
+        #0b2035 !important;
+
+    border:
+        1px solid var(--owner-dark-border) !important;
+
+    border-radius:
+        12px !important;
+}
+
+
+/* =========================================================
+   TRUCKS AND DRIVERS
+========================================================= */
+
+/* cards */
+
+body[data-theme="dark"] .owner-dashboard-main .truck-card,
+
+body[data-theme="dark"] .owner-dashboard-main .driver-card,
+
+body[data-theme="dark"] .owner-dashboard-main .fleet-card {
+
+    color:
+        var(--owner-dark-text) !important;
+
+    background:
+        #0d2238 !important;
+
+    border:
+        1px solid var(--owner-dark-border) !important;
+}
+
+
+/* white information tiles inside truck card */
+
+body[data-theme="dark"] .owner-dashboard-main .truck-card>div,
+
+body[data-theme="dark"] .owner-dashboard-main .driver-card>div {
+
+    border-color:
+        var(--owner-dark-border) !important;
+}
+
+
+/* =========================================================
+   AVAILABLE FLEET / DRIVER TABS
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main button {
+
+    transition:
+        background .18s ease,
+        color .18s ease,
+        border-color .18s ease;
+}
+
+
+/* =========================================================
+   TRUCK DETAILS INFORMATION BOXES
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main .truck-details-modal-grid>div {
+
+    background:
+        #102840 !important;
+
+    border:
+        1px solid var(--owner-dark-border) !important;
+}
+
+
+/* =========================================================
+   LIVE BOOKINGS
+========================================================= */
+
+/* white booking cards */
+
+body[data-theme="dark"] .owner-dashboard-main .live-bookings-card,
+
+body[data-theme="dark"] .owner-dashboard-main .booking-card {
+
+    color:
+        var(--owner-dark-text) !important;
+
+    background:
+        #0d2238 !important;
+
+    border:
+        1px solid var(--owner-dark-border) !important;
+}
+
+
+/* fallback for inline white cards */
+
+body[data-theme="dark"] .owner-dashboard-main .glass-card {
+
+    background:
+        #0d2238 !important;
+}
+
+
+/* =========================================================
+   LIVE BOOKINGS SEARCH BOX
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main input[type="search"] {
+
+    color:
+        #edf6ff !important;
+
+    background:
+        #0b2238 !important;
+}
+
+
+/* =========================================================
+   BOOKING DETAILS INFORMATION TILES
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main .booking-info-grid>div,
+
+body[data-theme="dark"] .owner-dashboard-main .booking-details-grid>div {
+
+    color:
+        var(--owner-dark-text) !important;
+
+    background:
+        #102840 !important;
+
+    border:
+        1px solid var(--owner-dark-border) !important;
+}
+
+
+/* =========================================================
+   PAYMENT / TRIP STATUS PANELS
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main .payment-details,
+
+body[data-theme="dark"] .owner-dashboard-main .trip-status,
+
+body[data-theme="dark"] .owner-dashboard-main .payment-card {
+
+    color:
+        var(--owner-dark-text) !important;
+
+    background:
+        #0d263e !important;
+
+    border:
+        1px solid var(--owner-dark-border) !important;
+}
+
+
+/* =========================================================
+   EMPTY STATES
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main .empty-state,
+
+body[data-theme="dark"] .owner-dashboard-main .empty-box {
+
+    color:
+        #9eb1c4 !important;
+
+    background:
+        #0e263e !important;
+
+    border:
+        1px solid var(--owner-dark-border) !important;
+}
+
+
+/* =========================================================
+   GENERIC WHITE INLINE CARD FALLBACK
+   MOBILE DASHBOARD ONLY
+========================================================= */
+
+@media (max-width: 768px) {
+
+    /*
+    This catches white cards rendered with inline style
+    inside dashboard without affecting buttons like Delete.
+  */
+
+    body[data-theme="dark"] .owner-dashboard-main .card {
+
+        color:
+            var(--owner-dark-text) !important;
+
+        background:
+            #0d2238 !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-main .glass-card {
+
+        color:
+            var(--owner-dark-text) !important;
+
+        background:
+            #0d2238 !important;
+    }
+
+
+    /* =====================================================
+     ADD DRIVER / ADD TRUCK
+  ===================================================== */
+
+    body[data-theme="dark"] .owner-add-form-card {
+
+        background:
+            linear-gradient(150deg,
+                #0d243a,
+                #091c2f) !important;
+    }
+
+
+    body[data-theme="dark"] .owner-add-form-grid input,
+
+    body[data-theme="dark"] .owner-add-form-grid select,
+
+    body[data-theme="dark"] .owner-add-form-grid textarea {
+
+        color:
+            #eaf4ff !important;
+
+        background:
+            #102c48 !important;
+
+        border-color:
+            rgba(136,
+                180,
+                222,
+                .18) !important;
+    }
+
+
+    /* =====================================================
+     OVERVIEW ACTION CARDS
+  ===================================================== */
+
+    body[data-theme="dark"] .owner-overview .overview-quick-actions button {
+
+        background:
+            linear-gradient(145deg,
+                #112b46,
+                #0c2238) !important;
+    }
+
+
+    body[data-theme="dark"] .owner-overview .overview-quick-actions h4 {
+
+        color:
+            #edf6ff !important;
+    }
+
+
+    body[data-theme="dark"] .owner-overview .overview-quick-actions p {
+
+        color:
+            #8da4bb !important;
+    }
+
+
+    /* =====================================================
+     CHARTS
+  ===================================================== */
+
+    body[data-theme="dark"] .owner-overview .overview-charts .card {
+
+        background:
+            #0c2238 !important;
+    }
+
+
+    /* =====================================================
+     ALL TEXT CONTRAST
+  ===================================================== */
+
+    body[data-theme="dark"] .owner-dashboard-main strong {
+
+        color:
+            #eef6ff;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-main small {
+
+        color:
+            #8da4bb;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+
+    body[data-theme="dark"] .owner-dashboard-main {
+
+        background:
+            #061524 !important;
+    }
+
+
+    body[data-theme="dark"] .owner-add-form-card,
+
+    body[data-theme="dark"] .owner-overview .card,
+
+    body[data-theme="dark"] .owner-dashboard-main .glass-card {
+
+        border-radius:
+            18px !important;
+    }
+
+}
+
+
+/* =====================================================================
+   FINAL DARK MODE OVERRIDES
+   IMPORTANT:
+   These rules intentionally come LAST because TrucksAndDrivers and
+   LiveBookings use many React inline light backgrounds (#fff / #f8fbff).
+   !important + structural selectors override those light inline styles.
+===================================================================== */
+
+
+/* =====================================================================
+   SAVED DASHBOARD PREFERENCES
+   Moved here from Settings.jsx
+===================================================================== */
+
+body[data-dashboard-density="compact"] .owner-dashboard-content-outer {
+    padding: 8px !important;
+}
+
+body[data-dashboard-density="compact"] .owner-dashboard-content {
+    padding: 10px !important;
+    border-radius: 18px !important;
+}
+
+body[data-dashboard-density="compact"] .owner-overview {
+    gap: 14px !important;
+}
+
+body[data-show-quickstats="false"] .owner-dashboard-quickstats {
+    display: none !important;
+}
+
+body[data-reduced-motion="true"] *,
+body[data-reduced-motion="true"] *::before,
+body[data-reduced-motion="true"] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+}
+
+
+/* =====================================================================
+   ROOT VARIABLES - DARK
+===================================================================== */
+
+body[data-theme="dark"] .owner-dashboard-main {
+    --card-bg: #0d2238 !important;
+    --bg-secondary: #102840 !important;
+    --bg-soft: #0d2741 !important;
+    --text-primary: #eef6ff !important;
+    --text-muted: #91a8bf !important;
+    --dark-blue: #f2f7fd !important;
+    --border-light: rgba(132, 174, 214, 0.15) !important;
+
+    background: #061524 !important;
+    color: #d9e6f3 !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-content,
+body[data-theme="dark"] .owner-dashboard-content-outer {
+    background: #061524 !important;
+}
+
+
+/* =====================================================================
+   TRUCKS & DRIVERS
+   Fix all white information tiles shown in mobile screenshots
+===================================================================== */
+
+/* Main fleet / driver cards */
+body[data-theme="dark"] .owner-dashboard-main .fleet-card,
+body[data-theme="dark"] .owner-dashboard-main .driver-card {
+    background: linear-gradient(145deg, #0d2238 0%, #091c2f 100%) !important;
+    border: 1px solid rgba(132, 174, 214, 0.15) !important;
+    color: #eaf3fc !important;
+}
+
+/*
+   Every Truck / Driver info tile has a direct child .text-muted label.
+   :has() lets us theme those light inline #f8fbff boxes without touching
+   business logic or changing TrucksAndDrivers.jsx.
+*/
+body[data-theme="dark"] .owner-dashboard-main .fleet-card div:has(> p.text-muted),
+body[data-theme="dark"] .owner-dashboard-main .driver-card div:has(> p.text-muted) {
+    background: #102840 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+    color: #eaf3fc !important;
+}
+
+/* Text inside those tiles */
+body[data-theme="dark"] .owner-dashboard-main .fleet-card div:has(> p.text-muted)>p:not(.text-muted),
+body[data-theme="dark"] .owner-dashboard-main .driver-card div:has(> p.text-muted)>p:not(.text-muted) {
+    color: #e9f3fd !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .fleet-card .text-muted,
+body[data-theme="dark"] .owner-dashboard-main .driver-card .text-muted {
+    color: #8fa7bf !important;
+}
+
+/* Health box + bar */
+body[data-theme="dark"] .owner-dashboard-main .fleet-card div:has(> p.text-muted) div[style*="background"] {
+    border-color: rgba(132, 174, 214, 0.14);
+}
+
+/* View Details button: remove white patch */
+body[data-theme="dark"] .owner-dashboard-main .fleet-card .btn-outline {
+    background: #102b46 !important;
+    color: #9fd0ff !important;
+    border-color: rgba(111, 177, 239, 0.24) !important;
+}
+
+/* Keep delete button intentionally red, but use dark-red surface instead of pink/white */
+body[data-theme="dark"] .owner-dashboard-main .fleet-card button[style*="rgb(254, 242, 242)"],
+body[data-theme="dark"] .owner-dashboard-main .fleet-card button[style*="#fef2f2"],
+body[data-theme="dark"] .owner-dashboard-main .driver-card button[style*="rgb(254, 242, 242)"],
+body[data-theme="dark"] .owner-dashboard-main .driver-card button[style*="#fef2f2"] {
+    background: rgba(239, 68, 68, 0.12) !important;
+    color: #ff7883 !important;
+    border-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+/* Driver rating panel */
+body[data-theme="dark"] .owner-dashboard-main .driver-card div:has(> svg + span) {
+    color: #f4c45e !important;
+}
+
+/*
+   Generic catch for known light inline surfaces in TrucksAndDrivers.
+   React/browser may serialize hex colors as rgb(), so both forms are covered.
+*/
+body[data-theme="dark"] .owner-dashboard-main .fleet-card [style*="background: rgb(248, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .fleet-card [style*="background: #f8fbff"],
+body[data-theme="dark"] .owner-dashboard-main .driver-card [style*="background: rgb(248, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .driver-card [style*="background: #f8fbff"] {
+    background: #102840 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+}
+
+
+/* =====================================================================
+   TRUCKS & DRIVERS - TAB BAR
+===================================================================== */
+
+/* Parent wrapping the two Available Fleet / Available Drivers buttons */
+body[data-theme="dark"] .owner-dashboard-main div:has(> button:first-child:nth-last-child(2) + button:last-child)>button {
+    border-color: rgba(132, 174, 214, 0.16);
+}
+
+/* Inactive tab that still uses a white/light inline surface */
+body[data-theme="dark"] .owner-dashboard-main button[style*="background: rgb(255, 255, 255)"],
+body[data-theme="dark"] .owner-dashboard-main button[style*="background: #fff"] {
+    background: #102840 !important;
+    color: #9fb4c9 !important;
+}
+
+/* Don't override intentional orange/red/primary buttons */
+body[data-theme="dark"] .owner-dashboard-main .btn-primary,
+body[data-theme="dark"] .owner-dashboard-main button[style*="linear-gradient"],
+body[data-theme="dark"] .owner-dashboard-main button[style*="rgb(255, 122, 0)"],
+body[data-theme="dark"] .owner-dashboard-main button[style*="#ff7a00"] {
+    color: #fff !important;
+}
+
+
+/* =====================================================================
+   LIVE BOOKINGS
+   Booking information cards + Trip Status + Payment Details + History
+===================================================================== */
+
+/* Main booking card */
+body[data-theme="dark"] .owner-dashboard-main .glass-card {
+    background: #0d2238 !important;
+    border-color: rgba(132, 174, 214, 0.15) !important;
+    color: #e9f3fd !important;
+}
+
+/*
+   LiveBookings infoGrid:
+   direct nested grid items are inline #f8fbff.
+   Every item contains label/value <p> elements.
+*/
+body[data-theme="dark"] .owner-dashboard-main .glass-card div:has(> p + p) {
+    background: #102840 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+}
+
+/* Labels and values inside the booking details */
+body[data-theme="dark"] .owner-dashboard-main .glass-card div:has(> p + p)>p:first-child {
+    color: #829bb3 !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .glass-card div:has(> p + p)>p:last-child {
+    color: #e8f2fc !important;
+}
+
+
+/* Action panel: inline #f9fbff */
+body[data-theme="dark"] .owner-dashboard-main .glass-card [style*="background: rgb(249, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .glass-card [style*="background: #f9fbff"] {
+    background: #0a1e32 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+}
+
+
+/* Payment summary tiles */
+body[data-theme="dark"] .owner-dashboard-main .glass-card [style*="background: rgb(248, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .glass-card [style*="background: #f8fbff"] {
+    background: #102840 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+    color: #dce9f6 !important;
+}
+
+
+/* History item inline white */
+body[data-theme="dark"] .owner-dashboard-main .glass-card [style*="background: rgb(255, 255, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .glass-card [style*="background: #fff"] {
+    background: #102840 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+    color: #dce9f6 !important;
+}
+
+
+/* Trip Status / Payment Details section cards */
+body[data-theme="dark"] .owner-dashboard-main .glass-card div:has(> p[style] + div[style]),
+body[data-theme="dark"] .owner-dashboard-main .glass-card div:has(> strong + span) {
+    border-color: rgba(132, 174, 214, 0.14) !important;
+}
+
+
+/* Status history text */
+body[data-theme="dark"] .owner-dashboard-main .glass-card strong {
+    color: #eaf4ff !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .glass-card small,
+body[data-theme="dark"] .owner-dashboard-main .glass-card span:not(.badge) {
+    color: #91a8bf;
+}
+
+
+/* =====================================================================
+   LIVE BOOKINGS SEARCH BAR
+===================================================================== */
+
+/*
+   The search wrapper itself is inline white.
+   It contains Search svg + text input.
+*/
+body[data-theme="dark"] .owner-dashboard-main div:has(> svg + input[type="text"]) {
+    background: #102840 !important;
+    border-color: rgba(132, 174, 214, 0.18) !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main div:has(> svg + input[type="text"]) input {
+    background: transparent !important;
+    color: #edf6ff !important;
+}
+
+
+/* =====================================================================
+   LIVE FLEET MAP
+===================================================================== */
+
+body[data-theme="dark"] .owner-dashboard-main .card [style*="background: rgb(248, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .card [style*="background: #f8fbff"] {
+    background: #102840 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .card [style*="background: rgb(255, 255, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .card [style*="background: #fff"] {
+    background: #102840 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+}
+
+
+/* =====================================================================
+   ADD TRUCK + ADD DRIVER
+===================================================================== */
+
+body[data-theme="dark"] .owner-add-form-card {
+    background: linear-gradient(145deg, #0d2238 0%, #091c2f 100%) !important;
+    border-color: rgba(132, 174, 214, 0.15) !important;
+}
+
+body[data-theme="dark"] .owner-add-form-title {
+    color: #f2f7fd !important;
+}
+
+body[data-theme="dark"] .owner-add-form-subtitle {
+    color: #8fa7bf !important;
+}
+
+body[data-theme="dark"] .owner-add-form-grid input,
+body[data-theme="dark"] .owner-add-form-grid select,
+body[data-theme="dark"] .owner-add-form-grid textarea {
+    background: #102840 !important;
+    color: #edf6ff !important;
+    border-color: rgba(132, 174, 214, 0.18) !important;
+}
+
+body[data-theme="dark"] .owner-add-form-grid input::placeholder,
+body[data-theme="dark"] .owner-add-form-grid textarea::placeholder {
+    color: #7891aa !important;
+}
+
+
+/* =====================================================================
+   OVERVIEW
+===================================================================== */
+
+body[data-theme="dark"] .owner-overview .overview-quick-actions button {
+    background: linear-gradient(145deg, #102840, #0c2137) !important;
+    border-color: rgba(132, 174, 214, 0.15) !important;
+}
+
+body[data-theme="dark"] .owner-overview .overview-quick-actions h4 {
+    color: #eef6ff !important;
+}
+
+body[data-theme="dark"] .owner-overview .overview-quick-actions p {
+    color: #91a8bf !important;
+}
+
+body[data-theme="dark"] .owner-overview .overview-charts .card {
+    background: #0d2238 !important;
+}
+
+
+/* =====================================================================
+   MOBILE - STRONG FINAL PASS
+===================================================================== */
+
+@media (max-width: 768px) {
+
+    body[data-theme="dark"] .owner-dashboard-main,
+    body[data-theme="dark"] .owner-dashboard-content,
+    body[data-theme="dark"] .owner-dashboard-content-outer {
+        background: #061524 !important;
+    }
+
+    /*
+     Mobile screenshots showed white boxes most clearly, so repeat the most
+     important selectors after all component/mobile rules.
+  */
+    body[data-theme="dark"] .owner-dashboard-main .fleet-card div:has(> p.text-muted),
+    body[data-theme="dark"] .owner-dashboard-main .driver-card div:has(> p.text-muted),
+    body[data-theme="dark"] .owner-dashboard-main .glass-card div:has(> p + p) {
+        background: #102840 !important;
+        border-color: rgba(132, 174, 214, 0.16) !important;
+    }
+
+    body[data-theme="dark"] .owner-dashboard-main .fleet-card [style*="background: rgb(248, 251, 255)"],
+    body[data-theme="dark"] .owner-dashboard-main .driver-card [style*="background: rgb(248, 251, 255)"],
+    body[data-theme="dark"] .owner-dashboard-main .glass-card [style*="background: rgb(248, 251, 255)"],
+    body[data-theme="dark"] .owner-dashboard-main .glass-card [style*="background: rgb(249, 251, 255)"],
+    body[data-theme="dark"] .owner-dashboard-main .glass-card [style*="background: rgb(255, 255, 255)"] {
+        background: #102840 !important;
+        color: #e9f3fd !important;
+        border-color: rgba(132, 174, 214, 0.16) !important;
+    }
+
+    body[data-theme="dark"] .owner-dashboard-main h1,
+    body[data-theme="dark"] .owner-dashboard-main h2,
+    body[data-theme="dark"] .owner-dashboard-main h3,
+    body[data-theme="dark"] .owner-dashboard-main h4 {
+        color: #f3f8ff !important;
+    }
+
+    body[data-theme="dark"] .owner-dashboard-main p {
+        color: #9aafc3;
+    }
+}
+
+
+/* =====================================================================
+   LIGHT MODE SAFETY
+   No visual changes are forced here. Existing page/component styles win.
+===================================================================== */
+
+
+/* =====================================================================
+   EAGLE TRANSPORT - FINAL REMAINING LIGHT PATCH FIX
+   TrucksAndDrivers + LiveBookings
+   Keep this block at the VERY END of this CSS file.
+===================================================================== */
+
+
+/* =====================================================================
+   TRUCKS & DRIVERS
+===================================================================== */
+
+/* Available Truck Fleet / Available Drivers outer tab wrapper */
+body[data-theme="dark"] .owner-dashboard-main div[style*="background: rgb(245, 248, 252)"],
+body[data-theme="dark"] .owner-dashboard-main div[style*="background: #f5f8fc"] {
+    background: #0d2238 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .025) !important;
+}
+
+
+/* Inactive fleet/driver tab button */
+body[data-theme="dark"] .owner-dashboard-main div[style*="background: rgb(245, 248, 252)"]>button:not([style*="linear-gradient"]),
+body[data-theme="dark"] .owner-dashboard-main div[style*="background: #f5f8fc"]>button:not([style*="linear-gradient"]) {
+    background: transparent !important;
+    color: #8fa8bf !important;
+}
+
+
+/* Driver rating strip - remove cream / white background */
+body[data-theme="dark"] .owner-dashboard-main .driver-card div[style*="background: rgb(255, 248, 230)"],
+body[data-theme="dark"] .owner-dashboard-main .driver-card div[style*="background: #fff8e6"] {
+    background: #102840 !important;
+    border: 1px solid rgba(245, 158, 11, .18) !important;
+    color: #f5bd4d !important;
+}
+
+
+/* Truck / Driver light info tiles - exact remaining inline colors */
+body[data-theme="dark"] .owner-dashboard-main .fleet-card div[style*="background: rgb(248, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .driver-card div[style*="background: rgb(248, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .fleet-card div[style*="background-color: rgb(248, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .driver-card div[style*="background-color: rgb(248, 251, 255)"] {
+    background: #102840 !important;
+    background-color: #102840 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+    color: #e8f2fc !important;
+}
+
+
+/* Truck health progress empty track: don't leave a bright white bar */
+body[data-theme="dark"] .owner-dashboard-main .fleet-card div[style*="background: rgb(226, 232, 240)"],
+body[data-theme="dark"] .owner-dashboard-main .fleet-card div[style*="background-color: rgb(226, 232, 240)"] {
+    background: #203a54 !important;
+    background-color: #203a54 !important;
+}
+
+
+/* View Details button */
+body[data-theme="dark"] .owner-dashboard-main .fleet-card .btn-outline {
+    background: #102840 !important;
+    color: #a7d2fb !important;
+    border-color: rgba(111, 177, 239, .22) !important;
+}
+
+
+/* Delete button - premium dark red instead of pale pink */
+body[data-theme="dark"] .owner-dashboard-main .fleet-card button[style*="background: rgb(254, 242, 242)"],
+body[data-theme="dark"] .owner-dashboard-main .driver-card button[style*="background: rgb(254, 242, 242)"],
+body[data-theme="dark"] .owner-dashboard-main .fleet-card button[style*="background-color: rgb(254, 242, 242)"],
+body[data-theme="dark"] .owner-dashboard-main .driver-card button[style*="background-color: rgb(254, 242, 242)"] {
+    background: rgba(239, 68, 68, .11) !important;
+    background-color: rgba(239, 68, 68, .11) !important;
+    color: #ff7c86 !important;
+    border-color: rgba(239, 68, 68, .22) !important;
+}
+
+
+/* =====================================================================
+   LIVE BOOKINGS
+===================================================================== */
+
+/* Main action panel - Trip Status / Payment / Location / History wrapper */
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(249, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background-color: rgb(249, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: #f9fbff"] {
+    background: #0a1e32 !important;
+    background-color: #0a1e32 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+}
+
+
+/* Booking info boxes + payment summary + live map empty state */
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(248, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background-color: rgb(248, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .card div[style*="background: rgb(248, 251, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .card div[style*="background-color: rgb(248, 251, 255)"] {
+    background: #102840 !important;
+    background-color: #102840 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+    color: #e8f2fc !important;
+}
+
+
+/* Status History individual rows */
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(255, 255, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background-color: rgb(255, 255, 255)"] {
+    background: #102840 !important;
+    background-color: #102840 !important;
+    border-color: rgba(132, 174, 214, 0.16) !important;
+    color: #e8f2fc !important;
+}
+
+
+/* Selects used in booking action panel */
+body[data-theme="dark"] .owner-dashboard-main .glass-card select[style*="background: rgb(255, 255, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .glass-card select[style*="background-color: rgb(255, 255, 255)"] {
+    background: #102840 !important;
+    background-color: #102840 !important;
+    color: #edf6ff !important;
+    border-color: rgba(132, 174, 214, .18) !important;
+}
+
+
+/* Trip Status buttons: inactive white -> dark */
+body[data-theme="dark"] .owner-dashboard-main .glass-card button[style*="background: rgb(255, 255, 255)"],
+body[data-theme="dark"] .owner-dashboard-main .glass-card button[style*="background-color: rgb(255, 255, 255)"] {
+    background: #102840 !important;
+    background-color: #102840 !important;
+    color: #cbdced !important;
+    border-color: rgba(132, 174, 214, .18) !important;
+}
+
+
+/* Active Delivered status can keep orange accent but not pale-white surface */
+body[data-theme="dark"] .owner-dashboard-main .glass-card button[style*="background: rgb(255, 247, 237)"],
+body[data-theme="dark"] .owner-dashboard-main .glass-card button[style*="background-color: rgb(255, 247, 237)"] {
+    background: rgba(255, 122, 0, .12) !important;
+    background-color: rgba(255, 122, 0, .12) !important;
+    color: #ff9a47 !important;
+    border-color: rgba(255, 122, 0, .28) !important;
+}
+
+
+/* Text contrast inside action panels */
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(249, 251, 255)"] h1,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(249, 251, 255)"] h2,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(249, 251, 255)"] h3,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(249, 251, 255)"] h4,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background-color: rgb(249, 251, 255)"] h1,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background-color: rgb(249, 251, 255)"] h2,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background-color: rgb(249, 251, 255)"] h3,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background-color: rgb(249, 251, 255)"] h4 {
+    color: #eef6ff !important;
+}
+
+
+/* Payment Details / History nested text */
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(248, 251, 255)"] strong,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(255, 255, 255)"] strong {
+    color: #f0f6fc !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(248, 251, 255)"] p,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(255, 255, 255)"] p,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(248, 251, 255)"] span,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(255, 255, 255)"] span,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(248, 251, 255)"] small,
+body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(255, 255, 255)"] small {
+    color: #93aac0;
+}
+
+
+/* =====================================================================
+   MOBILE FINAL OVERRIDE
+===================================================================== */
+
+@media (max-width: 768px) {
+
+    body[data-theme="dark"] .owner-dashboard-main div[style*="background: rgb(245, 248, 252)"] {
+        background: #0d2238 !important;
+    }
+
+    body[data-theme="dark"] .owner-dashboard-main .driver-card div[style*="background: rgb(255, 248, 230)"] {
+        background: #102840 !important;
+    }
+
+    body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(249, 251, 255)"],
+    body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(248, 251, 255)"],
+    body[data-theme="dark"] .owner-dashboard-main .glass-card div[style*="background: rgb(255, 255, 255)"] {
+        background: #102840 !important;
+        border-color: rgba(132, 174, 214, .16) !important;
+    }
+}
+
+
+/* =====================================================================
+   EXACT CLASS-BASED DARK FIX
+   This section is intentionally class-based so it does not depend on
+   browser serialization of React inline style="background: ...".
+===================================================================== */
+
+
+/* =========================
+   TOP ADD TRUCK / ADD DRIVER
+========================= */
+
+body[data-theme="dark"] .owner-dashboard-main .fleet-premium-action {
+    background: linear-gradient(145deg, #102840 0%, #0b2137 100%) !important;
+    border: 1px solid rgba(132, 174, 214, 0.16) !important;
+    color: #eaf3fc !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .16) !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .fleet-premium-action__copy strong {
+    color: #eef6ff !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .fleet-premium-action__copy small {
+    color: #8fa7bf !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .fleet-premium-action__plus {
+    background: #0d3150 !important;
+    color: #8ec8ff !important;
+}
+
+
+/* =========================
+   TRUCKS & DRIVERS
+========================= */
+
+body[data-theme="dark"] .owner-dashboard-main .fleet-info-tile,
+body[data-theme="dark"] .owner-dashboard-main .driver-info-tile {
+    background: #102840 !important;
+    border: 1px solid rgba(132, 174, 214, 0.16) !important;
+    color: #e8f2fc !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .fleet-info-tile .text-muted,
+body[data-theme="dark"] .owner-dashboard-main .driver-info-tile .text-muted {
+    color: #829bb3 !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .fleet-info-tile p:not(.text-muted),
+body[data-theme="dark"] .owner-dashboard-main .driver-info-tile p:not(.text-muted) {
+    color: #eef6ff !important;
+}
+
+
+/* Fleet / Driver switch */
+body[data-theme="dark"] .owner-dashboard-main .fleet-switcher {
+    background: #0d2238 !important;
+    border: 1px solid rgba(132, 174, 214, .16) !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .fleet-switcher>button {
+    color: #91a8bf !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .fleet-switcher>button:not([style*="linear-gradient"]) {
+    background: transparent !important;
+}
+
+
+/* Driver rating */
+body[data-theme="dark"] .owner-dashboard-main .driver-rating-box {
+    background: #102840 !important;
+    color: #f4bc4d !important;
+    border: 1px solid rgba(245, 158, 11, .18) !important;
+}
+
+
+/* =========================
+   LIVE BOOKINGS
+========================= */
+
+/* Entire operation/action area */
+body[data-theme="dark"] .owner-dashboard-main .live-action-panel {
+    background: #0a1e32 !important;
+    border: 1px solid rgba(132, 174, 214, .16) !important;
+}
+
+
+/* Each section: Trip Status, Payment Details, History, etc. */
+body[data-theme="dark"] .owner-dashboard-main .live-action-section {
+    background: #102840 !important;
+    border: 1px solid rgba(132, 174, 214, .14) !important;
+    border-radius: 16px !important;
+    padding: 14px !important;
+    color: #dce9f6 !important;
+}
+
+
+/* Section titles */
+body[data-theme="dark"] .owner-dashboard-main .live-action-section>p:first-child {
+    color: #eef6ff !important;
+}
+
+
+/* Payment details inner summary */
+body[data-theme="dark"] .owner-dashboard-main .live-payment-summary {
+    background: #0c2137 !important;
+    border: 1px solid rgba(132, 174, 214, .16) !important;
+    color: #a9bdd0 !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .live-payment-summary span {
+    color: #9eb2c6 !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .live-payment-summary strong {
+    color: #f0f6fc !important;
+}
+
+
+/* Status history */
+body[data-theme="dark"] .owner-dashboard-main .live-history-list {
+    background: transparent !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .live-history-item {
+    background: #0c2137 !important;
+    border: 1px solid rgba(132, 174, 214, .16) !important;
+    color: #dce9f6 !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .live-history-item strong {
+    color: #f0f6fc !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .live-history-item span,
+body[data-theme="dark"] .owner-dashboard-main .live-history-item small {
+    color: #91a8bf !important;
+}
+
+
+/* Booking information tiles */
+body[data-theme="dark"] .owner-dashboard-main .live-booking-info-tile {
+    background: #102840 !important;
+    border: 1px solid rgba(132, 174, 214, .16) !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .live-booking-info-tile p:first-child {
+    color: #829bb3 !important;
+}
+
+body[data-theme="dark"] .owner-dashboard-main .live-booking-info-tile p:last-child {
+    color: #eef6ff !important;
+}
+
+
+/* Delivered chip stays orange but darker */
+body[data-theme="dark"] .owner-dashboard-main .live-trip-status-section span[style*="rgb(255, 247, 237)"],
+body[data-theme="dark"] .owner-dashboard-main .live-trip-status-section span[style*="#fff7ed"] {
+    background: rgba(255, 122, 0, .12) !important;
+    color: #ff9a47 !important;
+    border-color: rgba(255, 122, 0, .28) !important;
+}
+
+
+/* "Trip completed" and "Payment fully collected" remain green */
+body[data-theme="dark"] .owner-dashboard-main .live-action-section [style*="rgb(4, 120, 87)"],
+body[data-theme="dark"] .owner-dashboard-main .live-action-section [style*="#047857"] {
+    color: #32d6a0 !important;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+
+    body[data-theme="dark"] .owner-dashboard-main .fleet-premium-action {
+        background: #102840 !important;
+    }
+
+    body[data-theme="dark"] .owner-dashboard-main .live-action-panel {
+        background: #0a1e32 !important;
+        padding: 10px !important;
+    }
+
+    body[data-theme="dark"] .owner-dashboard-main .live-action-section {
+        background: #102840 !important;
+        padding: 12px !important;
+        border-radius: 14px !important;
+    }
+
+    body[data-theme="dark"] .owner-dashboard-main .live-payment-summary,
+    body[data-theme="dark"] .owner-dashboard-main .live-history-item {
+        background: #0c2137 !important;
+    }
+}
+
+
+/* =====================================================================
+   OWNER DASHBOARD STICKY TOPBAR + THEME TOGGLE
+   Dark visual rules live here; OwnerDashboard only controls the state.
+===================================================================== */
+
+.owner-dashboard-main {
+    overflow-x: clip !important;
+}
+
+.owner-dashboard-topbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 120 !important;
+    flex-shrink: 0 !important;
+}
+
+body[data-theme="dark"] .owner-theme-toggle {
+    color: #eef6ff !important;
+    background: rgba(255, 255, 255, .07) !important;
+    border-color: rgba(255, 255, 255, .10) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .14) !important;
+}
+
+body[data-theme="dark"] .owner-theme-toggle__icon {
+    color: #ffd36a !important;
+    background: rgba(255, 193, 59, .10) !important;
+}
+
+body[data-theme="dark"] .owner-theme-toggle:hover {
+    background: rgba(255, 255, 255, .10) !important;
+    border-color: rgba(255, 255, 255, .14) !important;
+}
+
+@media (max-width: 768px) {
+    body[data-theme="dark"] .owner-theme-toggle__icon {
+        background: transparent !important;
+    }
+}
+
+
+/* =====================================================================
+   FINAL MOBILE WHITE-BOTTOM FIX
+   Tollgate Logs + Emergency Alerts
+   IMPORTANT: keep this block at the VERY END of this file.
+===================================================================== */
+
+@media (max-width: 768px) {
+
+    /* ---------------------------------------------------------
+     Dashboard parent canvas must stay dark for the full screen
+  --------------------------------------------------------- */
+
+    html[data-theme="dark"],
+    body[data-theme="dark"],
+    body[data-theme="dark"] #root,
+    body[data-theme="dark"] .owner-dashboard-main,
+    body[data-theme="dark"] .owner-dashboard-content-outer,
+    body[data-theme="dark"] .owner-dashboard-content {
+
+        background-color: #061524 !important;
+        background-image: none !important;
+
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-main {
+
+        min-height: 100dvh !important;
+
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-content-outer {
+
+        min-height:
+            calc(100dvh - 64px) !important;
+
+        height: auto !important;
+
+        align-self: stretch !important;
+
+        background:
+            #061524 !important;
+
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-content {
+
+        min-height:
+            calc(100dvh - 82px) !important;
+
+        height: auto !important;
+
+        background:
+            #061524 !important;
+
+        background-color:
+            #061524 !important;
+
+        border-color:
+            rgba(132,
+                174,
+                214,
+                .10) !important;
+
+        box-shadow:
+            none !important;
+
+    }
+
+
+    /* ---------------------------------------------------------
+     TOLLGATE PAGE
+  --------------------------------------------------------- */
+
+    body[data-theme="dark"] .owner-dashboard-content .toll-mobile-page {
+
+        width: 100% !important;
+
+        min-height:
+            calc(100dvh - 100px) !important;
+
+        height: auto !important;
+
+        margin: 0 !important;
+
+        padding-bottom:
+            20px !important;
+
+        background:
+            #061524 !important;
+
+        background-color:
+            #061524 !important;
+
+    }
+
+
+    body[data-theme="dark"] .toll-history-card {
+
+        background:
+            #0d2238 !important;
+
+        border-color:
+            rgba(132,
+                174,
+                214,
+                .15) !important;
+
+    }
+
+
+    body[data-theme="dark"] .toll-history-card::after {
+
+        content: "";
+
+        display: block;
+
+        height: 1px;
+
+        background:
+            transparent;
+
+    }
+
+
+    /* ---------------------------------------------------------
+     EMERGENCY ALERTS PAGE
+  --------------------------------------------------------- */
+
+    body[data-theme="dark"] .owner-dashboard-content .ea-page {
+
+        width: 100% !important;
+
+        min-height:
+            calc(100dvh - 100px) !important;
+
+        height: auto !important;
+
+        margin: 0 !important;
+
+        padding-bottom:
+            20px !important;
+
+        background:
+            #061524 !important;
+
+        background-color:
+            #061524 !important;
+
+    }
+
+
+    body[data-theme="dark"] .ea-alert-list {
+
+        background:
+            transparent !important;
+
+    }
+
+
+    body[data-theme="dark"] .ea-empty {
+
+        background:
+            #0d2238 !important;
+
+        color:
+            #dce9f6 !important;
+
+        border:
+            1px solid rgba(132,
+                174,
+                214,
+                .15) !important;
+
+    }
+
+
+    /* ---------------------------------------------------------
+     Prevent any inherited white section after short content
+  --------------------------------------------------------- */
+
+    body[data-theme="dark"] .owner-dashboard-content>* {
+
+        position: relative;
+
+        z-index: 1;
+
+    }
+
+}
+
+
+/* =====================================================================
+   SMALL MOBILE
+===================================================================== */
+
+@media (max-width: 420px) {
+
+    body[data-theme="dark"] .owner-dashboard-content-outer {
+
+        min-height:
+            calc(100dvh - 60px) !important;
+
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-content {
+
+        min-height:
+            calc(100dvh - 76px) !important;
+
+    }
+
+
+    body[data-theme="dark"] .toll-mobile-page,
+
+    body[data-theme="dark"] .ea-page {
+
+        min-height:
+            calc(100dvh - 92px) !important;
+
+    }
+
+}
+
+
+/* =====================================================================
+   ABSOLUTE FINAL OWNER DASHBOARD CANVAS FIX
+   This fixes the remaining white bottom area by theming the ROOT layout.
+===================================================================== */
+
+.owner-dashboard-layout {
+    min-height: 100dvh !important;
+    background:
+        linear-gradient(180deg,
+            #edf3f9 0%,
+            #f6f9fc 100%) !important;
+}
+
+
+/* LIGHT MODE */
+body[data-theme="light"] .owner-dashboard-layout,
+html[data-theme="light"] .owner-dashboard-layout {
+    background:
+        linear-gradient(180deg,
+            #edf3f9 0%,
+            #f6f9fc 100%) !important;
+}
+
+
+/* DARK MODE */
+body[data-theme="dark"] .owner-dashboard-layout,
+html[data-theme="dark"] .owner-dashboard-layout {
+    min-height: 100dvh !important;
+    background:
+        #061524 !important;
+    background-color:
+        #061524 !important;
+}
+
+
+/* Fill the entire right-side dashboard canvas */
+body[data-theme="dark"] .owner-dashboard-main,
+html[data-theme="dark"] .owner-dashboard-main {
+    min-height: 100dvh !important;
+    background: #061524 !important;
+}
+
+
+/* Content wrapper must stretch even when page content is short */
+body[data-theme="dark"] .owner-dashboard-content-outer,
+html[data-theme="dark"] .owner-dashboard-content-outer {
+    min-height:
+        calc(100dvh - 74px) !important;
+    background:
+        #061524 !important;
+}
+
+
+/* Main content surface */
+body[data-theme="dark"] .owner-dashboard-content,
+html[data-theme="dark"] .owner-dashboard-content {
+    min-height:
+        calc(100dvh - 100px) !important;
+    background:
+        #061524 !important;
+    background-color:
+        #061524 !important;
+}
+
+
+/* Tollgate and Emergency short-content pages */
+body[data-theme="dark"] .toll-mobile-page,
+html[data-theme="dark"] .toll-mobile-page,
+body[data-theme="dark"] .ea-page,
+html[data-theme="dark"] .ea-page {
+    min-height:
+        calc(100dvh - 110px) !important;
+    background:
+        #061524 !important;
+}
+
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+    body[data-theme="dark"] .owner-dashboard-layout,
+    html[data-theme="dark"] .owner-dashboard-layout,
+    body[data-theme="dark"] .owner-dashboard-main,
+    html[data-theme="dark"] .owner-dashboard-main,
+    body[data-theme="dark"] .owner-dashboard-content-outer,
+    html[data-theme="dark"] .owner-dashboard-content-outer,
+    body[data-theme="dark"] .owner-dashboard-content,
+    html[data-theme="dark"] .owner-dashboard-content {
+        background:
+            #061524 !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-layout,
+    html[data-theme="dark"] .owner-dashboard-layout {
+        min-height:
+            100dvh !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-main,
+    html[data-theme="dark"] .owner-dashboard-main {
+        min-height:
+            100dvh !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-content-outer,
+    html[data-theme="dark"] .owner-dashboard-content-outer {
+        min-height:
+            calc(100dvh - 64px) !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-content,
+    html[data-theme="dark"] .owner-dashboard-content {
+        min-height:
+            calc(100dvh - 82px) !important;
+    }
+
+
+    body[data-theme="dark"] .toll-mobile-page,
+    html[data-theme="dark"] .toll-mobile-page,
+    body[data-theme="dark"] .ea-page,
+    html[data-theme="dark"] .ea-page {
+        min-height:
+            calc(100dvh - 96px) !important;
+        background:
+            #061524 !important;
+    }
+
+}
+
+/* =====================================================================
+   OWNER OVERVIEW - LIGHT MODE FIX
+   Keep this block at the VERY END
+===================================================================== */
+
+body[data-theme="light"] .owner-overview .glass-card,
+html[data-theme="light"] .owner-overview .glass-card {
+    background:
+        linear-gradient(145deg,
+            #ffffff 0%,
+            #f8fbff 100%) !important;
+
+    color: #0b315d !important;
+
+    border:
+        1px solid rgba(15, 49, 88, 0.08) !important;
+
+    box-shadow:
+        0 12px 30px rgba(15, 49, 88, 0.07) !important;
+}
+
+
+/* =========================================================
+   STAT CARDS
+========================================================= */
+
+body[data-theme="light"] .owner-overview .overview-stats-grid>button,
+html[data-theme="light"] .owner-overview .overview-stats-grid>button {
+    background:
+        linear-gradient(145deg,
+            #ffffff 0%,
+            #f8fbff 100%) !important;
+
+    color: #0b315d !important;
+
+    border:
+        1px solid rgba(15, 49, 88, 0.08) !important;
+
+    box-shadow:
+        0 10px 28px rgba(15, 49, 88, 0.07) !important;
+}
+
+
+/* STAT TITLES */
+
+body[data-theme="light"] .owner-overview .overview-stats-grid p,
+html[data-theme="light"] .owner-overview .overview-stats-grid p {
+    color: #64748b !important;
+}
+
+
+/* STAT VALUES */
+
+body[data-theme="light"] .owner-overview .overview-stats-grid h3,
+html[data-theme="light"] .owner-overview .overview-stats-grid h3 {
+    color: #0b315d !important;
+}
+
+
+/* =========================================================
+   HERO CARD
+========================================================= */
+
+body[data-theme="light"] .owner-overview .overview-hero,
+html[data-theme="light"] .owner-overview .overview-hero {
+    background:
+        linear-gradient(135deg,
+            #0d3b6d 0%,
+            #155493 52%,
+            #2374be 100%) !important;
+
+    color: #ffffff !important;
+
+    border:
+        1px solid rgba(15, 74, 136, 0.10) !important;
+
+    box-shadow:
+        0 18px 42px rgba(15, 74, 136, 0.16) !important;
+}
+
+
+/* HERO TITLE */
+
+body[data-theme="light"] .owner-overview .overview-hero-title,
+html[data-theme="light"] .owner-overview .overview-hero-title {
+    color: #ffffff !important;
+}
+
+
+/* HERO TEXT */
+
+body[data-theme="light"] .owner-overview .overview-hero-text,
+html[data-theme="light"] .owner-overview .overview-hero-text {
+    color: rgba(255, 255, 255, 0.86) !important;
+}
+
+
+/* HERO META */
+
+body[data-theme="light"] .owner-overview .overview-hero-meta,
+html[data-theme="light"] .owner-overview .overview-hero-meta {
+    color: #ffffff !important;
+
+    background:
+        rgba(255, 255, 255, 0.12) !important;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+
+/* REFRESH BUTTON */
+
+body[data-theme="light"] .owner-overview .overview-refresh-btn,
+html[data-theme="light"] .owner-overview .overview-refresh-btn {
+    color: #ffffff !important;
+
+    background:
+        rgba(255, 255, 255, 0.14) !important;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+
+/* =========================================================
+   FLEET UTILIZATION CARD
+========================================================= */
+
+body[data-theme="light"] .owner-overview .overview-fleet-card,
+html[data-theme="light"] .owner-overview .overview-fleet-card {
+    color: #ffffff !important;
+
+    background:
+        rgba(255, 255, 255, 0.11) !important;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.10) !important;
+}
+
+
+body[data-theme="light"] .owner-overview .overview-fleet-card p,
+html[data-theme="light"] .owner-overview .overview-fleet-card p,
+body[data-theme="light"] .owner-overview .overview-fleet-card h3,
+html[data-theme="light"] .owner-overview .overview-fleet-card h3 {
+    color: #ffffff !important;
+}
+
+
+/* =========================================================
+   QUICK ACTION CARDS
+========================================================= */
+
+body[data-theme="light"] .owner-overview .overview-quick-actions button,
+html[data-theme="light"] .owner-overview .overview-quick-actions button {
+    background:
+        #ffffff !important;
+
+    color:
+        #0b315d !important;
+
+    border:
+        1px solid rgba(15, 49, 88, 0.08) !important;
+
+    box-shadow:
+        0 10px 25px rgba(15, 49, 88, 0.06) !important;
+}
+
+
+body[data-theme="light"] .owner-overview .overview-quick-actions h4,
+html[data-theme="light"] .owner-overview .overview-quick-actions h4 {
+    color:
+        #0b315d !important;
+}
+
+
+body[data-theme="light"] .owner-overview .overview-quick-actions p,
+html[data-theme="light"] .owner-overview .overview-quick-actions p {
+    color:
+        #64748b !important;
+}
+
+
+/* =========================================================
+   CHART CARDS
+========================================================= */
+
+body[data-theme="light"] .owner-overview .overview-charts .card,
+html[data-theme="light"] .owner-overview .overview-charts .card {
+    background:
+        #ffffff !important;
+
+    color:
+        #0b315d !important;
+
+    border:
+        1px solid rgba(15, 49, 88, 0.08) !important;
+
+    box-shadow:
+        0 12px 30px rgba(15, 49, 88, 0.06) !important;
+}
+
+
+/* =========================================================
+   DETAIL / SEARCH CARDS
+========================================================= */
+
+body[data-theme="light"] .owner-overview .card:not(.overview-hero),
+html[data-theme="light"] .owner-overview .card:not(.overview-hero) {
+    background:
+        #ffffff !important;
+
+    color:
+        #0b315d !important;
+
+    border-color:
+        rgba(15, 49, 88, 0.08) !important;
+}
+
+
+/* =========================================================
+   PAGE BACKGROUND
+========================================================= */
+
+body[data-theme="light"] .owner-dashboard-main,
+body[data-theme="light"] .owner-dashboard-content,
+body[data-theme="light"] .owner-dashboard-content-outer,
+html[data-theme="light"] .owner-dashboard-main,
+html[data-theme="light"] .owner-dashboard-content,
+html[data-theme="light"] .owner-dashboard-content-outer {
+    background:
+        #f4f7fb !important;
+
+    color:
+        #0b315d !important;
+}
+
+/* =====================================================================
+   PAYMENT MANAGEMENT - DARK MODE FINAL FIX
+   Keep this block at the VERY END of owner-dashboard-dark.css
+   Visual overrides only.
+===================================================================== */
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+body[data-theme="dark"] .payment-page,
+html[data-theme="dark"] .payment-page {
+    color: #dce9f6 !important;
+    background: transparent !important;
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+body[data-theme="dark"] .payment-summary-card,
+html[data-theme="dark"] .payment-summary-card {
+    color: #eaf4ff !important;
+
+    background:
+        linear-gradient(145deg,
+            #0f2943 0%,
+            #0b2035 100%) !important;
+
+    border:
+        1px solid rgba(132, 174, 214, 0.15) !important;
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, .18) !important;
+}
+
+
+body[data-theme="dark"] .payment-summary-card p,
+html[data-theme="dark"] .payment-summary-card p {
+    color: #93a9bf !important;
+}
+
+
+body[data-theme="dark"] .payment-summary-card h3,
+html[data-theme="dark"] .payment-summary-card h3 {
+    color: #f3f8ff !important;
+}
+
+
+/* =========================================================
+   EXPENSE CARDS
+========================================================= */
+
+body[data-theme="dark"] .payment-expense-card,
+html[data-theme="dark"] .payment-expense-card {
+    color: #eaf4ff !important;
+
+    background:
+        linear-gradient(145deg,
+            #0f2943 0%,
+            #0b2035 100%) !important;
+
+    border:
+        1px solid rgba(132, 174, 214, 0.15) !important;
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, .17) !important;
+}
+
+
+body[data-theme="dark"] .payment-expense-card p,
+html[data-theme="dark"] .payment-expense-card p {
+    color: #93a9bf !important;
+}
+
+
+body[data-theme="dark"] .payment-expense-card h3,
+html[data-theme="dark"] .payment-expense-card h3 {
+    color: #f4f8ff !important;
+}
+
+
+/* Keep expense icon surface dark-red instead of white/pink */
+
+body[data-theme="dark"] .payment-expense-card>div:first-child,
+html[data-theme="dark"] .payment-expense-card>div:first-child {
+    background:
+        rgba(239, 68, 68, 0.12) !important;
+
+    color:
+        #ff6b72 !important;
+
+    border:
+        1px solid rgba(239, 68, 68, 0.14) !important;
+}
+
+
+/* =========================================================
+   SALARY / OTHER EXPENSE CARDS
+========================================================= */
+
+body[data-theme="dark"] .payment-salary-card,
+html[data-theme="dark"] .payment-salary-card {
+    color: #dce9f6 !important;
+
+    background:
+        linear-gradient(145deg,
+            #0d2238 0%,
+            #091c2f 100%) !important;
+
+    border:
+        1px solid rgba(132, 174, 214, 0.15) !important;
+
+    box-shadow:
+        0 16px 36px rgba(0, 0, 0, .19) !important;
+}
+
+
+body[data-theme="dark"] .payment-salary-card h3,
+body[data-theme="dark"] .payment-salary-card h4,
+html[data-theme="dark"] .payment-salary-card h3,
+html[data-theme="dark"] .payment-salary-card h4 {
+    color: #f3f8ff !important;
+}
+
+
+body[data-theme="dark"] .payment-salary-card p,
+html[data-theme="dark"] .payment-salary-card p {
+    color: #91a8bf !important;
+}
+
+
+/* =========================================================
+   INPUTS / SELECTS
+========================================================= */
+
+body[data-theme="dark"] .payment-salary-card input,
+body[data-theme="dark"] .payment-salary-card select,
+html[data-theme="dark"] .payment-salary-card input,
+html[data-theme="dark"] .payment-salary-card select {
+    color: #edf6ff !important;
+
+    background:
+        #102b46 !important;
+
+    border:
+        1px solid rgba(132, 174, 214, 0.19) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .025) !important;
+}
+
+
+body[data-theme="dark"] .payment-salary-card input::placeholder,
+html[data-theme="dark"] .payment-salary-card input::placeholder {
+    color: #8299b0 !important;
+    opacity: 1 !important;
+}
+
+
+body[data-theme="dark"] .payment-salary-card select option,
+html[data-theme="dark"] .payment-salary-card select option {
+    color: #edf6ff !important;
+    background: #0c243b !important;
+}
+
+
+/* =========================================================
+   SELECTED DRIVER DETAILS / INLINE WHITE BOXES
+========================================================= */
+
+body[data-theme="dark"] .payment-salary-card>div[style*="border"],
+html[data-theme="dark"] .payment-salary-card>div[style*="border"] {
+    color: #dce9f6 !important;
+
+    background:
+        #102840 !important;
+
+    border-color:
+        rgba(132, 174, 214, 0.16) !important;
+}
+
+
+body[data-theme="dark"] .payment-salary-card [style*="background: rgb(248, 250, 252)"],
+body[data-theme="dark"] .payment-salary-card [style*="background: #f8fafc"],
+html[data-theme="dark"] .payment-salary-card [style*="background: rgb(248, 250, 252)"],
+html[data-theme="dark"] .payment-salary-card [style*="background: #f8fafc"] {
+    color: #b8cce0 !important;
+
+    background:
+        #102840 !important;
+
+    border-color:
+        rgba(132, 174, 214, 0.16) !important;
+}
+
+
+/* Fully paid success panel */
+
+body[data-theme="dark"] .payment-salary-card [style*="background: rgb(236, 253, 245)"],
+body[data-theme="dark"] .payment-salary-card [style*="background: #ecfdf5"],
+html[data-theme="dark"] .payment-salary-card [style*="background: rgb(236, 253, 245)"],
+html[data-theme="dark"] .payment-salary-card [style*="background: #ecfdf5"] {
+    color: #4ee1ae !important;
+
+    background:
+        rgba(16, 185, 129, .10) !important;
+
+    border-color:
+        rgba(16, 185, 129, .22) !important;
+}
+
+
+/* =========================================================
+   FILTER CARD
+========================================================= */
+
+body[data-theme="dark"] .payment-filter-card,
+html[data-theme="dark"] .payment-filter-card {
+    color: #dce9f6 !important;
+
+    background:
+        linear-gradient(145deg,
+            #0d2238,
+            #091c2f) !important;
+
+    border:
+        1px solid rgba(132, 174, 214, 0.15) !important;
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, .16) !important;
+}
+
+
+/* Inactive filter tabs */
+
+body[data-theme="dark"] .payment-filter-tabs button,
+html[data-theme="dark"] .payment-filter-tabs button {
+    color: #a7bbcf !important;
+
+    background:
+        #102840 !important;
+
+    border-color:
+        rgba(132, 174, 214, 0.14) !important;
+}
+
+
+/* Active tab inline primary color should stay readable */
+
+body[data-theme="dark"] .payment-filter-tabs button[style*="rgb(15, 74, 136)"],
+body[data-theme="dark"] .payment-filter-tabs button[style*="#0f4a88"],
+body[data-theme="dark"] .payment-filter-tabs button[style*="#0F4A88"],
+html[data-theme="dark"] .payment-filter-tabs button[style*="rgb(15, 74, 136)"],
+html[data-theme="dark"] .payment-filter-tabs button[style*="#0f4a88"],
+html[data-theme="dark"] .payment-filter-tabs button[style*="#0F4A88"] {
+    color: #ffffff !important;
+
+    background:
+        linear-gradient(135deg,
+            #1764ae,
+            #0f4a88) !important;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+body[data-theme="dark"] .payment-search-box,
+html[data-theme="dark"] .payment-search-box {
+    color: #dce9f6 !important;
+
+    background:
+        #102840 !important;
+
+    border:
+        1px solid rgba(132, 174, 214, 0.17) !important;
+}
+
+
+body[data-theme="dark"] .payment-search-box svg,
+html[data-theme="dark"] .payment-search-box svg {
+    color: #6ea9df !important;
+}
+
+
+body[data-theme="dark"] .payment-search-box input,
+html[data-theme="dark"] .payment-search-box input {
+    color: #edf6ff !important;
+
+    background:
+        transparent !important;
+
+    border: none !important;
+
+    box-shadow: none !important;
+}
+
+
+body[data-theme="dark"] .payment-search-box input::placeholder,
+html[data-theme="dark"] .payment-search-box input::placeholder {
+    color: #7f97af !important;
+}
+
+
+/* =========================================================
+   PAYMENT / BOOKING LIST CARDS
+========================================================= */
+
+body[data-theme="dark"] .payment-booking-card,
+html[data-theme="dark"] .payment-booking-card {
+    color: #dce9f6 !important;
+
+    background:
+        linear-gradient(145deg,
+            #0f2943,
+            #0b2035) !important;
+
+    border:
+        1px solid rgba(132, 174, 214, 0.15) !important;
+}
+
+
+body[data-theme="dark"] .payment-booking-card h3,
+body[data-theme="dark"] .payment-booking-card h4,
+body[data-theme="dark"] .payment-booking-card strong,
+html[data-theme="dark"] .payment-booking-card h3,
+html[data-theme="dark"] .payment-booking-card h4,
+html[data-theme="dark"] .payment-booking-card strong {
+    color: #f2f7fd !important;
+}
+
+
+body[data-theme="dark"] .payment-booking-card p,
+body[data-theme="dark"] .payment-booking-card span,
+html[data-theme="dark"] .payment-booking-card p,
+html[data-theme="dark"] .payment-booking-card span {
+    color: #91a8bf;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    body[data-theme="dark"] .payment-summary-card,
+    body[data-theme="dark"] .payment-expense-card,
+    body[data-theme="dark"] .payment-salary-card,
+    body[data-theme="dark"] .payment-filter-card,
+    html[data-theme="dark"] .payment-summary-card,
+    html[data-theme="dark"] .payment-expense-card,
+    html[data-theme="dark"] .payment-salary-card,
+    html[data-theme="dark"] .payment-filter-card {
+        border-color:
+            rgba(132, 174, 214, .14) !important;
+
+        box-shadow:
+            0 9px 22px rgba(0, 0, 0, .16) !important;
+    }
+
+
+    body[data-theme="dark"] .payment-search-box,
+    html[data-theme="dark"] .payment-search-box {
+        background:
+            #102840 !important;
+    }
+
+}
+
+
+/* =====================================================================
+   LIVE BOOKINGS - PREMIUM ACTION PANEL REDESIGN
+   Trip Status + Payment Details + Status History
+   DARK MODE ONLY
+   Keep this block at the VERY END.
+===================================================================== */
+
+
+/* =========================================================
+   OUTER ACTION PANEL
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main .live-action-panel,
+html[data-theme="dark"] .owner-dashboard-main .live-action-panel {
+    padding: 14px !important;
+
+    gap: 12px !important;
+
+    border-radius: 22px !important;
+
+    background:
+        linear-gradient(145deg,
+            rgba(12, 34, 56, .96),
+            rgba(8, 27, 45, .96)) !important;
+
+    border:
+        1px solid rgba(132, 174, 214, .13) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .025),
+        0 14px 32px rgba(0, 0, 0, .15) !important;
+}
+
+
+/* =========================================================
+   THREE MAIN SECTIONS
+   Remove boxy square appearance
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main .live-action-section,
+html[data-theme="dark"] .owner-dashboard-main .live-action-section {
+    min-width: 0 !important;
+
+    padding: 16px !important;
+
+    border-radius: 17px !important;
+
+    background:
+        linear-gradient(150deg,
+            rgba(16, 43, 70, .72),
+            rgba(11, 33, 55, .72)) !important;
+
+    border:
+        1px solid rgba(132, 174, 214, .09) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .018) !important;
+}
+
+
+/* Remove old hard vertical dividers / square borders */
+
+body[data-theme="dark"] .owner-dashboard-main .live-action-section+.live-action-section,
+html[data-theme="dark"] .owner-dashboard-main .live-action-section+.live-action-section {
+    border-left:
+        1px solid rgba(132, 174, 214, .08) !important;
+}
+
+
+/* =========================================================
+   SECTION TITLES
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main .live-action-section>p:first-child,
+html[data-theme="dark"] .owner-dashboard-main .live-action-section>p:first-child {
+    margin:
+        0 0 12px !important;
+
+    color:
+        #f3f8ff !important;
+
+    font-size:
+        .95rem !important;
+
+    font-weight:
+        800 !important;
+
+    letter-spacing:
+        -.01em !important;
+}
+
+
+/* =========================================================
+   TRIP STATUS
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main .live-trip-status-section,
+html[data-theme="dark"] .owner-dashboard-main .live-trip-status-section {
+    background:
+        radial-gradient(circle at 10% 15%,
+            rgba(255, 122, 0, .06),
+            transparent 38%),
+        linear-gradient(150deg,
+            rgba(16, 43, 70, .72),
+            rgba(11, 33, 55, .72)) !important;
+}
+
+
+/* delivered badge */
+
+body[data-theme="dark"] .owner-dashboard-main .live-trip-status-section span[style*="rgb(255, 247, 237)"],
+body[data-theme="dark"] .owner-dashboard-main .live-trip-status-section span[style*="#fff7ed"],
+html[data-theme="dark"] .owner-dashboard-main .live-trip-status-section span[style*="rgb(255, 247, 237)"],
+html[data-theme="dark"] .owner-dashboard-main .live-trip-status-section span[style*="#fff7ed"] {
+    padding:
+        8px 12px !important;
+
+    border-radius:
+        999px !important;
+
+    background:
+        rgba(255, 122, 0, .11) !important;
+
+    color:
+        #ff9d4b !important;
+
+    border:
+        1px solid rgba(255, 122, 0, .22) !important;
+
+    box-shadow:
+        0 7px 18px rgba(255, 122, 0, .06) !important;
+}
+
+
+/* trip completed */
+
+body[data-theme="dark"] .owner-dashboard-main .live-trip-status-section [style*="#047857"],
+body[data-theme="dark"] .owner-dashboard-main .live-trip-status-section [style*="rgb(4, 120, 87)"],
+html[data-theme="dark"] .owner-dashboard-main .live-trip-status-section [style*="#047857"],
+html[data-theme="dark"] .owner-dashboard-main .live-trip-status-section [style*="rgb(4, 120, 87)"] {
+    color:
+        #35d5a0 !important;
+
+    font-weight:
+        700 !important;
+}
+
+
+/* =========================================================
+   PAYMENT DETAILS
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main .live-payment-summary,
+html[data-theme="dark"] .owner-dashboard-main .live-payment-summary {
+    padding:
+        14px !important;
+
+    border-radius:
+        14px !important;
+
+    background:
+        rgba(8, 30, 50, .58) !important;
+
+    border:
+        1px solid rgba(132, 174, 214, .09) !important;
+
+    box-shadow:
+        none !important;
+}
+
+
+body[data-theme="dark"] .owner-dashboard-main .live-payment-summary p,
+html[data-theme="dark"] .owner-dashboard-main .live-payment-summary p {
+    margin:
+        7px 0 !important;
+
+    color:
+        #9db1c5 !important;
+}
+
+
+body[data-theme="dark"] .owner-dashboard-main .live-payment-summary span,
+html[data-theme="dark"] .owner-dashboard-main .live-payment-summary span {
+    color:
+        #9eb2c6 !important;
+}
+
+
+body[data-theme="dark"] .owner-dashboard-main .live-payment-summary strong,
+html[data-theme="dark"] .owner-dashboard-main .live-payment-summary strong {
+    color:
+        #f3f8ff !important;
+
+    font-weight:
+        800 !important;
+}
+
+
+/* Payment fully collected */
+
+body[data-theme="dark"] .owner-dashboard-main .live-action-section [style*="#047857"],
+body[data-theme="dark"] .owner-dashboard-main .live-action-section [style*="rgb(4, 120, 87)"],
+html[data-theme="dark"] .owner-dashboard-main .live-action-section [style*="#047857"],
+html[data-theme="dark"] .owner-dashboard-main .live-action-section [style*="rgb(4, 120, 87)"] {
+    color:
+        #35d5a0 !important;
+}
+
+
+/* =========================================================
+   STATUS HISTORY
+========================================================= */
+
+body[data-theme="dark"] .owner-dashboard-main .live-history-list,
+html[data-theme="dark"] .owner-dashboard-main .live-history-list {
+    padding:
+        2px 4px 2px 0 !important;
+
+    gap:
+        8px !important;
+
+    background:
+        transparent !important;
+}
+
+
+body[data-theme="dark"] .owner-dashboard-main .live-history-item,
+html[data-theme="dark"] .owner-dashboard-main .live-history-item {
+    padding:
+        12px 13px !important;
+
+    border-radius:
+        13px !important;
+
+    background:
+        rgba(15, 42, 68, .64) !important;
+
+    border:
+        1px solid rgba(132, 174, 214, .085) !important;
+
+    box-shadow:
+        none !important;
+
+    transition:
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease !important;
+}
+
+
+body[data-theme="dark"] .owner-dashboard-main .live-history-item:hover,
+html[data-theme="dark"] .owner-dashboard-main .live-history-item:hover {
+    transform:
+        translateY(-1px);
+
+    background:
+        rgba(18, 49, 79, .82) !important;
+
+    border-color:
+        rgba(132, 174, 214, .15) !important;
+}
+
+
+body[data-theme="dark"] .owner-dashboard-main .live-history-item strong,
+html[data-theme="dark"] .owner-dashboard-main .live-history-item strong {
+    color:
+        #f0f6fc !important;
+}
+
+
+body[data-theme="dark"] .owner-dashboard-main .live-history-item span,
+body[data-theme="dark"] .owner-dashboard-main .live-history-item small,
+html[data-theme="dark"] .owner-dashboard-main .live-history-item span,
+html[data-theme="dark"] .owner-dashboard-main .live-history-item small {
+    color:
+        #8fa6bc !important;
+}
+
+
+/* =========================================================
+   DESKTOP - SOFTER SEPARATION
+========================================================= */
+
+@media (min-width: 769px) {
+
+    body[data-theme="dark"] .owner-dashboard-main .live-action-panel {
+        align-items:
+            stretch !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-main .live-action-section {
+        border:
+            1px solid rgba(132, 174, 214, .075) !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-main .live-action-section+.live-action-section {
+        border-left:
+            1px solid rgba(132, 174, 214, .075) !important;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    body[data-theme="dark"] .owner-dashboard-main .live-action-panel,
+    html[data-theme="dark"] .owner-dashboard-main .live-action-panel {
+        padding:
+            9px !important;
+
+        gap:
+            9px !important;
+
+        border-radius:
+            17px !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-main .live-action-section,
+    html[data-theme="dark"] .owner-dashboard-main .live-action-section {
+        padding:
+            12px !important;
+
+        border-radius:
+            14px !important;
+
+        border-left:
+            1px solid rgba(132, 174, 214, .08) !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-main .live-payment-summary,
+    html[data-theme="dark"] .owner-dashboard-main .live-payment-summary {
+        padding:
+            11px !important;
+
+        border-radius:
+            12px !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-main .live-history-item,
+    html[data-theme="dark"] .owner-dashboard-main .live-history-item {
+        padding:
+            10px 11px !important;
+
+        border-radius:
+            11px !important;
+    }
+
+}
+
+
+/* =====================================================================
+   TOLLGATE LOGS - ABSOLUTE FINAL MOBILE DARK CANVAS
+   Keep this block at the VERY END.
+===================================================================== */
+
+body[data-theme="dark"] .owner-dashboard-layout,
+html[data-theme="dark"] .owner-dashboard-layout,
+body[data-theme="dark"] .owner-dashboard-main,
+html[data-theme="dark"] .owner-dashboard-main,
+body[data-theme="dark"] .owner-dashboard-content-outer,
+html[data-theme="dark"] .owner-dashboard-content-outer,
+body[data-theme="dark"] .owner-dashboard-content,
+html[data-theme="dark"] .owner-dashboard-content {
+    background-color: #061524 !important;
+}
+
+body[data-theme="dark"] .toll-mobile-page,
+html[data-theme="dark"] .toll-mobile-page {
+    min-height: 100dvh !important;
+    height: auto !important;
+    background: #061524 !important;
+    background-color: #061524 !important;
+}
+
+@media (max-width: 768px) {
+
+    body[data-theme="dark"] .owner-dashboard-layout,
+    html[data-theme="dark"] .owner-dashboard-layout,
+    body[data-theme="dark"] .owner-dashboard-main,
+    html[data-theme="dark"] .owner-dashboard-main {
+        min-height: 100dvh !important;
+        background: #061524 !important;
+    }
+
+    body[data-theme="dark"] .owner-dashboard-content-outer,
+    html[data-theme="dark"] .owner-dashboard-content-outer,
+    body[data-theme="dark"] .owner-dashboard-content,
+    html[data-theme="dark"] .owner-dashboard-content {
+        min-height: 100dvh !important;
+        height: auto !important;
+        background: #061524 !important;
+        background-color: #061524 !important;
+    }
+
+    body[data-theme="dark"] .owner-dashboard-content>.toll-mobile-page,
+    html[data-theme="dark"] .owner-dashboard-content>.toll-mobile-page {
+        min-height: 100dvh !important;
+        background: #061524 !important;
+    }
+
+    body[data-theme="dark"] .toll-history-card,
+    html[data-theme="dark"] .toll-history-card {
+        background: linear-gradient(180deg, #0d2238 0%, #0a1d31 100%) !important;
+        border-color: rgba(132, 174, 214, .14) !important;
+    }
+}
+
+
+/* =====================================================================
+   EAGLE OWNER DASHBOARD — TRUE DARK ROOT CANVAS FIX
+   FINAL OVERRIDE — KEEP AT VERY END OF THIS FILE.
+
+   Purpose:
+   - Remove the remaining WHITE area below short pages such as
+     Tollgate Logs and Emergency Alerts.
+   - DARK MODE ONLY.
+   - No component logic, API, calculation, content or light-mode CSS changed.
+===================================================================== */
+
+
+/* ---------------------------------------------------------
+   1. ROOT DOCUMENT CANVAS
+   Global index/global CSS uses a light/white body background.
+   Override it ONLY while Owner Dashboard dark theme is active.
+--------------------------------------------------------- */
+
+html:has(body[data-theme="dark"]),
+body[data-theme="dark"],
+body[data-theme="dark"] #root {
+    min-height: 100% !important;
+    background: #061524 !important;
+    background-color: #061524 !important;
+}
+
+
+/* Modern mobile viewport height */
+body[data-theme="dark"],
+body[data-theme="dark"] #root {
+    min-height: 100dvh !important;
+}
+
+
+/* ---------------------------------------------------------
+   2. OWNER DASHBOARD ROOT LAYERS
+--------------------------------------------------------- */
+
+body[data-theme="dark"] .owner-dashboard-layout,
+body[data-theme="dark"] .owner-dashboard-main {
+    min-height: 100dvh !important;
+    background: #061524 !important;
+    background-color: #061524 !important;
+}
+
+
+/* ---------------------------------------------------------
+   3. CONTENT AREA MUST FILL REMAINING SCREEN
+--------------------------------------------------------- */
+
+body[data-theme="dark"] .owner-dashboard-content-outer {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+
+    min-height: calc(100dvh - 64px) !important;
+
+    background: #061524 !important;
+    background-color: #061524 !important;
+}
+
+
+body[data-theme="dark"] .owner-dashboard-content {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+
+    min-height: calc(100dvh - 82px) !important;
+
+    background: #061524 !important;
+    background-color: #061524 !important;
+}
+
+
+/* ---------------------------------------------------------
+   4. AnimatePresence / Framer Motion ACTIVE TAB WRAPPER
+   This is the layer between OwnerDashboard content and page component.
+--------------------------------------------------------- */
+
+body[data-theme="dark"] .owner-dashboard-content>div {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: calc(100dvh - 100px) !important;
+
+    background: #061524 !important;
+    background-color: #061524 !important;
+}
+
+
+/* ---------------------------------------------------------
+   5. SHORT DARK PAGES
+--------------------------------------------------------- */
+
+body[data-theme="dark"] .toll-mobile-page,
+body[data-theme="dark"] .ea-page {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: calc(100dvh - 100px) !important;
+
+    margin: 0 !important;
+
+    background: #061524 !important;
+    background-color: #061524 !important;
+}
+
+
+/* Their final visible sections should not create a white tail */
+body[data-theme="dark"] .toll-mobile-page::after,
+body[data-theme="dark"] .ea-page::after {
+    content: "" !important;
+    display: block !important;
+    flex: 1 1 auto !important;
+    min-height: 1px !important;
+    background: #061524 !important;
+}
+
+
+/* ---------------------------------------------------------
+   6. MOBILE — FORCE ALL CANVAS LAYERS TO FULL VIEWPORT
+--------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+
+    body[data-theme="dark"],
+    body[data-theme="dark"] #root,
+    body[data-theme="dark"] .owner-dashboard-layout,
+    body[data-theme="dark"] .owner-dashboard-main {
+        min-height: 100dvh !important;
+        background: #061524 !important;
+        background-color: #061524 !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-content-outer {
+        min-height: calc(100dvh - 64px) !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-content {
+        min-height: calc(100dvh - 82px) !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-content>div,
+    body[data-theme="dark"] .toll-mobile-page,
+    body[data-theme="dark"] .ea-page {
+        min-height: calc(100dvh - 100px) !important;
+
+        background: #061524 !important;
+        background-color: #061524 !important;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   7. SMALL MOBILE
+--------------------------------------------------------- */
+
+@media (max-width: 640px) {
+
+    body[data-theme="dark"] .owner-dashboard-content-outer {
+        min-height: calc(100dvh - 64px) !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-content {
+        min-height: calc(100dvh - 82px) !important;
+    }
+
+
+    body[data-theme="dark"] .owner-dashboard-content>div,
+    body[data-theme="dark"] .toll-mobile-page,
+    body[data-theme="dark"] .ea-page {
+        min-height: calc(100dvh - 82px) !important;
+    }
+}

@@ -1411,12 +1411,12 @@ const PaymentManagement = () => {
 
       <div className="payment-list" style={styles.list}>
         {loading ? (
-          <div style={styles.empty}>
+          <div className="payment-empty-state" style={styles.empty}>
             Loading payments...
           </div>
         ) : filteredBookings.length ===
           0 ? (
-          <div style={styles.empty}>
+          <div className="payment-empty-state" style={styles.empty}>
             No payment records found
           </div>
         ) : (
@@ -2211,6 +2211,73 @@ const PaymentManagement = () => {
             transition: none !important;
           }
         }
+
+        /* =========================================================
+           PAYMENT EMPTY STATE — DARK MODE + MOBILE COMPACT FIX
+           UI ONLY.
+           No calculations, GST, salary, filters, APIs or backend calls changed.
+        ========================================================= */
+
+        body[data-theme="dark"] .payment-empty-state,
+        html[data-theme="dark"] .payment-empty-state {
+          color: #a8bdd1 !important;
+
+          background:
+            linear-gradient(
+              145deg,
+              #0d2238 0%,
+              #091c2f 100%
+            ) !important;
+
+          border:
+            1px solid rgba(132, 174, 214, 0.12) !important;
+
+          box-shadow:
+            inset 0 1px 0 rgba(255,255,255,0.02) !important;
+        }
+
+
+        @media (max-width: 768px) {
+
+          .payment-empty-state {
+            min-height: 76px !important;
+            padding: 16px 12px !important;
+
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            border-radius: 13px !important;
+
+            font-size: 10.5px !important;
+            line-height: 1.35 !important;
+            text-align: center !important;
+
+            box-sizing: border-box !important;
+          }
+
+
+          body[data-theme="dark"] .payment-empty-state,
+          html[data-theme="dark"] .payment-empty-state {
+            color: #9eb4c9 !important;
+            background: #0d2741 !important;
+          }
+
+        }
+
+
+        @media (max-width: 420px) {
+
+          .payment-empty-state {
+            min-height: 64px !important;
+            padding: 13px 10px !important;
+            border-radius: 12px !important;
+            font-size: 10px !important;
+          }
+
+        }
+
+
       `}</style>
     </div>
   );

@@ -521,6 +521,310 @@ const mobileCss = `
       transition: none !important;
     }
   }
+
+  /* =========================================================
+     TOLLGATE LOGS - PREMIUM COMPACT THEME
+     Light + Dark / Desktop + Mobile
+  ========================================================= */
+
+  .toll-mobile-page {
+    width: 100%;
+    min-width: 0;
+    min-height: calc(100dvh - 118px);
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 769px) {
+    .toll-summary-grid {
+      gap: 14px !important;
+      margin-bottom: 18px !important;
+    }
+
+    .toll-summary-card {
+      padding: 18px !important;
+      border-radius: 18px !important;
+    }
+
+    .toll-history-card {
+      border-radius: 20px !important;
+    }
+
+    .toll-table-header {
+      padding: 18px 20px !important;
+    }
+
+    .toll-refresh-btn {
+      min-height: 40px !important;
+      padding: 0 14px !important;
+      border-radius: 12px !important;
+    }
+  }
+
+  /* DARK MODE */
+  body[data-theme="dark"] .toll-mobile-page,
+  html[data-theme="dark"] .toll-mobile-page {
+    color: #dce9f6;
+  }
+
+  body[data-theme="dark"] .toll-summary-card,
+  html[data-theme="dark"] .toll-summary-card,
+  body[data-theme="dark"] .toll-history-card,
+  html[data-theme="dark"] .toll-history-card {
+    background: #0d2238 !important;
+    color: #eaf3fc !important;
+    border-color: rgba(132,174,214,.15) !important;
+    box-shadow: 0 12px 28px rgba(0,0,0,.16) !important;
+  }
+
+  body[data-theme="dark"] .toll-summary-card h3,
+  html[data-theme="dark"] .toll-summary-card h3,
+  body[data-theme="dark"] .toll-table-header h3,
+  html[data-theme="dark"] .toll-table-header h3 {
+    color: #f2f7fd !important;
+  }
+
+  body[data-theme="dark"] .toll-summary-card p,
+  html[data-theme="dark"] .toll-summary-card p {
+    color: #91a8bf !important;
+  }
+
+  body[data-theme="dark"] .toll-table-header,
+  html[data-theme="dark"] .toll-table-header {
+    background: #0d2238 !important;
+    border-bottom-color: rgba(132,174,214,.14) !important;
+  }
+
+  body[data-theme="dark"] .toll-refresh-btn,
+  html[data-theme="dark"] .toll-refresh-btn {
+    background: #102840 !important;
+    color: #dce9f6 !important;
+    border-color: rgba(132,174,214,.16) !important;
+    box-shadow: 0 6px 16px rgba(0,0,0,.12) !important;
+  }
+
+  body[data-theme="dark"] .toll-table-wrap,
+  html[data-theme="dark"] .toll-table-wrap {
+    background: #091c2f !important;
+  }
+
+  body[data-theme="dark"] .toll-row,
+  html[data-theme="dark"] .toll-row {
+    background: #0d2238 !important;
+    border-color: rgba(132,174,214,.15) !important;
+    box-shadow: 0 7px 18px rgba(0,0,0,.14) !important;
+  }
+
+  body[data-theme="dark"] .toll-cell,
+  html[data-theme="dark"] .toll-cell {
+    background: #102840 !important;
+    border-color: rgba(132,174,214,.15) !important;
+    color: #eaf3fc !important;
+  }
+
+  body[data-theme="dark"] .toll-cell::before,
+  html[data-theme="dark"] .toll-cell::before {
+    color: #7891aa !important;
+  }
+
+  body[data-theme="dark"] .toll-cell p:first-of-type,
+  html[data-theme="dark"] .toll-cell p:first-of-type {
+    color: #eef6ff !important;
+  }
+
+  body[data-theme="dark"] .toll-cell p:last-of-type,
+  html[data-theme="dark"] .toll-cell p:last-of-type {
+    color: #91a8bf !important;
+  }
+
+  @media (max-width: 768px) {
+    .toll-mobile-page {
+      min-height: calc(100dvh - 88px) !important;
+      padding-bottom: 16px !important;
+    }
+
+    /* MUST override the component's earlier light mobile rules */
+    body[data-theme="dark"] .toll-table-header h3,
+    html[data-theme="dark"] .toll-table-header h3 {
+      color: #f2f7fd !important;
+    }
+
+    body[data-theme="dark"] .toll-refresh-btn,
+    html[data-theme="dark"] .toll-refresh-btn {
+      background: #102840 !important;
+      color: #dce9f6 !important;
+      border-color: rgba(132,174,214,.16) !important;
+    }
+
+    body[data-theme="dark"] .toll-table-wrap,
+    html[data-theme="dark"] .toll-table-wrap {
+      background: #091c2f !important;
+    }
+
+    body[data-theme="dark"] .toll-row,
+    html[data-theme="dark"] .toll-row {
+      background: #0d2238 !important;
+      border-color: rgba(132,174,214,.15) !important;
+    }
+
+    body[data-theme="dark"] .toll-cell,
+    html[data-theme="dark"] .toll-cell {
+      background: #102840 !important;
+      border-color: rgba(132,174,214,.15) !important;
+    }
+  }
+
+
+  /* =========================================================
+     TOLLGATE MOBILE - ABSOLUTE FINAL DARK CANVAS FIX
+     UI only. API / totals / refresh logic untouched.
+  ========================================================= */
+
+  body[data-theme="dark"] .toll-mobile-page,
+  html[data-theme="dark"] .toll-mobile-page {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+    background: #061524 !important;
+    background-color: #061524 !important;
+  }
+
+  body[data-theme="dark"] .toll-history-card,
+  html[data-theme="dark"] .toll-history-card {
+    background: linear-gradient(180deg, #0d2238 0%, #0a1d31 100%) !important;
+    border: 1px solid rgba(132,174,214,.14) !important;
+  }
+
+  body[data-theme="dark"] .toll-history-card > div,
+  html[data-theme="dark"] .toll-history-card > div {
+    background-color: transparent;
+  }
+
+  body[data-theme="dark"] .toll-history-card > div[style*="text-align"],
+  html[data-theme="dark"] .toll-history-card > div[style*="text-align"] {
+    color: #8fa7bf !important;
+    background: #0b2035 !important;
+  }
+
+  @media (max-width: 768px) {
+    body[data-theme="dark"] .toll-mobile-page,
+    html[data-theme="dark"] .toll-mobile-page {
+      min-height: 100dvh !important;
+      padding: 10px 10px 28px !important;
+      margin: 0 !important;
+      background: #061524 !important;
+    }
+
+    .toll-summary-grid {
+      gap: 7px !important;
+      margin-bottom: 10px !important;
+    }
+
+    .toll-summary-card {
+      min-height: 76px !important;
+      padding: 9px 9px !important;
+      gap: 8px !important;
+      border-radius: 14px !important;
+    }
+
+    .toll-summary-card > div:first-child {
+      width: 34px !important;
+      height: 34px !important;
+      min-width: 34px !important;
+      border-radius: 10px !important;
+    }
+
+    .toll-summary-card > div:first-child svg {
+      width: 16px !important;
+      height: 16px !important;
+    }
+
+    .toll-summary-card p {
+      font-size: 8px !important;
+      line-height: 1.18 !important;
+    }
+
+    .toll-summary-card h3 {
+      font-size: 14px !important;
+      line-height: 1.05 !important;
+    }
+
+    .toll-history-card {
+      border-radius: 16px !important;
+      margin-bottom: 0 !important;
+    }
+
+    .toll-table-header {
+      min-height: 54px !important;
+      padding: 10px 11px !important;
+    }
+
+    .toll-table-header h3 {
+      font-size: 13px !important;
+    }
+
+    .toll-refresh-btn {
+      min-height: 34px !important;
+      padding: 0 9px !important;
+      border-radius: 10px !important;
+      font-size: 9px !important;
+    }
+
+    body[data-theme="dark"] .toll-history-card > div[style*="text-align"],
+    html[data-theme="dark"] .toll-history-card > div[style*="text-align"] {
+      min-height: 150px !important;
+      padding: 30px 20px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 0 0 16px 16px !important;
+      color: #91a8bf !important;
+      background: #0b2035 !important;
+      font-size: 12px !important;
+      line-height: 1.55 !important;
+    }
+
+    body[data-theme="dark"] .toll-table-wrap,
+    html[data-theme="dark"] .toll-table-wrap {
+      padding: 7px !important;
+      background: #091c2f !important;
+    }
+
+    body[data-theme="dark"] .toll-row,
+    html[data-theme="dark"] .toll-row {
+      padding: 8px !important;
+      gap: 6px !important;
+      border-radius: 13px !important;
+    }
+
+    body[data-theme="dark"] .toll-cell,
+    html[data-theme="dark"] .toll-cell {
+      padding: 7px !important;
+      border-radius: 9px !important;
+    }
+  }
+
+  @media (max-width: 420px) {
+    body[data-theme="dark"] .toll-mobile-page,
+    html[data-theme="dark"] .toll-mobile-page {
+      min-height: 100dvh !important;
+      padding: 8px 8px 24px !important;
+    }
+
+    .toll-summary-card {
+      min-height: 70px !important;
+      padding: 8px !important;
+    }
+
+    body[data-theme="dark"] .toll-history-card > div[style*="text-align"],
+    html[data-theme="dark"] .toll-history-card > div[style*="text-align"] {
+      min-height: 135px !important;
+      padding: 25px 18px !important;
+      font-size: 11px !important;
+    }
+  }
+
 `;
 
 const styles = {

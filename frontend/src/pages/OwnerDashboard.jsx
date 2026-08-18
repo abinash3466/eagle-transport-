@@ -23,6 +23,8 @@ import {
   Save,
   FileText,
   UserPlus,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -36,6 +38,7 @@ import eagleLogo from '/src/assets/eagle-logo.png';
 import CreateBooking from './admin/CreateBooking';
 import SmartDispatch from './admin/SmartDispatch';
 import FuelLogs from "./admin/FuelLogs";
+import "../styles/owner-dashboard-dark.css";
 
 const fetchWithAuth = (url, options = {}) => {
 
@@ -55,7 +58,15 @@ const fetchWithAuth = (url, options = {}) => {
 
 };
 
-const API_URL = import.meta.env.VITE_API_URL;
+const RAW_API_URL = String(import.meta.env.VITE_API_URL || "").trim();
+
+const API_URL = RAW_API_URL
+  ? `${RAW_API_URL.replace(/\/+$/, "")}${/\/api$/i.test(
+    RAW_API_URL.replace(/\/+$/, "")
+  )
+    ? ""
+    : "/api"}`
+  : "/api";
 
 const SIDEBAR_WIDTH = 280;
 
@@ -1000,6 +1011,7 @@ const OwnerDashboard = () => {
   const [notifications, setNotifications] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
+  const [dashboardTheme, setDashboardTheme] = useState("light");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -1010,6 +1022,31 @@ const OwnerDashboard = () => {
       navigate("/owner/login", { replace: true });
     }
   }, [navigate]);
+
+  /* =========================================
+     DASHBOARD THEME
+     Always starts in Light Mode when dashboard opens.
+  ========================================= */
+  useEffect(() => {
+    document.body.setAttribute("data-theme", "light");
+    localStorage.setItem("theme", "light");
+    setDashboardTheme("light");
+
+    return () => {
+      // Keep the selected dashboard theme until the user leaves/re-enters.
+    };
+  }, []);
+
+  const toggleDashboardTheme = () => {
+    setDashboardTheme((currentTheme) => {
+      const nextTheme = currentTheme === "light" ? "dark" : "light";
+
+      document.body.setAttribute("data-theme", nextTheme);
+      localStorage.setItem("theme", nextTheme);
+
+      return nextTheme;
+    });
+  };
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -1109,7 +1146,16 @@ const OwnerDashboard = () => {
   );
 
   return (
-    <div style={styles.layout}>
+    <div
+      className="owner-dashboard-layout"
+      style={{
+        ...styles.layout,
+        background:
+          dashboardTheme === "dark"
+            ? "#061524"
+            : "linear-gradient(180deg, #edf3f9 0%, #f6f9fc 100%)",
+      }}
+    >
       <aside style={styles.desktopSidebar} className="desktop-only">
         <SidebarContent />
       </aside>
@@ -1144,7 +1190,13 @@ const OwnerDashboard = () => {
         )}
       </AnimatePresence>
 
-      <div style={styles.main} className="owner-dashboard-main">
+      <div
+        className="owner-dashboard-main"
+        style={{
+          ...styles.main,
+          background: dashboardTheme === "dark" ? "#061524" : "transparent",
+        }}
+      >
         <div style={styles.topbar} className="owner-dashboard-topbar">
           <div style={styles.topbarLeft}>
             <button className="mobile-only owner-mobile-menu-btn" onClick={() => setIsMobileMenuOpen(true)} style={styles.mobileMenuBtn}>
@@ -1169,6 +1221,24 @@ const OwnerDashboard = () => {
           </div>
 
           <div style={styles.topActions}>
+
+            {/* DASHBOARD LIGHT / DARK MODE */}
+            <button
+              type="button"
+              className="owner-theme-toggle"
+              onClick={toggleDashboardTheme}
+              aria-label={dashboardTheme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+              title={dashboardTheme === "light" ? "Dark Mode" : "Light Mode"}
+            >
+              <span className="owner-theme-toggle__icon">
+                {dashboardTheme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+              </span>
+
+              <span className="owner-theme-toggle__label desktop-only">
+                {dashboardTheme === "light" ? "Dark" : "Light"}
+              </span>
+            </button>
+
             <div style={styles.notificationWrap}>
 
 
@@ -1268,8 +1338,31 @@ const OwnerDashboard = () => {
           </div>
         </div>
 
-        <div style={styles.contentOuter} className="owner-dashboard-content-outer">
-          <div style={styles.content} className="owner-dashboard-content">
+        <div
+          className="owner-dashboard-content-outer"
+          style={{
+            ...styles.contentOuter,
+            display: "flex",
+            flexDirection: "column",
+            background: dashboardTheme === "dark" ? "#061524" : "transparent",
+          }}
+        >
+          <div
+            className="owner-dashboard-content"
+            style={{
+              ...styles.content,
+              flex: 1,
+              backgroundColor: dashboardTheme === "dark" ? "#061524" : "#ffffff",
+              borderColor:
+                dashboardTheme === "dark"
+                  ? "rgba(132, 174, 214, 0.10)"
+                  : "rgba(15, 59, 115, 0.06)",
+              boxShadow:
+                dashboardTheme === "dark"
+                  ? "none"
+                  : "0 14px 34px rgba(15, 59, 115, 0.06)",
+            }}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
@@ -1277,6 +1370,19 @@ const OwnerDashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -18 }}
                 transition={{ duration: 0.16, ease: 'easeOut' }}
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  minHeight:
+                    activeTab === "Tollgate Logs" && dashboardTheme === "dark"
+                      ? "calc(100dvh - 100px)"
+                      : undefined,
+                  background:
+                    activeTab === "Tollgate Logs" && dashboardTheme === "dark"
+                      ? "#061524"
+                      : "transparent",
+                }}
               >
                 <div style={styles.contentHeader} className="owner-dashboard-header">
                   <div style={styles.headerActionWrap}>
@@ -1383,6 +1489,20 @@ const OwnerDashboard = () => {
             gap: 7px !important;
           }
 
+          .owner-theme-toggle {
+            width: 40px !important;
+            min-width: 40px !important;
+            height: 40px !important;
+            padding: 0 !important;
+            border-radius: 12px !important;
+          }
+
+          .owner-theme-toggle__icon {
+            width: 100% !important;
+            height: 100% !important;
+            background: transparent !important;
+          }
+
           .owner-mobile-menu-btn,
           .owner-notification-btn {
             width: 40px !important;
@@ -1452,10 +1572,117 @@ const OwnerDashboard = () => {
 
 
 
+
+        /* =========================================================
+           FINAL FULL-HEIGHT DARK CANVAS FIX
+           Prevents short pages (Tollgate / Emergency) from revealing white.
+        ========================================================= */
+
+        [data-theme="dark"] .owner-dashboard-layout,
+        [data-theme="dark"] .owner-dashboard-main,
+        [data-theme="dark"] .owner-dashboard-content-outer,
+        [data-theme="dark"] .owner-dashboard-content {
+          background: #061524 !important;
+          background-color: #061524 !important;
+        }
+
+        .owner-dashboard-content-outer {
+          display: flex !important;
+          flex-direction: column !important;
+          flex: 1 1 auto !important;
+        }
+
+        .owner-dashboard-content {
+          flex: 1 1 auto !important;
+        }
+
+        @media (max-width: 1024px) {
+          .owner-dashboard-layout,
+          .owner-dashboard-main {
+            min-height: 100dvh !important;
+          }
+
+          .owner-dashboard-content-outer {
+            min-height: calc(100dvh - 68px) !important;
+          }
+
+          .owner-dashboard-content {
+            min-height: calc(100dvh - 92px) !important;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .owner-dashboard-content-outer {
+            min-height: calc(100dvh - 64px) !important;
+          }
+
+          .owner-dashboard-content {
+            min-height: calc(100dvh - 82px) !important;
+          }
+        }
+
+
         /* =========================================================
            OWNER DASHBOARD — PREMIUM MOBILE SIDEBAR + DARK TOPBAR
            UI ONLY. No API / calculations / functions are changed.
         ========================================================= */
+
+        /* =========================================================
+           STICKY TOPBAR + COMPACT THEME SWITCH
+        ========================================================= */
+
+        .owner-dashboard-main {
+          overflow-x: clip !important;
+        }
+
+        .owner-dashboard-topbar {
+          position: sticky !important;
+          top: 0 !important;
+          z-index: 120 !important;
+          flex-shrink: 0 !important;
+        }
+
+        .owner-theme-toggle {
+          min-width: 78px;
+          height: 42px;
+          padding: 0 12px;
+          border: 1px solid rgba(15, 74, 136, .10);
+          border-radius: 13px;
+          background: rgba(247, 250, 255, .96);
+          color: #0c3c6b;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 7px;
+          font-size: 11px;
+          font-weight: 800;
+          cursor: pointer;
+          box-shadow: 0 6px 16px rgba(8, 47, 89, .06);
+          transition:
+            transform .18s ease,
+            background .18s ease,
+            border-color .18s ease,
+            box-shadow .18s ease;
+        }
+
+        .owner-theme-toggle:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 9px 19px rgba(8, 47, 89, .09);
+        }
+
+        .owner-theme-toggle__icon {
+          width: 23px;
+          height: 23px;
+          border-radius: 8px;
+          display: grid;
+          place-items: center;
+          color: #0f5b9f;
+          background: #eaf4ff;
+        }
+
+        .owner-theme-toggle__label {
+          line-height: 1;
+        }
 
         /* Theme-safe topbar (desktop + mobile) */
         .owner-dashboard-topbar {
@@ -1751,6 +1978,18 @@ const OwnerDashboard = () => {
             min-height: 58px !important;
             height: 58px !important;
             padding: 6px 8px !important;
+          }
+
+          .owner-theme-toggle {
+            width: 37px !important;
+            min-width: 37px !important;
+            height: 37px !important;
+            border-radius: 11px !important;
+          }
+
+          .owner-theme-toggle__icon svg {
+            width: 17px !important;
+            height: 17px !important;
           }
 
           .owner-mobile-menu-btn,
@@ -2056,6 +2295,108 @@ const OwnerDashboard = () => {
         @media (min-width: 1025px) {
           .mobile-only { display: none !important; }
         }
+
+        /* Tollgate dark short-page fill only */
+        body[data-theme="dark"] .owner-dashboard-content .toll-mobile-page,
+        html[data-theme="dark"] .owner-dashboard-content .toll-mobile-page {
+          flex: 1 1 auto !important;
+          background: #061524 !important;
+          background-color: #061524 !important;
+        }
+
+
+
+        /* =========================================================
+           OWNER DASHBOARD MOBILE TOPBAR — FIXED POSITION ONLY
+           UI/layout fix only.
+           No functions, calculations, API calls, content or other CSS changed.
+        ========================================================= */
+
+        @media (max-width: 1024px) {
+
+          .owner-dashboard-topbar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+
+            width: 100% !important;
+            max-width: 100% !important;
+
+            z-index: 500 !important;
+
+            margin: 0 !important;
+
+            box-sizing: border-box !important;
+          }
+
+          /* Fixed topbar is removed from normal document flow.
+             Add only the exact top spacing required so page content
+             starts below the bar instead of going underneath it. */
+          .owner-dashboard-main {
+            padding-top: 68px !important;
+          }
+
+        }
+
+
+        @media (max-width: 640px) {
+
+          .owner-dashboard-main {
+            padding-top: 64px !important;
+          }
+
+        }
+
+        /* ===============================
+   MOBILE MENU ICON CENTER FIX
+================================ */
+
+@media (max-width: 1024px) {
+
+  .owner-mobile-menu-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    width: 40px !important;
+    min-width: 40px !important;
+    height: 40px !important;
+
+    line-height: 1 !important;
+  }
+
+  .owner-mobile-menu-btn svg {
+    display: block !important;
+
+    width: 22px !important;
+    height: 22px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    flex-shrink: 0 !important;
+  }
+}
+
+@media (max-width: 420px) {
+
+  .owner-mobile-menu-btn {
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+  }
+
+  .owner-mobile-menu-btn svg {
+    width: 21px !important;
+    height: 21px !important;
+  }
+}
+
+
       `}</style>
     </div>
   );
@@ -2065,8 +2406,8 @@ const styles = {
   layout: {
     display: 'flex',
     minHeight: '100vh',
-    background: 'linear-gradient(180deg, #edf3f9 0%, #f6f9fc 100%)',
-    overflowX: 'hidden',
+    background: 'transparent',
+    overflowX: 'clip',
   },
 
   desktopSidebar: {
@@ -2252,13 +2593,14 @@ const styles = {
     flexDirection: 'column',
     width: `calc(100vw - ${SIDEBAR_WIDTH}px)`,
     maxWidth: `calc(100vw - ${SIDEBAR_WIDTH}px)`,
-    overflowX: 'hidden',
+    overflowX: 'clip',
   },
 
   topbar: {
     height: '74px',
-    backgroundColor: 'rgba(255,255,255,0.76)',
-    backdropFilter: 'blur(14px)',
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    backdropFilter: 'blur(18px) saturate(135%)',
+    WebkitBackdropFilter: 'blur(18px) saturate(135%)',
     borderBottom: '1px solid rgba(15, 59, 115, 0.08)',
     padding: '0 28px',
     display: 'flex',
@@ -2266,7 +2608,8 @@ const styles = {
     alignItems: 'center',
     position: 'sticky',
     top: 0,
-    zIndex: 90,
+    zIndex: 120,
+    boxShadow: '0 6px 20px rgba(8, 47, 89, 0.06)',
   },
 
   topbarLeft: {
@@ -2430,6 +2773,9 @@ const styles = {
     width: '100%',
     boxSizing: 'border-box',
     overflowX: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: 0,
   },
 
   quickStatsGrid: {
@@ -2474,6 +2820,7 @@ const styles = {
   },
 
   content: {
+    flex: 1,
     backgroundColor: '#ffffff',
     borderRadius: '28px',
     minHeight: 'calc(100vh - 210px)',

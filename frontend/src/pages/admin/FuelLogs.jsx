@@ -294,9 +294,9 @@ const FuelLogs = () => {
         </div>
 
         {loading ? (
-          <div style={styles.emptyBox}>Loading fuel logs...</div>
+          <div className="fuel-empty-box" style={styles.emptyBox}>Loading fuel logs...</div>
         ) : fuelLogs.length === 0 ? (
-          <div style={styles.emptyBox}>No fuel logs found. Driver fuel entries will appear here.</div>
+          <div className="fuel-empty-box" style={styles.emptyBox}>No fuel logs found. Driver fuel entries will appear here.</div>
         ) : (
           <div className="fuel-table-wrap" style={{ overflowX: 'auto' }}>
             <table className="fuel-table" style={styles.table}>
@@ -549,6 +549,26 @@ const mobileCss = `
       font-size: 8.5px !important;
     }
 
+    .fuel-empty-box {
+      min-height: 108px !important;
+      padding: 20px 16px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+      font-size: 12px !important;
+      line-height: 1.45 !important;
+      border-top: 1px solid var(--border-light) !important;
+      box-sizing: border-box !important;
+    }
+
+    body[data-theme="dark"] .fuel-empty-box,
+    html[data-theme="dark"] .fuel-empty-box {
+      color: #9db2c7 !important;
+      background: #0d2741 !important;
+      border-top-color: rgba(132, 174, 214, 0.12) !important;
+    }
+
     .fuel-table-wrap {
       overflow: visible !important;
       padding: 9px !important;
@@ -652,6 +672,29 @@ const mobileCss = `
   }
 
   @media (max-width: 420px) {
+    .fuel-history-card {
+      border-radius: 16px !important;
+    }
+
+    .fuel-table-header {
+      padding: 10px 11px !important;
+    }
+
+    .fuel-table-header h3 {
+      font-size: 13px !important;
+    }
+
+    .fuel-table-header > span {
+      padding: 4px 6px !important;
+      font-size: 8px !important;
+    }
+
+    .fuel-empty-box {
+      min-height: 92px !important;
+      padding: 16px 13px !important;
+      font-size: 11px !important;
+      line-height: 1.4 !important;
+    }
     .fuel-mobile-page {
       gap: 12px !important;
     }

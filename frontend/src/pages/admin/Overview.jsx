@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authHeader } from "../../utils/authHeader";
 import { fetchWithAuth } from "../../utils/fetchWithAuth";
@@ -32,6 +32,82 @@ import {
 } from 'recharts';
 
 const API_URL = import.meta.env.VITE_API_URL;
+
+const MeasuredChart = ({ children }) => {
+  const chartRef = useRef(null);
+  const [size, setSize] = useState({
+    width: 0,
+    height: 300,
+  });
+
+  useEffect(() => {
+    const element = chartRef.current;
+
+    if (!element) {
+      return undefined;
+    }
+
+    const updateSize = () => {
+      const width = Math.floor(
+        element.getBoundingClientRect().width
+      );
+
+      if (width > 0) {
+        setSize({
+          width,
+          height: width <= 520 ? 210 : 300,
+        });
+      }
+    };
+
+    updateSize();
+
+    const delayedUpdate =
+      window.setTimeout(updateSize, 120);
+
+    let observer;
+
+    if (typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver(updateSize);
+      observer.observe(element);
+    }
+
+    window.addEventListener(
+      'resize',
+      updateSize
+    );
+
+    return () => {
+      window.clearTimeout(delayedUpdate);
+
+      window.removeEventListener(
+        'resize',
+        updateSize
+      );
+
+      if (observer) {
+        observer.disconnect();
+      }
+    };
+  }, []);
+
+  return (
+    <div
+      ref={chartRef}
+      className="overview-measured-chart"
+    >
+      {size.width > 0
+        ? children(size)
+        : (
+          <div
+            className="overview-chart-loading-space"
+            aria-hidden="true"
+          />
+        )}
+    </div>
+  );
+};
+
 
 // Props-il searchTerm matrum setSearchTerm-ai vaangugirom
 const Overview = ({ onNavigate, searchTerm, setSearchTerm }) => {
@@ -833,53 +909,260 @@ Status: ${i.status ||
       </div>
 
       <div className="overview-charts" style={styles.chartsGrid}>
-        <motion.div className="card" style={styles.chartCard}>
-          <div style={styles.chartHeader}>
-            <h3 style={styles.chartTitle}>Revenue Overview</h3>
+
+        <motion.div
+          className="card overview-chart-card"
+          style={styles.chartCard}
+        >
+          <div
+            className="overview-chart-header"
+            style={styles.chartHeader}
+          >
+            <h3
+              className="overview-chart-title"
+              style={styles.chartTitle}
+            >
+              Revenue Overview
+            </h3>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={revenueData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-light)" />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} />
-              <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => `₹${value / 1000}k`} />
-              <Tooltip />
-              <Area type="monotone" dataKey="revenue" stroke="var(--primary-blue)" strokeWidth={3} fill="rgba(15,74,136,0.15)" />
-            </AreaChart>
-          </ResponsiveContainer>
+
+          <MeasuredChart>
+            {({ width, height }) => (
+              <AreaChart
+                width={width}
+                height={height}
+                data={revenueData}
+                margin={{
+                  top: 10,
+                  right: 12,
+                  left: 2,
+                  bottom: 2,
+                }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="var(--border-light)"
+                />
+
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{
+                    fontSize:
+                      width <= 520
+                        ? 10
+                        : 12,
+                  }}
+                />
+
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  width={
+                    width <= 520
+                      ? 48
+                      : 58
+                  }
+                  tick={{
+                    fontSize:
+                      width <= 520
+                        ? 10
+                        : 12,
+                  }}
+                  tickFormatter={(value) =>
+                    `₹${value / 1000}k`
+                  }
+                />
+
+                <Tooltip />
+
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="var(--primary-blue)"
+                  strokeWidth={3}
+                  fill="rgba(15,74,136,0.15)"
+                  dot={{
+                    r:
+                      width <= 520
+                        ? 3
+                        : 4,
+                  }}
+                  activeDot={{
+                    r:
+                      width <= 520
+                        ? 5
+                        : 6,
+                  }}
+                />
+              </AreaChart>
+            )}
+          </MeasuredChart>
         </motion.div>
 
-        <motion.div className="card" style={styles.chartCard}>
-          <div style={styles.chartHeader}>
-            <h3 style={styles.chartTitle}>Dispatch Summary</h3>
+
+        <motion.div
+          className="card overview-chart-card"
+          style={styles.chartCard}
+        >
+          <div
+            className="overview-chart-header"
+            style={styles.chartHeader}
+          >
+            <h3
+              className="overview-chart-title"
+              style={styles.chartTitle}
+            >
+              Dispatch Summary
+            </h3>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dispatchData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-light)" />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} />
-              <YAxis axisLine={false} tickLine={false} />
-              <Tooltip />
-              <Bar dataKey="trips" fill="var(--accent-orange)" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+
+          <MeasuredChart>
+            {({ width, height }) => (
+              <BarChart
+                width={width}
+                height={height}
+                data={dispatchData}
+                margin={{
+                  top: 10,
+                  right: 12,
+                  left:
+                    width <= 520
+                      ? -8
+                      : 0,
+                  bottom: 2,
+                }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="var(--border-light)"
+                />
+
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{
+                    fontSize:
+                      width <= 520
+                        ? 10
+                        : 12,
+                  }}
+                />
+
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  width={
+                    width <= 520
+                      ? 40
+                      : 48
+                  }
+                  tick={{
+                    fontSize:
+                      width <= 520
+                        ? 10
+                        : 12,
+                  }}
+                />
+
+                <Tooltip />
+
+                <Bar
+                  dataKey="trips"
+                  fill="var(--accent-orange)"
+                  radius={[7, 7, 0, 0]}
+                  maxBarSize={
+                    width <= 520
+                      ? 26
+                      : 38
+                  }
+                />
+              </BarChart>
+            )}
+          </MeasuredChart>
         </motion.div>
+
       </div>
 
-      <div className="card" style={styles.activityCard}>
-        <h3 style={styles.chartTitle}>Recent Activity</h3>
-        {recentActivity.map((item, index) => (
-          <div key={index} style={styles.activityItem}>
-            <div style={styles.activityDot}></div>
-            <div style={{ flex: 1 }}>
-              <p style={styles.activityTitle}>{item.title}</p>
-              <p style={styles.activityMeta}>{item.meta}</p>
+
+      <div
+        className="card overview-activity-card"
+        style={styles.activityCard}
+      >
+        <h3
+          className="overview-activity-heading"
+          style={styles.chartTitle}
+        >
+          Recent Activity
+        </h3>
+
+        <div className="overview-activity-list">
+          {recentActivity.map((item, index) => (
+            <div
+              key={index}
+              className="overview-activity-item"
+              style={styles.activityItem}
+            >
+              <div
+                className="overview-activity-dot"
+                style={styles.activityDot}
+              />
+
+              <div className="overview-activity-copy">
+                <p
+                  className="overview-activity-title"
+                  style={styles.activityTitle}
+                >
+                  {item.title}
+                </p>
+
+                <p
+                  className="overview-activity-meta"
+                  style={styles.activityMeta}
+                >
+                  {item.meta}
+                </p>
+              </div>
+
+              <span
+                className="overview-activity-time"
+                style={styles.activityTime}
+              >
+                {item.time}
+              </span>
             </div>
-            <span style={styles.activityTime}>{item.time}</span>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
 
       <style>{`
+
+        /* =========================================
+           OVERVIEW CHART - STABLE SIZE
+        ========================================= */
+
+        .overview-measured-chart {
+          width: 100%;
+          min-width: 0;
+          overflow: hidden;
+        }
+
+        .overview-chart-loading-space {
+          width: 100%;
+          height: 300px;
+        }
+
+        .overview-activity-copy {
+          flex: 1;
+          min-width: 0;
+        }
+
+
         @media (max-width: 640px) {
           .owner-overview {
             width: 100% !important;
@@ -1067,6 +1350,100 @@ Status: ${i.status ||
             display: grid !important;
             grid-template-columns: 1fr !important;
             gap: 10px !important;
+          }
+
+          .overview-chart-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            padding: 14px 10px 10px !important;
+            border-radius: 18px !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+          }
+
+          .overview-chart-header {
+            margin-bottom: 5px !important;
+          }
+
+          .overview-chart-title {
+            margin: 0 !important;
+            font-size: 16px !important;
+            line-height: 1.2 !important;
+            letter-spacing: -0.15px !important;
+          }
+
+          .overview-measured-chart {
+            width: 100% !important;
+            min-width: 0 !important;
+            height: 210px !important;
+            overflow: hidden !important;
+          }
+
+          .overview-chart-loading-space {
+            height: 210px !important;
+          }
+
+          .overview-measured-chart .recharts-wrapper,
+          .overview-measured-chart .recharts-surface {
+            display: block !important;
+          }
+
+          .overview-activity-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            padding: 14px !important;
+            border-radius: 18px !important;
+            box-sizing: border-box !important;
+          }
+
+          .overview-activity-heading {
+            margin: 0 0 7px !important;
+            font-size: 16px !important;
+            line-height: 1.2 !important;
+          }
+
+          .overview-activity-item {
+            width: 100% !important;
+            min-width: 0 !important;
+            display: grid !important;
+            grid-template-columns:
+              7px minmax(0, 1fr) !important;
+            align-items: start !important;
+            gap: 4px 9px !important;
+            padding: 10px 0 !important;
+            box-sizing: border-box !important;
+          }
+
+          .overview-activity-dot {
+            width: 7px !important;
+            height: 7px !important;
+            margin-top: 5px !important;
+          }
+
+          .overview-activity-copy {
+            min-width: 0 !important;
+          }
+
+          .overview-activity-title {
+            margin: 0 !important;
+            font-size: 11.5px !important;
+            line-height: 1.35 !important;
+          }
+
+          .overview-activity-meta {
+            margin: 3px 0 0 !important;
+            font-size: 9px !important;
+            line-height: 1.42 !important;
+            overflow-wrap: anywhere !important;
+          }
+
+          .overview-activity-time {
+            grid-column: 2 !important;
+            margin-top: 1px !important;
+            font-size: 8.5px !important;
+            line-height: 1.25 !important;
+            white-space: normal !important;
+            text-align: left !important;
           }
 
           .overview-charts > div,
