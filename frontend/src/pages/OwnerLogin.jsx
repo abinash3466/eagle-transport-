@@ -836,6 +836,586 @@ const OwnerLogin = () => {
 
 }
 
+
+        /* =========================================================
+           OWNER LOGIN — FINAL MOBILE THEME FIX
+           UI ONLY.
+           Light mode and dark mode are separated correctly.
+           No login API, auth, remember-me or forgot-password logic changed.
+        ========================================================= */
+
+        @media (max-width: 768px) {
+
+          /* LIGHT MODE */
+          html:not([data-eagle-theme="dark"]) .owner-login-page,
+          body:not([data-eagle-theme="dark"]) .owner-login-page,
+          html[data-eagle-theme="light"] .owner-login-page,
+          body[data-eagle-theme="light"] .owner-login-page {
+            min-height: calc(100dvh - 74px) !important;
+            height: auto !important;
+            padding: 16px 12px 22px !important;
+            align-items: flex-start !important;
+            overflow-x: hidden !important;
+            overflow-y: visible !important;
+            background:
+              linear-gradient(
+                155deg,
+                #edf5fc 0%,
+                #f7fbff 46%,
+                #e6f1fb 100%
+              ) !important;
+          }
+
+          html:not([data-eagle-theme="dark"]) .owner-login-card,
+          body:not([data-eagle-theme="dark"]) .owner-login-card,
+          html[data-eagle-theme="light"] .owner-login-card,
+          body[data-eagle-theme="light"] .owner-login-card {
+            width: 100% !important;
+            max-width: 350px !important;
+            margin: 4px auto 0 !important;
+            padding: 20px 18px 18px !important;
+            border-radius: 22px !important;
+            background:
+              linear-gradient(
+                150deg,
+                rgba(255,255,255,.99) 0%,
+                rgba(247,251,255,.99) 100%
+              ) !important;
+            border: 1px solid rgba(32, 92, 145, .10) !important;
+            box-shadow:
+              0 18px 40px rgba(18, 68, 111, .12),
+              inset 0 1px 0 rgba(255,255,255,.9) !important;
+            color: #133b63 !important;
+          }
+
+          html:not([data-eagle-theme="dark"]) .owner-login-title,
+          body:not([data-eagle-theme="dark"]) .owner-login-title,
+          html[data-eagle-theme="light"] .owner-login-title,
+          body[data-eagle-theme="light"] .owner-login-title {
+            color: #0f3f6d !important;
+          }
+
+          html:not([data-eagle-theme="dark"]) .owner-login-subtitle,
+          body:not([data-eagle-theme="dark"]) .owner-login-subtitle,
+          html[data-eagle-theme="light"] .owner-login-subtitle,
+          body[data-eagle-theme="light"] .owner-login-subtitle {
+            color: #6c8298 !important;
+          }
+
+          html:not([data-eagle-theme="dark"]) .owner-login-label,
+          body:not([data-eagle-theme="dark"]) .owner-login-label,
+          html[data-eagle-theme="light"] .owner-login-label,
+          body[data-eagle-theme="light"] .owner-login-label {
+            color: #173f68 !important;
+          }
+
+          html:not([data-eagle-theme="dark"]) .owner-login-input-wrap,
+          body:not([data-eagle-theme="dark"]) .owner-login-input-wrap,
+          html[data-eagle-theme="light"] .owner-login-input-wrap,
+          body[data-eagle-theme="light"] .owner-login-input-wrap {
+            min-height: 44px !important;
+            background: #ffffff !important;
+            border: 1px solid #d6e3ef !important;
+            box-shadow: 0 4px 12px rgba(15, 68, 115, .045) !important;
+          }
+
+          html:not([data-eagle-theme="dark"]) .owner-login-input,
+          body:not([data-eagle-theme="dark"]) .owner-login-input,
+          html[data-eagle-theme="light"] .owner-login-input,
+          body[data-eagle-theme="light"] .owner-login-input {
+            color: #163b61 !important;
+            background: transparent !important;
+          }
+
+          html:not([data-eagle-theme="dark"]) .owner-login-input::placeholder,
+          body:not([data-eagle-theme="dark"]) .owner-login-input::placeholder,
+          html[data-eagle-theme="light"] .owner-login-input::placeholder,
+          body[data-eagle-theme="light"] .owner-login-input::placeholder {
+            color: #8ca0b4 !important;
+            opacity: 1 !important;
+          }
+
+          html:not([data-eagle-theme="dark"]) .owner-login-secure,
+          body:not([data-eagle-theme="dark"]) .owner-login-secure,
+          html[data-eagle-theme="light"] .owner-login-secure,
+          body[data-eagle-theme="light"] .owner-login-secure {
+            color: #174b7d !important;
+            background: #eef6ff !important;
+            border: 1px solid #cfe4f8 !important;
+          }
+
+          html:not([data-eagle-theme="dark"]) .owner-login-remember,
+          body:not([data-eagle-theme="dark"]) .owner-login-remember,
+          html[data-eagle-theme="light"] .owner-login-remember,
+          body[data-eagle-theme="light"] .owner-login-remember {
+            color: #536b84 !important;
+          }
+
+          html:not([data-eagle-theme="dark"]) .owner-login-forgot,
+          body:not([data-eagle-theme="dark"]) .owner-login-forgot,
+          html[data-eagle-theme="light"] .owner-login-forgot,
+          body[data-eagle-theme="light"] .owner-login-forgot {
+            color: #1264ad !important;
+          }
+
+          html:not([data-eagle-theme="dark"]) .main-content:has(.owner-login-page),
+          body:not([data-eagle-theme="dark"]) .main-content:has(.owner-login-page),
+          html[data-eagle-theme="light"] .main-content:has(.owner-login-page),
+          body[data-eagle-theme="light"] .main-content:has(.owner-login-page) {
+            min-height: calc(100dvh - 74px) !important;
+            background:
+              linear-gradient(
+                155deg,
+                #edf5fc 0%,
+                #f7fbff 46%,
+                #e6f1fb 100%
+              ) !important;
+          }
+
+          html:not([data-eagle-theme="dark"]) .page-wrapper:has(.owner-login-page),
+          body:not([data-eagle-theme="dark"]) .page-wrapper:has(.owner-login-page),
+          html[data-eagle-theme="light"] .page-wrapper:has(.owner-login-page),
+          body[data-eagle-theme="light"] .page-wrapper:has(.owner-login-page) {
+            background: #edf5fc !important;
+          }
+
+          /* DARK MODE */
+          html[data-eagle-theme="dark"] .owner-login-page,
+          body[data-eagle-theme="dark"] .owner-login-page {
+            min-height: calc(100dvh - 74px) !important;
+            padding: 16px 12px 22px !important;
+            background:
+              linear-gradient(
+                155deg,
+                #061727 0%,
+                #08253f 48%,
+                #071d31 100%
+              ) !important;
+          }
+
+          html[data-eagle-theme="dark"] .owner-login-card,
+          body[data-eagle-theme="dark"] .owner-login-card {
+            background:
+              linear-gradient(
+                150deg,
+                #0a263f 0%,
+                #071f34 100%
+              ) !important;
+            border: 1px solid rgba(116,172,225,.14) !important;
+            box-shadow: 0 22px 48px rgba(0,0,0,.25) !important;
+          }
+
+          html[data-eagle-theme="dark"] .owner-login-title,
+          body[data-eagle-theme="dark"] .owner-login-title {
+            color: #f4f8fd !important;
+          }
+
+          html[data-eagle-theme="dark"] .owner-login-subtitle,
+          body[data-eagle-theme="dark"] .owner-login-subtitle {
+            color: #91a8bf !important;
+          }
+
+          html[data-eagle-theme="dark"] .owner-login-label,
+          body[data-eagle-theme="dark"] .owner-login-label {
+            color: #d8e7f5 !important;
+          }
+
+          html[data-eagle-theme="dark"] .owner-login-input-wrap,
+          body[data-eagle-theme="dark"] .owner-login-input-wrap {
+            background: #0c2944 !important;
+            border: 1px solid rgba(132,174,214,.18) !important;
+          }
+
+          html[data-eagle-theme="dark"] .owner-login-input,
+          body[data-eagle-theme="dark"] .owner-login-input {
+            color: #edf6ff !important;
+            background: transparent !important;
+          }
+
+          html[data-eagle-theme="dark"] .owner-login-secure,
+          body[data-eagle-theme="dark"] .owner-login-secure {
+            color: #9fd0ff !important;
+            background: rgba(64, 143, 215, .10) !important;
+            border: 1px solid rgba(111,177,239,.18) !important;
+          }
+
+          html[data-eagle-theme="dark"] .owner-login-remember,
+          body[data-eagle-theme="dark"] .owner-login-remember {
+            color: #9db2c7 !important;
+          }
+
+          html[data-eagle-theme="dark"] .owner-login-forgot,
+          body[data-eagle-theme="dark"] .owner-login-forgot {
+            color: #6eb9f8 !important;
+          }
+
+          html[data-eagle-theme="dark"] .main-content:has(.owner-login-page),
+          body[data-eagle-theme="dark"] .main-content:has(.owner-login-page),
+          html[data-eagle-theme="dark"] .page-wrapper:has(.owner-login-page),
+          body[data-eagle-theme="dark"] .page-wrapper:has(.owner-login-page) {
+            background: #061727 !important;
+          }
+        }
+
+        @media (max-width: 420px) {
+          .owner-login-card {
+            max-width: 336px !important;
+            padding: 18px 15px 16px !important;
+            border-radius: 20px !important;
+          }
+
+          .owner-login-logo-wrap {
+            width: 54px !important;
+            height: 54px !important;
+            border-radius: 15px !important;
+          }
+
+          .owner-login-logo {
+            width: 64px !important;
+            height: 64px !important;
+          }
+
+          .owner-login-title {
+            margin-top: 9px !important;
+            font-size: 23px !important;
+          }
+
+          .owner-login-subtitle {
+            margin: 6px auto 10px !important;
+            font-size: 10.5px !important;
+          }
+
+          .owner-login-secure {
+            margin-bottom: 12px !important;
+          }
+
+          .owner-login-form {
+            gap: 9px !important;
+          }
+
+          .owner-login-input-wrap {
+            min-height: 42px !important;
+            border-radius: 12px !important;
+          }
+
+          .owner-login-input {
+            height: 40px !important;
+            font-size: 12px !important;
+          }
+
+          .owner-login-submit {
+            min-height: 41px !important;
+            border-radius: 12px !important;
+            font-size: 12px !important;
+          }
+        }
+
+
+
+        /* =========================================================
+           OWNER LOGIN — SEAMLESS MOBILE INPUT FINAL FIX
+           Fixes the dark inner rectangle caused by browser autofill /
+           global dark input styles.
+           UI only — no auth/API/function changes.
+        ========================================================= */
+
+        @media (max-width: 768px) {
+
+          /* ---------- DARK MODE : ONE UNIFORM FIELD ---------- */
+
+          html[data-eagle-theme="dark"]
+          body
+          .owner-login-page
+          .owner-login-card
+          .owner-login-input-wrap,
+          body[data-eagle-theme="dark"]
+          .owner-login-page
+          .owner-login-card
+          .owner-login-input-wrap {
+            display: flex !important;
+            align-items: center !important;
+
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: 46px !important;
+
+            padding: 0 12px !important;
+            gap: 9px !important;
+
+            overflow: hidden !important;
+
+            border-radius: 13px !important;
+            border: 1px solid rgba(116, 168, 216, .22) !important;
+
+            background: #0b2944 !important;
+            background-color: #0b2944 !important;
+
+            box-shadow:
+              inset 0 1px 0 rgba(255,255,255,.025),
+              0 5px 14px rgba(0,0,0,.08) !important;
+          }
+
+
+          /* Actual text input must NEVER create its own box */
+          html[data-eagle-theme="dark"]
+          body
+          .owner-login-page
+          .owner-login-card
+          .owner-login-input-wrap
+          > input.owner-login-input,
+          body[data-eagle-theme="dark"]
+          .owner-login-page
+          .owner-login-card
+          .owner-login-input-wrap
+          > input.owner-login-input {
+            flex: 1 1 auto !important;
+
+            width: 0 !important;
+            min-width: 0 !important;
+            height: 44px !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            appearance: none !important;
+            -webkit-appearance: none !important;
+
+            border: 0 !important;
+            border-radius: 0 !important;
+            outline: 0 !important;
+
+            color: #f0f7ff !important;
+            caret-color: #ffffff !important;
+
+            background: transparent !important;
+            background-color: transparent !important;
+            background-image: none !important;
+
+            box-shadow: none !important;
+            -webkit-box-shadow: none !important;
+
+            font-size: 12.5px !important;
+            line-height: 44px !important;
+          }
+
+
+          html[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > input.owner-login-input::placeholder,
+          body[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > input.owner-login-input::placeholder {
+            color: #7891aa !important;
+            opacity: 1 !important;
+          }
+
+
+          /* Chrome / Edge / mobile browser saved-login autofill */
+          html[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > input.owner-login-input:-webkit-autofill,
+          html[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > input.owner-login-input:-webkit-autofill:hover,
+          html[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > input.owner-login-input:-webkit-autofill:focus,
+          body[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > input.owner-login-input:-webkit-autofill,
+          body[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > input.owner-login-input:-webkit-autofill:hover,
+          body[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > input.owner-login-input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #f0f7ff !important;
+            caret-color: #ffffff !important;
+
+            border: 0 !important;
+
+            background-color: transparent !important;
+            background-image: none !important;
+
+            -webkit-box-shadow:
+              0 0 0 1000px #0b2944 inset !important;
+
+            box-shadow:
+              0 0 0 1000px #0b2944 inset !important;
+
+            transition:
+              background-color 99999s ease-out 0s !important;
+          }
+
+
+          /* Modern :autofill support */
+          html[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > input.owner-login-input:autofill,
+          body[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > input.owner-login-input:autofill {
+            color: #f0f7ff !important;
+            background: #0b2944 !important;
+            box-shadow:
+              0 0 0 1000px #0b2944 inset !important;
+          }
+
+
+          /* Mail / lock icons */
+          html[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > svg,
+          body[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > svg {
+            width: 17px !important;
+            height: 17px !important;
+
+            flex: 0 0 17px !important;
+
+            color: #7798b8 !important;
+            stroke: #7798b8 !important;
+          }
+
+
+          /* Password eye button must blend into same field */
+          html[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > button,
+          body[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > button {
+            width: 30px !important;
+            min-width: 30px !important;
+            height: 30px !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            border: 0 !important;
+            border-radius: 9px !important;
+
+            color: #7798b8 !important;
+
+            background: transparent !important;
+            background-color: transparent !important;
+
+            box-shadow: none !important;
+          }
+
+
+          html[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > button svg,
+          body[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > button svg {
+            width: 16px !important;
+            height: 16px !important;
+          }
+
+
+          /* Focus = one border around the whole field */
+          html[data-eagle-theme="dark"]
+          .owner-login-input-wrap:focus-within,
+          body[data-eagle-theme="dark"]
+          .owner-login-input-wrap:focus-within {
+            border-color: #318bd3 !important;
+
+            box-shadow:
+              0 0 0 3px rgba(49,139,211,.10),
+              inset 0 1px 0 rgba(255,255,255,.025) !important;
+          }
+
+
+          /* ---------- LIGHT MODE : SAME SEAMLESS STRUCTURE ---------- */
+
+          html[data-eagle-theme="light"]
+          .owner-login-input-wrap
+          > input.owner-login-input,
+          body[data-eagle-theme="light"]
+          .owner-login-input-wrap
+          > input.owner-login-input {
+            width: 0 !important;
+            min-width: 0 !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            border: 0 !important;
+            border-radius: 0 !important;
+
+            background: transparent !important;
+            background-color: transparent !important;
+            background-image: none !important;
+
+            box-shadow: none !important;
+            -webkit-box-shadow: none !important;
+          }
+
+
+          html[data-eagle-theme="light"]
+          .owner-login-input-wrap
+          > input.owner-login-input:-webkit-autofill,
+          html[data-eagle-theme="light"]
+          .owner-login-input-wrap
+          > input.owner-login-input:-webkit-autofill:hover,
+          html[data-eagle-theme="light"]
+          .owner-login-input-wrap
+          > input.owner-login-input:-webkit-autofill:focus,
+          body[data-eagle-theme="light"]
+          .owner-login-input-wrap
+          > input.owner-login-input:-webkit-autofill,
+          body[data-eagle-theme="light"]
+          .owner-login-input-wrap
+          > input.owner-login-input:-webkit-autofill:hover,
+          body[data-eagle-theme="light"]
+          .owner-login-input-wrap
+          > input.owner-login-input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #163b61 !important;
+
+            -webkit-box-shadow:
+              0 0 0 1000px #ffffff inset !important;
+
+            box-shadow:
+              0 0 0 1000px #ffffff inset !important;
+          }
+
+        }
+
+
+        @media (max-width: 420px) {
+
+          html[data-eagle-theme="dark"]
+          .owner-login-input-wrap,
+          body[data-eagle-theme="dark"]
+          .owner-login-input-wrap {
+            min-height: 43px !important;
+            padding: 0 10px !important;
+            gap: 8px !important;
+            border-radius: 12px !important;
+          }
+
+
+          html[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > input.owner-login-input,
+          body[data-eagle-theme="dark"]
+          .owner-login-input-wrap
+          > input.owner-login-input {
+            height: 41px !important;
+            line-height: 41px !important;
+            font-size: 12px !important;
+          }
+
+        }
+
+
       `}</style>
 
 
@@ -847,14 +1427,14 @@ const OwnerLogin = () => {
         className="owner-login-page"
         style={styles.page}
       >
-        <div 
-          className="owner-login-bg-glow-one" 
+        <div
+          className="owner-login-bg-glow-one"
           style={styles.bgGlowOne}>
         </div>
 
-        <div 
+        <div
           style={styles.bgGlowTwo}
-          className="owner-login-bg-glow-two">           
+          className="owner-login-bg-glow-two">
         </div>
 
 

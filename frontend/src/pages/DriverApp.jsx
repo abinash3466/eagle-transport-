@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GoogleMap, useJsApiLoader, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
 import { fetchWithAuth } from "../utils/fetchWithAuth";
+import "./DriverAppPremium.css";
 import {
   Truck,
   MapPin,
@@ -24,6 +25,9 @@ import {
   Eye,
   EyeOff,
   Save,
+  Menu,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -875,120 +879,153 @@ const DriverApp = () => {
   if (!isLoggedIn) {
     return (
       <div className="driver-login-premium" style={loginStyles.loginPage}>
-        <style>{driverPremiumCss}</style>
-        <div className="driver-login-card" style={loginStyles.loginCard}>
-          <div style={loginStyles.logoBox}>
-            <img src="/eagle-logo.png" alt="Eagle Logo" style={loginStyles.logoImg} />
-          </div>
 
-          <h1 style={loginStyles.title}>Driver Login</h1>
-          <p style={loginStyles.subtitle}>
-            Secure access to Eagle Transport Driver <br /> Dashboard
-          </p>
-
-          <div style={loginStyles.badge}>
-            <ShieldCheck size={18} />
-            <span>Protected driver access</span>
-          </div>
-
-          <form onSubmit={handleLogin} style={loginStyles.form}>
-            <label style={loginStyles.label}>Driver ID</label>
-            <div style={loginStyles.inputWrap}>
-              <User size={22} color="#64748b" />
-              <input
-                type="text"
-                placeholder="DRV00"
-                value={loginData.driverId}
-                onChange={(e) => setLoginData((prev) => ({ ...prev, driverId: e.target.value }))}
-                style={loginStyles.input}
-                required
+        <div className="driver-login-navbar">
+          <div className="driver-login-brand">
+            <div className="driver-login-brand-logo">
+              <img
+                src="/eagle-logo.png"
+                alt="Eagle Transport"
               />
             </div>
 
-            <label style={loginStyles.label}>Password</label>
-            <div style={loginStyles.inputWrap}>
-              <Lock size={22} color="#64748b" />
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={loginData.password}
-                onChange={(e) => setLoginData((prev) => ({ ...prev, password: e.target.value }))}
-                style={loginStyles.input}
-                required
-              />
-              <button type="button" onClick={() => setShowPassword(!showPassword)} style={loginStyles.eyeBtn}>
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
+            <div className="driver-login-brand-copy">
+              <strong>EAGLE</strong>
+              <span>TRANSPORT</span>
+            </div>
+          </div>
+
+          <div className="driver-login-nav-actions">
+            <div className="driver-login-role-chip">
+              <Truck size={15} />
+              <span>Driver</span>
             </div>
 
-            <label style={loginStyles.rememberRow}>
-              <input type="checkbox" defaultChecked style={loginStyles.checkbox} />
-              <span>Remember me</span>
-            </label>
-
-            <button type="button" style={loginStyles.forgotBtn} onClick={() => setShowForgotPassword(true)}>
-              Forgot Password?
+            <button
+              type="button"
+              className="driver-login-menu-btn"
+              aria-label="Driver portal menu"
+            >
+              <Menu size={21} />
             </button>
+          </div>
+        </div>
 
-            {loginError && <div style={loginStyles.error}>{loginError}</div>}
+        <div className="driver-login-body">
+          <div className="driver-login-card" style={loginStyles.loginCard}>
+            <div style={loginStyles.logoBox}>
+              <img src="/eagle-logo.png" alt="Eagle Logo" style={loginStyles.logoImg} />
+            </div>
 
-            <button type="submit" style={loginStyles.loginBtn}>
-              Login to Driver Dashboard
-            </button>
-          </form>
+            <h1 style={loginStyles.title}>Driver Login</h1>
+            <p style={loginStyles.subtitle}>
+              Secure access to Eagle Transport Driver <br /> Dashboard
+            </p>
 
-          {showForgotPassword && (
-            <div style={loginStyles.modalOverlay}>
-              <div style={loginStyles.modalCard}>
-                <h2 style={loginStyles.modalTitle}>Reset Password</h2>
+            <div style={loginStyles.badge}>
+              <ShieldCheck size={18} />
+              <span>Protected driver access</span>
+            </div>
+
+            <form onSubmit={handleLogin} style={loginStyles.form}>
+              <label style={loginStyles.label}>Driver ID</label>
+              <div style={loginStyles.inputWrap}>
+                <User size={22} color="#64748b" />
                 <input
                   type="text"
-                  placeholder="Enter Driver ID"
-                  value={forgotData.driverId}
-                  onChange={(e) => setForgotData((prev) => ({ ...prev, driverId: e.target.value }))}
-                  style={loginStyles.modalInput}
+                  placeholder="DRV00"
+                  value={loginData.driverId}
+                  onChange={(e) => setLoginData((prev) => ({ ...prev, driverId: e.target.value }))}
+                  style={loginStyles.input}
+                  required
                 />
+              </div>
 
-                {!otpSent ? (
-                  <button style={loginStyles.modalBtn} onClick={sendResetOtp}>
-                    Send OTP
-                  </button>
-                ) : (
-                  <>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="Enter OTP"
-                      value={forgotData.otp}
-                      onChange={(e) => setForgotData((prev) => ({ ...prev, otp: e.target.value }))}
-                      style={loginStyles.modalInput}
-                    />
-                    <input
-                      type="password"
-                      placeholder="Enter New Password"
-                      value={forgotData.newPassword}
-                      onChange={(e) => setForgotData((prev) => ({ ...prev, newPassword: e.target.value }))}
-                      style={loginStyles.modalInput}
-                    />
-                    <button style={loginStyles.modalBtn} onClick={resetPassword}>
-                      Reset Password
-                    </button>
-                  </>
-                )}
-
-                <button
-                  style={loginStyles.closeBtn}
-                  onClick={() => {
-                    setShowForgotPassword(false);
-                    setOtpSent(false);
-                    setForgotData({ driverId: "", otp: "", newPassword: "" });
-                  }}
-                >
-                  Close
+              <label style={loginStyles.label}>Password</label>
+              <div style={loginStyles.inputWrap}>
+                <Lock size={22} color="#64748b" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  value={loginData.password}
+                  onChange={(e) => setLoginData((prev) => ({ ...prev, password: e.target.value }))}
+                  style={loginStyles.input}
+                  required
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} style={loginStyles.eyeBtn}>
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-            </div>
-          )}
+
+              <label style={loginStyles.rememberRow}>
+                <input type="checkbox" defaultChecked style={loginStyles.checkbox} />
+                <span>Remember me</span>
+              </label>
+
+              <button type="button" style={loginStyles.forgotBtn} onClick={() => setShowForgotPassword(true)}>
+                Forgot Password?
+              </button>
+
+              {loginError && <div style={loginStyles.error}>{loginError}</div>}
+
+              <button type="submit" style={loginStyles.loginBtn}>
+                Login to Driver Dashboard
+              </button>
+            </form>
+
+            {showForgotPassword && (
+              <div style={loginStyles.modalOverlay}>
+                <div style={loginStyles.modalCard}>
+                  <h2 style={loginStyles.modalTitle}>Reset Password</h2>
+                  <input
+                    type="text"
+                    placeholder="Enter Driver ID"
+                    value={forgotData.driverId}
+                    onChange={(e) => setForgotData((prev) => ({ ...prev, driverId: e.target.value }))}
+                    style={loginStyles.modalInput}
+                  />
+
+                  {!otpSent ? (
+                    <button style={loginStyles.modalBtn} onClick={sendResetOtp}>
+                      Send OTP
+                    </button>
+                  ) : (
+                    <>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="Enter OTP"
+                        value={forgotData.otp}
+                        onChange={(e) => setForgotData((prev) => ({ ...prev, otp: e.target.value }))}
+                        style={loginStyles.modalInput}
+                      />
+                      <input
+                        type="password"
+                        placeholder="Enter New Password"
+                        value={forgotData.newPassword}
+                        onChange={(e) => setForgotData((prev) => ({ ...prev, newPassword: e.target.value }))}
+                        style={loginStyles.modalInput}
+                      />
+                      <button style={loginStyles.modalBtn} onClick={resetPassword}>
+                        Reset Password
+                      </button>
+                    </>
+                  )}
+
+                  <button
+                    style={loginStyles.closeBtn}
+                    onClick={() => {
+                      setShowForgotPassword(false);
+                      setOtpSent(false);
+                      setForgotData({ driverId: "", otp: "", newPassword: "" });
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -996,24 +1033,53 @@ const DriverApp = () => {
 
   return (
     <div className={`driver-dashboard-shell ${settingsData.darkMode ? "driver-dark" : "driver-light"}`} style={styles.page}>
-      <style>{driverPremiumCss}</style>
       {/* Top Header */}
       <div className="driver-dashboard-header" style={styles.header}>
         <div className="driver-header-top" style={styles.headerTop}>
-          <div>
-            <h1 style={styles.headerTitle}>Driver Dashboard</h1>
-            <p style={styles.headerSub}>Live trip control panel</p>
+          <div className="driver-navbar-brand">
+            <div className="driver-navbar-logo">
+              <img
+                src="/eagle-logo.png"
+                alt="Eagle Transport"
+              />
+            </div>
+
+            <div className="driver-header-copy">
+              <div className="driver-navbar-brand-name">
+                <strong>EAGLE</strong>
+                <span>DRIVER PORTAL</span>
+              </div>
+
+              <div className="driver-navbar-page-copy">
+                <h1 style={styles.headerTitle}>Driver Dashboard</h1>
+                <p style={styles.headerSub}>Live trip control panel</p>
+              </div>
+            </div>
           </div>
 
-          <div style={styles.headerActions}>
-            <div style={styles.notificationWrap}>
-              <button style={styles.headerIconBtn} onClick={() => setShowDriverNotifications((prev) => !prev)}>
+          <div className="driver-header-actions" style={styles.headerActions}>
+            <button
+              type="button"
+              className="driver-theme-toggle-btn"
+              onClick={() =>
+                setSettingsData((prev) => ({
+                  ...prev,
+                  darkMode: !prev.darkMode,
+                }))
+              }
+              aria-label={settingsData.darkMode ? "Switch to light mode" : "Switch to dark mode"}
+              title={settingsData.darkMode ? "Light Mode" : "Dark Mode"}
+            >
+              {settingsData.darkMode ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+            <div className="driver-notification-wrap" style={styles.notificationWrap}>
+              <button className="driver-notification-btn" style={styles.headerIconBtn} onClick={() => setShowDriverNotifications((prev) => !prev)}>
                 <Bell size={22} />
                 {driverNotifications.length > 0 && <span style={styles.notifyDot}></span>}
               </button>
 
               {showDriverNotifications && (
-                <div style={styles.notificationDropdown}>
+                <div className="driver-notification-dropdown" style={styles.notificationDropdown}>
                   <h4 style={styles.notificationTitle}>Notifications</h4>
                   {driverNotifications.length === 0 ? (
                     <p style={styles.notificationEmpty}>No notifications</p>
@@ -1029,25 +1095,25 @@ const DriverApp = () => {
                 </div>
               )}
             </div>
-            <button style={styles.headerLogoutBtn} onClick={handleLogout}>
+            <button className="driver-logout-btn" style={styles.headerLogoutBtn} onClick={handleLogout}>
               <LogOut size={18} /> Logout
             </button>
           </div>
         </div>
 
         <div className="driver-profile-strip" style={styles.driverStrip}>
-          <img src="/driver.png" alt="Driver" style={styles.driverAvatar} />
-          <div style={{ flex: 1 }}>
+          <img className="driver-avatar" src="/driver.png" alt="Driver" style={styles.driverAvatar} />
+          <div className="driver-profile-copy" style={{ flex: 1 }}>
             <h2 style={styles.driverName}>{driverData.name}</h2>
-            <div style={styles.onlineRow}>
+            <div className="driver-online-row" style={styles.onlineRow}>
               <span style={styles.onlineDot}></span>
               <span>{driverData.status} • {driverData.driverId}</span>
             </div>
           </div>
 
-          <div style={styles.assignedTruckTop}>
-            <img src={driverData.truckImage} alt={driverData.truckName} style={styles.topTruckImage} />
-            <div>
+          <div className="driver-assigned-truck" style={styles.assignedTruckTop}>
+            <img className="driver-truck-image" src={driverData.truckImage} alt={driverData.truckName} style={styles.topTruckImage} />
+            <div className="driver-truck-copy">
               <p style={styles.assignedLabel}>Assigned Truck</p>
               <h3 style={styles.assignedTruckName}>{driverData.truckName}</h3>
               <span className="badge badge-default">{driverData.truckNumber}</span>
@@ -1071,10 +1137,10 @@ const DriverApp = () => {
             >
               {/* Health Cards */}
               {hasAssignedTruck ? (
-                <div style={styles.healthGrid}>
+                <div className="driver-health-grid" style={styles.healthGrid}>
                   {healthCards.map((item) => (
                     <div key={item.title} className="card driver-health-card" style={styles.healthCard}>
-                      <div style={styles.healthTop}>
+                      <div className="driver-health-top" style={styles.healthTop}>
                         <div
                           style={{
                             ...styles.healthIcon,
@@ -1089,7 +1155,7 @@ const DriverApp = () => {
                           <h4 style={styles.healthValue}>{item.value}</h4>
                         </div>
                       </div>
-                      <div style={styles.progressTrack}>
+                      <div className="driver-progress-track" style={styles.progressTrack}>
                         <div
                           style={{
                             ...styles.progressFill,
@@ -1112,16 +1178,16 @@ const DriverApp = () => {
               )}
 
               {/* Active Route Card */}
-              <div className="card driver-route-card" style={styles.routeCard}>
-                <div style={styles.routeHeader}>
+              <div className="card driver-route-card driver-mobile-section" style={styles.routeCard}>
+                <div className="driver-route-header" style={styles.routeHeader}>
                   <h3 style={styles.routeTitle}>Active Route</h3>
-                  <span className={`badge badge-${routeData.tripStatus === 'Trip Completed' ? 'success' : 'warning'}`}>
+                  <span className={`driver-route-status badge badge-${routeData.tripStatus === 'Trip Completed' ? 'success' : 'warning'}`}>
                     {routeData.tripStatus}
                   </span>
                 </div>
 
-                <div style={styles.routeContent}>
-                  <div style={styles.routeLineIcons}>
+                <div className="driver-route-content" style={styles.routeContent}>
+                  <div className="driver-route-line-icons" style={styles.routeLineIcons}>
                     <MapPin size={20} color="var(--primary-blue)" />
                     <div style={styles.routeLine}></div>
                     <Navigation2 size={20} color="var(--warning)" />
@@ -1129,7 +1195,7 @@ const DriverApp = () => {
                     <MapPin size={20} color="var(--danger)" />
                   </div>
 
-                  <div style={styles.routeTexts}>
+                  <div className="driver-route-texts" style={styles.routeTexts}>
                     <div>
                       <p style={styles.routeLabel}>Pickup (Completed)</p>
                       <p style={styles.routeValue}>{routeData.pickup}</p>
@@ -1145,7 +1211,7 @@ const DriverApp = () => {
                   </div>
                 </div>
 
-                <div style={styles.tripActionButtons}>
+                <div className="driver-trip-actions" style={styles.tripActionButtons}>
                   <button type="button" style={styles.startTripBtn} onClick={handleStartTrip}>
                     🚚 Start Trip
                   </button>
@@ -1159,7 +1225,7 @@ const DriverApp = () => {
               </div>
 
               {/* GPS Timeline */}
-              <div className="card driver-timeline-card" style={styles.timelineCard}>
+              <div className="card driver-timeline-card driver-mobile-section" style={styles.timelineCard}>
                 <h3 style={styles.sectionTitle}>Recent Location Updates</h3>
                 <div style={styles.timelineList}>
                   {gpsLog.map((item, index) => (
@@ -1175,8 +1241,8 @@ const DriverApp = () => {
               </div>
 
               {/* Trip History */}
-              <div className="card driver-timeline-card" style={styles.timelineCard}>
-                <h3 style={styles.sectionTitle}>Trip History</h3>
+              <div className="card driver-timeline-card driver-mobile-section" style={styles.timelineCard}>
+                <h3 className="driver-trip-history-title" style={styles.sectionTitle}>Trip History</h3>
                 {tripHistory.length === 0 ? (
                   <p style={styles.timelineMeta}>No completed trips yet</p>
                 ) : (
@@ -1224,11 +1290,11 @@ const DriverApp = () => {
 
           {activeMenu === 'Fuel' && (
             <motion.div key="fuel" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }}>
-              <div className="card driver-form-card" style={styles.formCard}>
+              <div className="card driver-form-card driver-operation-panel" style={styles.formCard}>
                 <h2 style={styles.formTitle}>Fuel Entry</h2>
                 <p style={styles.formDesc}>Enter petrol pump details, liters, and total amount.</p>
 
-                <form onSubmit={handleFuelSubmit} style={styles.formGrid}>
+                <form className="driver-operation-form" onSubmit={handleFuelSubmit} style={styles.formGrid}>
                   <input style={styles.input} placeholder="Petrol Pump Name" value={fuelForm.pumpName} onChange={(e) => setFuelForm({ ...fuelForm, pumpName: e.target.value })} />
                   <input style={styles.input} placeholder="Location / Place" value={fuelForm.place} onChange={(e) => setFuelForm({ ...fuelForm, place: e.target.value })} />
                   <input style={styles.input} type="number" placeholder="Liters" value={fuelForm.liters} onChange={(e) => setFuelForm({ ...fuelForm, liters: e.target.value })} />
@@ -1238,7 +1304,7 @@ const DriverApp = () => {
                     <option>Petrol</option>
                   </select>
 
-                  <div style={styles.formActions}>
+                  <div className="driver-form-actions" style={styles.formActions}>
                     <button type="button" className="btn btn-outline" onClick={() => setActiveMenu('Home')}>Cancel</button>
                     <button type="submit" className="btn btn-primary"><Save size={16} /> Save Fuel Log</button>
                   </div>
@@ -1261,11 +1327,11 @@ const DriverApp = () => {
 
           {activeMenu === 'Toll' && (
             <motion.div key="toll" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }}>
-              <div className="card driver-form-card" style={styles.formCard}>
+              <div className="card driver-form-card driver-operation-panel" style={styles.formCard}>
                 <h2 style={styles.formTitle}>Toll Entry</h2>
                 <p style={styles.formDesc}>Add tollgate name, amount, payment method, and location.</p>
 
-                <form onSubmit={handleTollSubmit} style={styles.formGrid}>
+                <form className="driver-operation-form" onSubmit={handleTollSubmit} style={styles.formGrid}>
                   <input style={styles.input} placeholder="Tollgate Name" value={tollForm.tollgate} onChange={(e) => setTollForm({ ...tollForm, tollgate: e.target.value })} />
                   <input style={styles.input} placeholder="Location / Place" value={tollForm.place} onChange={(e) => setTollForm({ ...tollForm, place: e.target.value })} />
                   <input style={styles.input} type="number" placeholder="Amount" value={tollForm.amount} onChange={(e) => setTollForm({ ...tollForm, amount: e.target.value })} />
@@ -1275,7 +1341,7 @@ const DriverApp = () => {
                     <option>UPI</option>
                   </select>
 
-                  <div style={styles.formActions}>
+                  <div className="driver-form-actions" style={styles.formActions}>
                     <button type="button" className="btn btn-outline" onClick={() => setActiveMenu('Home')}>Cancel</button>
                     <button type="submit" className="btn btn-primary"><Save size={16} /> Save Toll Entry</button>
                   </div>
@@ -1298,11 +1364,11 @@ const DriverApp = () => {
 
           {activeMenu === 'Issue' && (
             <motion.div key="issue" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }}>
-              <div className="card driver-form-card" style={styles.formCard}>
+              <div className="card driver-form-card driver-operation-panel" style={styles.formCard}>
                 <h2 style={styles.formTitle}>Truck Issue Report</h2>
                 <p style={styles.formDesc}>Enter truck issue reason, severity, and current location.</p>
 
-                <form onSubmit={handleIssueSubmit} style={styles.formGrid}>
+                <form className="driver-operation-form" onSubmit={handleIssueSubmit} style={styles.formGrid}>
                   <select style={styles.input} value={issueForm.issueType} onChange={(e) => setIssueForm({ ...issueForm, issueType: e.target.value })}>
                     <option>Tyre Issue</option>
                     <option>Brake Issue</option>
@@ -1327,7 +1393,7 @@ const DriverApp = () => {
                     onChange={(e) => setIssueForm({ ...issueForm, description: e.target.value })}
                   />
 
-                  <div style={styles.formActions}>
+                  <div className="driver-form-actions" style={styles.formActions}>
                     <button type="button" className="btn btn-outline" onClick={() => setActiveMenu('Home')}>Cancel</button>
                     <button type="submit" className="btn btn-primary"><AlertTriangle size={16} /> Submit Issue</button>
                   </div>
@@ -1350,38 +1416,38 @@ const DriverApp = () => {
 
           {activeMenu === "TripSummary" && (
             <motion.div key="trip-summary" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }}>
-              <div className="card driver-form-card" style={styles.formCard}>
+              <div className="card driver-form-card driver-operation-panel" style={styles.formCard}>
                 <h2 style={styles.formTitle}>Trip Summary</h2>
                 <p style={styles.formDesc}>Complete overview of your assigned trip.</p>
 
-                <div style={styles.summaryGrid}>
-                  <div style={styles.summaryBox}>
+                <div className="driver-summary-grid" style={styles.summaryGrid}>
+                  <div className="driver-summary-box" style={styles.summaryBox}>
                     <span>Booking ID</span>
                     <strong>{routeData.bookingId || "Not Assigned"}</strong>
                   </div>
-                  <div style={styles.summaryBox}>
+                  <div className="driver-summary-box" style={styles.summaryBox}>
                     <span>Status</span>
                     <strong>{routeData.tripStatus}</strong>
                   </div>
-                  <div style={styles.summaryBox}>
+                  <div className="driver-summary-box" style={styles.summaryBox}>
                     <span>Pickup</span>
                     <strong>{routeData.pickup}</strong>
                   </div>
-                  <div style={styles.summaryBox}>
+                  <div className="driver-summary-box" style={styles.summaryBox}>
                     <span>Destination</span>
                     <strong>{routeData.destination}</strong>
                   </div>
-                  <div style={styles.summaryBox}>
+                  <div className="driver-summary-box" style={styles.summaryBox}>
                     <span>Current Location</span>
                     <strong>{routeData.currentLocation}</strong>
                   </div>
-                  <div style={styles.summaryBox}>
+                  <div className="driver-summary-box" style={styles.summaryBox}>
                     <span>Truck</span>
                     <strong>{driverData.truckNumber}</strong>
                   </div>
                 </div>
 
-                <div style={styles.formActions}>
+                <div className="driver-form-actions" style={styles.formActions}>
                   <button className="btn btn-outline" onClick={() => setActiveMenu("Home")}>Back</button>
                   <button className="btn btn-primary" onClick={() => setActiveMenu("EndTrip")}>
                     <CheckCircle size={16} /> Go to End Trip
@@ -1393,7 +1459,7 @@ const DriverApp = () => {
 
           {activeMenu === 'EndTrip' && (
             <motion.div key="endtrip" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }}>
-              <div className="card driver-form-card" style={styles.formCard}>
+              <div className="card driver-form-card driver-operation-panel" style={styles.formCard}>
                 <h2 style={styles.formTitle}>End Trip</h2>
                 <p style={styles.formDesc}>Confirm destination reached and close the active trip.</p>
 
@@ -1414,7 +1480,7 @@ const DriverApp = () => {
                     onChange={(e) => setTripEndForm((prev) => ({ ...prev, remarks: e.target.value }))}
                   />
 
-                  <div style={styles.formActions}>
+                  <div className="driver-form-actions" style={styles.formActions}>
                     <button type="button" className="btn btn-outline" onClick={() => setActiveMenu('Home')}>Cancel</button>
                     <button type="submit" className="btn btn-primary"><CheckCircle size={16} /> Confirm End Trip</button>
                   </div>
@@ -1425,7 +1491,7 @@ const DriverApp = () => {
 
           {activeMenu === 'Map' && (
             <motion.div key="map" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }}>
-              <div className="card driver-form-card" style={styles.formCard}>
+              <div className="card driver-form-card driver-operation-panel" style={styles.formCard}>
                 <h2 style={styles.formTitle}>Route Optimization Map</h2>
                 <p style={styles.formDesc}>Select your preferred route type to view live navigation paths and bypass options.</p>
 
@@ -1437,7 +1503,7 @@ const DriverApp = () => {
 
           {activeMenu === 'Settings' && (
             <motion.div key="settings" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }}>
-              <div className="card driver-form-card" style={styles.formCard}>
+              <div className="card driver-form-card driver-operation-panel" style={styles.formCard}>
                 <h2 style={styles.formTitle}>Driver Settings</h2>
                 <p style={styles.formDesc}>Manage dashboard preferences.</p>
 
@@ -1470,7 +1536,7 @@ const DriverApp = () => {
                   </label>
                 </div>
 
-                <div style={styles.formActions}>
+                <div className="driver-form-actions" style={styles.formActions}>
                   <button className="btn btn-outline" onClick={() => setActiveMenu('Home')}>Back</button>
                   <button className="btn btn-primary" onClick={() => { setSuccessMsg('Settings saved'); clearSuccess(); setActiveMenu('Home'); }}>
                     <Save size={16} /> Save Settings
@@ -1520,439 +1586,6 @@ const DriverApp = () => {
     </div>
   );
 };
-
-
-const driverPremiumCss = `
-/* =========================================================
-   EAGLE DRIVER APP — PREMIUM DARK + MOBILE COMPACT UI
-   UI ONLY — no API, calculations, GPS or trip logic changed
-========================================================= */
-
-.driver-login-premium,
-.driver-dashboard-shell {
-  box-sizing: border-box;
-  width: 100%;
-}
-
-/* ===================== LOGIN ===================== */
-
-.driver-login-premium {
-  min-height: 100dvh !important;
-  padding: 18px !important;
-  overflow-x: hidden !important;
-  background:
-    radial-gradient(circle at 18% 14%, rgba(47, 128, 237, .18), transparent 30%),
-    radial-gradient(circle at 88% 82%, rgba(255, 122, 0, .09), transparent 28%),
-    linear-gradient(145deg, #061524 0%, #09233b 55%, #081827 100%) !important;
-}
-
-.driver-login-card {
-  width: min(100%, 410px) !important;
-  max-width: 410px !important;
-  padding: 28px 28px 24px !important;
-  border-radius: 26px !important;
-  overflow: hidden !important;
-  color: #eef6ff !important;
-  background:
-    linear-gradient(145deg, rgba(15, 41, 66, .97), rgba(7, 25, 42, .98)) !important;
-  border: 1px solid rgba(133, 183, 225, .16) !important;
-  box-shadow:
-    0 26px 70px rgba(0,0,0,.38),
-    inset 0 1px 0 rgba(255,255,255,.035) !important;
-}
-
-.driver-login-card h1 {
-  color: #f7fbff !important;
-  font-size: 1.82rem !important;
-  line-height: 1.05 !important;
-}
-
-.driver-login-card p {
-  color: #91a9bf !important;
-}
-
-.driver-login-card form > label {
-  color: #dbe9f6 !important;
-  font-size: .82rem !important;
-  text-align: left !important;
-}
-
-.driver-login-card form > div:not([style*="background: rgb(254"]):not([style*="background:#fee"]) {
-  box-sizing: border-box !important;
-}
-
-.driver-login-card form > div[style*="height: 56px"],
-.driver-login-card form > div[style*="height:56px"] {
-  width: 100% !important;
-  height: 50px !important;
-  min-width: 0 !important;
-  padding: 0 13px !important;
-  border-radius: 14px !important;
-  background: #0b243a !important;
-  border-color: rgba(133, 183, 225, .18) !important;
-}
-
-.driver-login-card input[type="text"],
-.driver-login-card input[type="password"] {
-  min-width: 0 !important;
-  width: 100% !important;
-  color: #f0f7ff !important;
-  background: transparent !important;
-  font-size: .88rem !important;
-}
-
-.driver-login-card input::placeholder {
-  color: #6f879e !important;
-  opacity: 1 !important;
-}
-
-.driver-login-card button[type="submit"] {
-  height: 50px !important;
-  border-radius: 14px !important;
-  background: linear-gradient(135deg, #1976d2, #10508f) !important;
-  box-shadow: 0 12px 26px rgba(18, 95, 166, .25) !important;
-  font-size: .9rem !important;
-}
-
-.driver-login-card button[type="button"] {
-  max-width: 100%;
-}
-
-.driver-login-card label[style*="Remember"],
-.driver-login-card label {
-  color: #c7d6e4;
-}
-
-/* ===================== DASHBOARD DARK ===================== */
-
-.driver-dashboard-shell.driver-dark {
-  background: #061524 !important;
-  color: #e8f1fa !important;
-}
-
-.driver-dark .driver-dashboard-header {
-  padding: 18px 18px 24px !important;
-  background:
-    linear-gradient(145deg, #0b2a49 0%, #0b3a68 60%, #0d3156 100%) !important;
-  border-bottom: 1px solid rgba(132,174,214,.12) !important;
-}
-
-.driver-dark .driver-profile-strip {
-  background: rgba(7, 25, 42, .34) !important;
-  border: 1px solid rgba(151,193,229,.12) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.025) !important;
-}
-
-.driver-dark .driver-content-wrap {
-  background: #061524 !important;
-}
-
-.driver-dark .card,
-.driver-dark .driver-health-card,
-.driver-dark .driver-no-truck-card,
-.driver-dark .driver-route-card,
-.driver-dark .driver-timeline-card,
-.driver-dark .driver-action-card,
-.driver-dark .driver-form-card {
-  color: #dce9f5 !important;
-  background:
-    linear-gradient(145deg, #0e2943 0%, #0a2035 100%) !important;
-  border-color: rgba(132,174,214,.14) !important;
-  box-shadow: 0 12px 28px rgba(0,0,0,.14) !important;
-}
-
-.driver-dark .card h1,
-.driver-dark .card h2,
-.driver-dark .card h3,
-.driver-dark .card h4,
-.driver-dark .card strong {
-  color: #f2f7fc !important;
-}
-
-.driver-dark .card p,
-.driver-dark .card span {
-  color: #9db2c6;
-}
-
-.driver-dark input,
-.driver-dark select,
-.driver-dark textarea {
-  color: #eef6ff !important;
-  background: #0b263e !important;
-  border-color: rgba(132,174,214,.18) !important;
-}
-
-.driver-dark input::placeholder,
-.driver-dark textarea::placeholder {
-  color: #7890a7 !important;
-  opacity: 1 !important;
-}
-
-.driver-dark select option {
-  color: #eef6ff !important;
-  background: #0b263e !important;
-}
-
-.driver-dark .driver-bottom-nav {
-  background: rgba(7, 24, 40, .97) !important;
-  border-top-color: rgba(132,174,214,.12) !important;
-  box-shadow: 0 -10px 28px rgba(0,0,0,.24) !important;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
-
-.driver-dark .driver-bottom-nav button {
-  color: #8ea6bb !important;
-}
-
-.driver-dark .driver-bottom-nav button:hover {
-  color: #62aef1 !important;
-}
-
-.driver-dark .driver-action-card {
-  min-height: 112px !important;
-}
-
-.driver-dark .driver-route-card {
-  border-top-color: #ff8418 !important;
-}
-
-/* ===================== MOBILE ===================== */
-
-@media (max-width: 768px) {
-  .driver-login-premium {
-    align-items: flex-start !important;
-    padding: 12px !important;
-  }
-
-  .driver-login-card {
-    margin: 0 auto !important;
-    padding: 21px 18px 18px !important;
-    border-radius: 22px !important;
-  }
-
-  .driver-login-card > div:first-of-type {
-    width: 64px !important;
-    height: 64px !important;
-    border-radius: 18px !important;
-    margin-bottom: 13px !important;
-    background: #eef4fa !important;
-  }
-
-  .driver-login-card > div:first-of-type img {
-    width: 88px !important;
-    height: 88px !important;
-  }
-
-  .driver-login-card h1 {
-    font-size: 1.55rem !important;
-  }
-
-  .driver-login-card > p {
-    margin: 7px 0 11px !important;
-    font-size: .78rem !important;
-    line-height: 1.4 !important;
-  }
-
-  .driver-login-card > div[style*="fit-content"] {
-    margin-bottom: 15px !important;
-    padding: 7px 11px !important;
-    font-size: .72rem !important;
-  }
-
-  .driver-login-card form {
-    gap: 8px !important;
-  }
-
-  .driver-login-card form > label {
-    margin-top: 2px !important;
-  }
-
-  .driver-login-card form > div[style*="height: 56px"],
-  .driver-login-card form > div[style*="height:56px"] {
-    height: 46px !important;
-    border-radius: 13px !important;
-  }
-
-  .driver-login-card input {
-    font-size: .82rem !important;
-  }
-
-  .driver-login-card label[style*="display: flex"],
-  .driver-login-card label[style*="display:flex"] {
-    font-size: .8rem !important;
-    margin: 4px 0 6px !important;
-  }
-
-  .driver-login-card button[type="submit"] {
-    height: 46px !important;
-    font-size: .82rem !important;
-  }
-
-  .driver-dashboard-shell {
-    padding-bottom: 74px !important;
-  }
-
-  .driver-dark .driver-dashboard-header {
-    padding: 13px 12px 16px !important;
-  }
-
-  .driver-header-top {
-    margin-bottom: 12px !important;
-    gap: 8px !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-  }
-
-  .driver-header-top h1 {
-    font-size: 1.18rem !important;
-    line-height: 1.1 !important;
-  }
-
-  .driver-header-top p {
-    margin-top: 3px !important;
-    font-size: .72rem !important;
-  }
-
-  .driver-header-top button {
-    min-height: 38px !important;
-  }
-
-  .driver-profile-strip {
-    padding: 11px !important;
-    border-radius: 17px !important;
-    gap: 10px !important;
-  }
-
-  .driver-profile-strip img {
-    max-width: 54px !important;
-    max-height: 54px !important;
-  }
-
-  .driver-content-wrap {
-    padding: 12px !important;
-  }
-
-  .driver-content-wrap > div > div {
-    gap: 12px !important;
-  }
-
-  .driver-dark .driver-health-card,
-  .driver-dark .driver-route-card,
-  .driver-dark .driver-timeline-card,
-  .driver-dark .driver-form-card {
-    border-radius: 17px !important;
-    padding: 14px !important;
-  }
-
-  .driver-dark .driver-health-card {
-    min-width: 0 !important;
-  }
-
-  .driver-dark .driver-action-card {
-    padding: 14px 10px !important;
-    min-height: 90px !important;
-    border-radius: 16px !important;
-  }
-
-  .driver-dark .driver-action-card svg {
-    width: 24px !important;
-    height: 24px !important;
-    margin-bottom: 7px !important;
-  }
-
-  .driver-dark .driver-action-card p {
-    font-size: .78rem !important;
-  }
-
-  .driver-route-card [style*="display: flex"][style*="gap: 12px"] {
-    gap: 7px !important;
-  }
-
-  .driver-route-card button {
-    padding: 9px 11px !important;
-    font-size: .72rem !important;
-  }
-
-  .driver-form-card h2 {
-    font-size: 1.18rem !important;
-  }
-
-  .driver-form-card > p {
-    margin: 5px 0 13px !important;
-    font-size: .76rem !important;
-    line-height: 1.45 !important;
-  }
-
-  .driver-form-card input,
-  .driver-form-card select,
-  .driver-form-card textarea {
-    padding: 11px 12px !important;
-    border-radius: 12px !important;
-    font-size: .82rem !important;
-  }
-
-  #eagle-driver-optimized-map {
-    min-height: 250px !important;
-  }
-
-  .driver-bottom-nav {
-    padding: 8px 10px !important;
-    padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
-  }
-
-  .driver-bottom-nav button {
-    gap: 2px !important;
-    min-width: 64px !important;
-  }
-
-  .driver-bottom-nav svg {
-    width: 20px !important;
-    height: 20px !important;
-  }
-
-  .driver-bottom-nav span {
-    font-size: .64rem !important;
-  }
-}
-
-@media (max-width: 420px) {
-  .driver-login-card {
-    padding: 18px 15px 16px !important;
-    border-radius: 20px !important;
-  }
-
-  .driver-login-card h1 {
-    font-size: 1.42rem !important;
-  }
-
-  .driver-dark .driver-dashboard-header {
-    padding: 11px 10px 14px !important;
-  }
-
-  .driver-content-wrap {
-    padding: 10px !important;
-  }
-
-  .driver-profile-strip {
-    padding: 9px !important;
-    border-radius: 15px !important;
-  }
-
-  .driver-dark .driver-health-card,
-  .driver-dark .driver-route-card,
-  .driver-dark .driver-timeline-card,
-  .driver-dark .driver-form-card {
-    padding: 12px !important;
-    border-radius: 15px !important;
-  }
-
-  .driver-dark .driver-action-card {
-    min-height: 82px !important;
-    padding: 11px 8px !important;
-  }
-}
-`;
 
 
 const styles = {
